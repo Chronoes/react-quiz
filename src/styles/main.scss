@@ -1,0 +1,59 @@
+@import '../../node_modules/bootstrap/scss/bootstrap';
+
+.form-container {
+  @extend .col-xs-12;
+  @extend .col-sm-8;
+  @extend .col-sm-offset-2;
+  @extend .col-lg-8;
+  @extend .col-lg-offset-2;
+  margin-top: 1vh;
+}
+
+.fill-blank {
+  @extend .form-control;
+  display: inline-block;
+  line-height: 1;
+  max-width: 6rem;
+  padding: .3rem;
+}
+
+.question-edit-controls {
+  & .form-group {
+    display: inline-block;
+  }
+
+  & .editable-text {
+    @extend .form-control;
+    cursor: pointer;
+    border: none;
+
+    &.h1 {
+      @extend h1;
+    }
+
+    &.h2 {
+      @extend h2;
+    }
+
+    &.h3 {
+      @extend h3;
+    }
+
+    &.h4 {
+      @extend h4;
+    }
+
+    &.h5 {
+      @extend h5;
+    }
+
+    &:hover,
+    &:focus {
+      background-color: #f8f8f8;
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
