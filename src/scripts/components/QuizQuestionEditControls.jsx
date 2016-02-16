@@ -1,13 +1,10 @@
 import React, {Component, PropTypes as Types} from 'react';
 
-import InlineEdit from './InlineEdit';
-
 class QuizQuestionEditControls extends Component {
   static propTypes = {
     children: Types.element.isRequired,
     id: Types.number,
     delete: Types.func,
-    textOnly: Types.bool,
   };
 
   constructor(props) {
@@ -21,19 +18,13 @@ class QuizQuestionEditControls extends Component {
   }
 
   render() {
-    const {textOnly, children} = this.props;
+    const {children} = this.props;
     return (
       <div className="question-edit-controls">
-        {textOnly ?
-          <InlineEdit className={`editable-text ${children.type}`} /> :
-          React.cloneElement(children, {
-            title: <InlineEdit className={`editable-text ${children.type}`} />,
-          }
-        )}
-        {textOnly ? null :
-          <fieldset className="form-group pull-right">
-            <button className="btn btn-danger-outline btn-sm" onClick={this.onDeleteClick}><i className="fa fa-minus" /></button>
-          </fieldset>}
+        {children}
+        <fieldset className="form-group pull-right">
+          <button className="btn btn-danger-outline btn-sm" onClick={this.onDeleteClick}><i className="fa fa-minus" /></button>
+        </fieldset>
       </div>
     );
   }

@@ -2,11 +2,11 @@ import React, {Component, PropTypes as Types, Children} from 'react';
 
 import Navbar from '../components/Navbar';
 
-/* TODO:
- * Implement JWT login
- * List all quizzes and activate one
- * Create new or edit existing quizzes
- * Allow adding and editing questions and rearranging them (up/down arrow keys or buttons, maybe drag-drop later)
+/*
+ * TODO: Implement JWT login
+ * TODO: List all quizzes and activate one
+ * TODO: Create new or edit existing quizzes
+ * TODO: Allow adding and editing questions and rearranging them (up/down arrow keys or buttons, maybe drag-drop later)
 */
 // FIXME: Temporary route title position, relocate somewhere else
 const ROUTE_TITLES = {admin: 'Admin', quiz: 'Quiz'};

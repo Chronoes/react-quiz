@@ -9,7 +9,7 @@ class CheckboxGroup extends Component {
     question: Types.string.isRequired,
     children: Types.instanceOf(List).isRequired,
     setAnswer: Types.func.isRequired,
-    title: Types.element.isRequired,
+    Title: Types.node.isRequired,
     disabled: Types.bool,
   };
 
@@ -24,10 +24,10 @@ class CheckboxGroup extends Component {
   }
 
   render() {
-    const {question, disabled, children, title} = this.props;
+    const {question, disabled, children, Title} = this.props;
     return (
       <fieldset className="form-group">
-        {React.cloneElement(title, {children: question})}
+        <Title>{question}</Title>
         <div className={`c-inputs-stacked m-l-1 ${disabled ? 'disabled' : ''}`}>
           {children.map((value, i) => (
             <Checkbox key={i} id={i} onChange={this.onCheckboxChange} disabled={disabled}>{value}</Checkbox>

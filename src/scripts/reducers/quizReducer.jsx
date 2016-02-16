@@ -1,9 +1,10 @@
+'use !extensible';
 import {fromJS as immutableJS} from 'immutable';
 
 const questionFormat = immutableJS({
   id: 0,
   type: 'radio',
-  question: 'Question 1',
+  question: '',
   choices: [{id: 0, value: ''}],
   userAnswers: [],
 });
@@ -41,6 +42,8 @@ export default function quiz(state = quizState, {type, ...action}) {
       return state.set('resultsSent', true);
     case 'SEND_RESULTS_SUCCESS':
       return state.set('correctAnswers', action.correctAnswers);
+    case 'SET_TITLE':
+      return state.set('title', action.title);
     case 'ADD_QUESTION':
       return state.update('questions', questions => questions.push(questionFormat.set('type', action.questionType)));
     case 'DELETE_QUESTION':

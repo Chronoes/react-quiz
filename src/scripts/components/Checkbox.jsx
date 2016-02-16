@@ -28,7 +28,7 @@ class Checkbox extends Component {
           name={id}
           onChange={this.onChange}
           disabled={disabled} />
-        <span className="c-indicator"></span>
+        <span className="c-indicator" />
         {children.get('value')}
       </label>
     );

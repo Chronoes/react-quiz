@@ -1,4 +1,5 @@
 @import '../../node_modules/bootstrap/scss/bootstrap';
+@import './constants';
 
 .form-container {
   @extend .col-xs-12;
@@ -21,39 +22,73 @@
   & .form-group {
     display: inline-block;
   }
+}
 
-  & .editable-text {
-    @extend .form-control;
-    cursor: pointer;
-    border: none;
 
-    &.h1 {
-      @extend h1;
-    }
+.editable-text {
+  @extend .form-control;
+  cursor: pointer;
+  border: none;
 
-    &.h2 {
-      @extend h2;
-    }
+  &.h1 {
+    @extend h1;
+  }
 
-    &.h3 {
-      @extend h3;
-    }
+  &.h2 {
+    @extend h2;
+  }
 
-    &.h4 {
-      @extend h4;
-    }
+  &.h3 {
+    @extend h3;
+  }
 
-    &.h5 {
-      @extend h5;
-    }
+  &.h4 {
+    @extend h4;
+  }
 
-    &:hover,
-    &:focus {
-      background-color: #f8f8f8;
-    }
+  &.h5 {
+    @extend h5;
+  }
 
-    &:hover {
-      text-decoration: underline;
-    }
+  &:hover,
+  &:focus {
+    background-color: #f8f8f8;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.striked-text-wrapper {
+  display: block;
+  overflow: hidden;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.striked-text {
+  @extend .text-muted;
+  display: inline-block;
+  position: relative;
+
+  &:before,
+  &:after {
+    background: $grey-accent;
+    content: '';
+    height: 1px;
+    position: absolute;
+    top: 50%;
+    width: 9999px;
+  }
+
+  &:before {
+    margin-right: 15px;
+    right: 100%;
+  }
+
+  &:after {
+    left: 100%;
+    margin-left: 15px;
   }
 }

@@ -1,7 +1,8 @@
 import {render} from 'react-dom';
+import patchDestructuring from 'extensible-polyfill';
+
 // Patch ImmutableJS for extensible destructuring
-import {Iterable} from 'immutable';
-Iterable.prototype[Symbol.for('get')] = value => this.get(value);
+patchDestructuring('safe');
 
 require('../styles/main.scss');
 require('font-awesome-webpack');

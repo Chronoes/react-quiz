@@ -1,3 +1,4 @@
+'use !extensible';
 import {fromJS as immutableJS} from 'immutable';
 import moment from 'moment';
 

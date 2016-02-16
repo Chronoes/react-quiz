@@ -7,6 +7,7 @@ import * as quizActions from '../actions/quizActions';
 
 import AdminQuizForm from '../components/AdminQuizForm';
 import NewQuizQuestion from '../components/NewQuizQuestion';
+import StrikedText from '../components/StrikedText';
 
 class AdminQuizPage extends Component {
   static propTypes = {
@@ -14,12 +15,33 @@ class AdminQuizPage extends Component {
     quiz: Types.instanceOf(Map).isRequired,
   };
 
+  constructor(props) {
+    super(props);
+    this.onQuizTitleChange = this.onQuizTitleChange.bind(this);
+  }
+
+  onQuizTitleChange(event) {
+    this.props.actions.setTitle(event.target.value);
+  }
+
   render() {
     const {quiz, actions: {addQuestion, ...actions}} = this.props;
+    const {title} = quiz;
     return (
       <div className="container">
-        <NewQuizQuestion addQuestion={addQuestion} />
-        <hr />
+          <div className="form-group row">
+            <label className="form-control-label col-lg-2">Pealkiri</label>
+            <div className="col-lg-10">
+              <input type="text" className="editable-text h1" defaultValue={title} onChange={this.onQuizTitleChange} />
+            </div>
+          </div>
+          <div className="form-group row">
+            <label className="form-control-label col-lg-2">Küsimuse tüüp</label>
+            <div className="col-lg-10">
+              <NewQuizQuestion addQuestion={addQuestion} />
+            </div>
+          </div>
+        <StrikedText>Eelvaade</StrikedText>
         <AdminQuizForm quiz={quiz} actions={actions} />
       </div>
     );

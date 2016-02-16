@@ -3,7 +3,7 @@
   "env": {
     "development": {
       "plugins": [
-        "extensible-destructuring",
+        ["extensible-destructuring", {"mode": "optout"}],
         ["react-transform", {
           "transforms": [{
             "transform": "react-transform-hmr",

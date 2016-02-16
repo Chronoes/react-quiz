@@ -22,13 +22,13 @@ export function finishQuiz() {
   return {type: 'FINISH_QUIZ'};
 }
 
-export function sendResults(quiz) {
+export function sendResults({userId, timeSpent, questions}) {
   return dispatch => {
     dispatch({type: 'SEND_RESULTS'});
     const payload = {
-      userId: quiz.get('userId'),
-      timeSpent: quiz.get('timeSpent'),
-      questions: quiz.get('questions')
+      userId,
+      timeSpent,
+      questions: questions
         .map(q => {
           return {
             id: q.get('id'),
@@ -52,4 +52,8 @@ export function addQuestion(questionType) {
 
 export function deleteQuestion(idx) {
   return {type: 'DELETE_QUESTION', idx};
+}
+
+export function setTitle(title) {
+  return {type: 'SET_TITLE', title};
 }
