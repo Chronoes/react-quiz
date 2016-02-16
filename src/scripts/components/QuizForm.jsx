@@ -1,8 +1,9 @@
 import React, {Component, PropTypes as Types} from 'react';
 import {Map} from 'immutable';
 
-import RadioGroup from './RadioGroup';
-import CheckboxGroup from './CheckboxGroup';
+import MultiInputGroup from './MultiInputGroup';
+import Radio from './Radio';
+import Checkbox from './Checkbox';
 import TextArea from './TextArea';
 import FillBlankGroup from './FillBlankGroup';
 
@@ -12,7 +13,8 @@ class QuizForm extends Component {
       sendResults: Types.func,
       finishQuiz: Types.func,
       setAnswer: Types.func,
-      setMultiAnswer: Types.func,
+      setCheckboxAnswer: Types.func,
+      setFillblankAnswer: Types.func,
     }).isRequired,
     quiz: Types.instanceOf(Map).isRequired,
   };
@@ -37,15 +39,15 @@ class QuizForm extends Component {
   }
 
   makeQuizElement({type, question, choices}, key, disabled) {
-    const {actions: {setAnswer, setMultiAnswer}} = this.props;
-    const defaultProps = {key, id: key, disabled, question, Title: 'h5'};
+    const {actions: {setAnswer, setCheckboxAnswer, setFillblankAnswer}} = this.props;
+    const defaultProps = {key, questionId: key, disabled, question, Title: 'h5'};
     switch (type) {
       case 'radio':
-        return <RadioGroup setAnswer={setAnswer} {...defaultProps}>{choices}</RadioGroup>;
+        return <MultiInputGroup setAnswer={setAnswer} Input={Radio} {...defaultProps}>{choices}</MultiInputGroup>;
       case 'checkbox':
-        return <CheckboxGroup setAnswer={setMultiAnswer} {...defaultProps}>{choices}</CheckboxGroup>;
+        return <MultiInputGroup setAnswer={setCheckboxAnswer} Input={Checkbox} {...defaultProps}>{choices}</MultiInputGroup>;
       case 'fillblank':
-        return <FillBlankGroup setAnswer={setMultiAnswer} {...defaultProps} />;
+        return <FillBlankGroup setAnswer={setFillblankAnswer} {...defaultProps} />;
       case 'textarea':
         return <TextArea setAnswer={setAnswer} {...defaultProps} />;
       default:
@@ -62,7 +64,7 @@ class QuizForm extends Component {
         <form onSubmit={this.onSubmitForm}>
           {questions.map((question, key) => this.makeQuizElement(question, key, !isRunning))}
           {resultsSent ?
-            <p className="bg-success text-center">
+            <p className="bg-success">
               Õigeid vastuseid on {correctAnswers}/{allQuestions}-st. (Ülejäänud kuuluvad ülevaatamisele)
             </p> :
             <button type="submit" className="btn btn-primary">Saada</button>}

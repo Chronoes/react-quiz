@@ -13,8 +13,7 @@ class FillBlank extends Component {
   }
 
   onChange(event) {
-    const {onChange, id} = this.props;
-    onChange(event.target.value.trim(), id);
+    this.props.onChange(this.props.id, event.target.value.trim());
   }
 
   render() {

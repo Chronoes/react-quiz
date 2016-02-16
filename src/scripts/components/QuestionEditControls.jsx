@@ -1,6 +1,6 @@
 import React, {Component, PropTypes as Types} from 'react';
 
-class QuizQuestionEditControls extends Component {
+class QuestionEditControls extends Component {
   static propTypes = {
     children: Types.element.isRequired,
     id: Types.number,
@@ -21,7 +21,7 @@ class QuizQuestionEditControls extends Component {
     const {children} = this.props;
     return (
       <div className="question-edit-controls">
-        {children}
+        <div className="col-xs-11">{children}</div>
         <fieldset className="form-group pull-right">
           <button className="btn btn-danger-outline btn-sm" onClick={this.onDeleteClick}><i className="fa fa-minus" /></button>
         </fieldset>
@@ -30,4 +30,4 @@ class QuizQuestionEditControls extends Component {
   }
 }
 
-export default QuizQuestionEditControls;
+export default QuestionEditControls;

@@ -25,22 +25,22 @@ class AdminQuizPage extends Component {
   }
 
   render() {
-    const {quiz, actions: {addQuestion, ...actions}} = this.props;
-    const {title} = quiz;
+    const {quiz, actions: {addQuestion, setQuestionTitle, ...actions}} = this.props;
+    const {title, questions} = quiz;
     return (
       <div className="container">
-          <div className="form-group row">
-            <label className="form-control-label col-lg-2">Pealkiri</label>
-            <div className="col-lg-10">
-              <input type="text" className="editable-text h1" defaultValue={title} onChange={this.onQuizTitleChange} />
-            </div>
+        <div className="form-group row">
+          <label className="form-control-label col-lg-2">Pealkiri</label>
+          <div className="col-lg-10">
+            <input type="text" className="editable-text h1" defaultValue={title} onChange={this.onQuizTitleChange} />
           </div>
-          <div className="form-group row">
-            <label className="form-control-label col-lg-2">Küsimuse tüüp</label>
-            <div className="col-lg-10">
-              <NewQuizQuestion addQuestion={addQuestion} />
-            </div>
+        </div>
+        <div className="form-group row">
+          <label className="form-control-label col-lg-2">Küsimuse tüüp</label>
+          <div className="col-lg-10">
+            <NewQuizQuestion question={questions.last()} questionId={questions.size - 1} addQuestion={addQuestion} setQuestionTitle={setQuestionTitle} />
           </div>
+        </div>
         <StrikedText>Eelvaade</StrikedText>
         <AdminQuizForm quiz={quiz} actions={actions} />
       </div>

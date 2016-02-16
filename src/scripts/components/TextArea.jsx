@@ -2,10 +2,11 @@ import React, {Component, PropTypes as Types} from 'react';
 
 class TextArea extends Component {
   static propTypes = {
-    id: Types.number.isRequired,
+    questionId: Types.number.isRequired,
     question: Types.string.isRequired,
     setAnswer: Types.func.isRequired,
     disabled: Types.bool.isRequired,
+    Title: Types.node.isRequired,
   };
 
   constructor(props) {
@@ -14,23 +15,22 @@ class TextArea extends Component {
   }
 
   onChange(event) {
-    const {setAnswer, id} = this.props;
-    setAnswer(id, event.target.value.trim());
+    this.props.setAnswer(this.props.questionId, event.target.value.trim());
   }
 
   render() {
-    const {question, disabled} = this.props;
+    const {question, disabled, Title} = this.props;
     return (
       <fieldset className="form-group">
-      <h5>{question}</h5>
-      <div className="m-l-1">
-      <textarea
-        className="form-control"
-        placeholder="Kirjuta oma vastus"
-        onChange={this.onChange}
-        required
-        disabled={disabled} />
-      </div>
+        <Title>{question}</Title>
+        <div className="m-l-1">
+          <textarea
+            className="form-control"
+            placeholder="Kirjuta oma vastus"
+            onChange={this.onChange}
+            required
+            disabled={disabled} />
+        </div>
       </fieldset>
     );
   }

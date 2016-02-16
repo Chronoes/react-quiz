@@ -5,23 +5,22 @@ import QuizInfoCard from '../components/QuizInfoCard';
 
 class QuizList extends Component {
   static propTypes = {
-    quizList: Types.instanceOf(List).isRequired,
+    children: Types.instanceOf(List).isRequired,
   };
 
   static GROUP_SIZE = 3;
 
   render() {
-    const {quizList} = this.props;
+    const {children} = this.props;
     return (
       <div>
-        {quizList.groupBy((_, i) => Math.floor(i / QuizList.GROUP_SIZE))
+        {children.groupBy((_, i) => Math.floor(i / QuizList.GROUP_SIZE))
           .map((quizGroup, i) => (
             <div key={i} className="row card-deck-wrapper">
               <div className="card-deck">
                 {quizGroup.map((quiz, j) => <QuizInfoCard key={j} quiz={quiz} />)}
               </div>
-            </div>
-          ))
+            </div>))
           .toArray()}
       </div>
     );

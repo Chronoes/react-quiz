@@ -6,6 +6,7 @@ const questionFormat = immutableJS({
   type: 'radio',
   question: '',
   choices: [{id: 0, value: ''}],
+  userAnswer: '',
   userAnswers: [],
 });
 
@@ -21,11 +22,18 @@ const quizState = immutableJS({
   correctAnswers: 0,
 });
 
+
 export default function quiz(state = quizState, {type, ...action}) {
   switch (type) {
     case 'SET_USER_ANSWER':
-      return state.setIn(['questions', action.questionIdx, 'userAnswers', 0], action.answer);
-    case 'SET_USER_MULTI_ANSWER':
+      return state.setIn(['questions', action.questionIdx, 'userAnswer'], action.answer);
+    case 'SET_USER_ANSWER_CHECKBOX':
+      return state.updateIn(['questions', action.questionIdx, 'userAnswers'], list => {
+        const {answer} = action;
+        const index = list.indexOf(answer);
+        return index === -1 ? list.push(answer) : list.delete(index);
+      });
+    case 'SET_USER_ANSWER_FILLBLANK':
       return state.setIn(['questions', action.questionIdx, 'userAnswers', action.answerIdx], action.answer);
     case 'GET_QUIZ_SUCCESS':
       return state.set('isRunning', true)
@@ -45,7 +53,9 @@ export default function quiz(state = quizState, {type, ...action}) {
     case 'SET_TITLE':
       return state.set('title', action.title);
     case 'ADD_QUESTION':
-      return state.update('questions', questions => questions.push(questionFormat.set('type', action.questionType)));
+      return state.update('questions', questions => questions.push(questionFormat.set('id', questions.size + 1).set('type', action.questionType)));
+    case 'SET_QUESTION_TITLE':
+      return state.setIn(['questions', action.idx, 'question'], action.title);
     case 'DELETE_QUESTION':
       return state.deleteIn(['questions', action.idx]);
     case 'RESET_QUIZ_STATE':

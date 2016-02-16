@@ -37,7 +37,7 @@ class QuizListPage extends Component {
       <div className="container">
         <button className="btn btn-primary" onClick={this.onClickNewQuiz}>Uus</button>
         <hr />
-        <QuizList quizList={quizList} />
+        <QuizList>{quizList}</QuizList>
       </div>
     );
   }

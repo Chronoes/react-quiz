@@ -21,7 +21,7 @@ function configureStore(initialState) {
   const store = finalCreateStore(state, initialState);
 
   if (module.hot) {
-    module.hot.accept('../../state', () => store.replaceReducer(require('../../state')));
+    module.hot.accept('../../state', () => store.replaceReducer(require('../../state').default));
   }
 
   return store;

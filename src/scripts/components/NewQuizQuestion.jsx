@@ -1,20 +1,35 @@
 import React, {Component, PropTypes as Types} from 'react';
 import {Map} from 'immutable';
 
+import QuestionTitle from './QuestionTitle';
+
 // FIXME: Move this somewhere else along with translations and constants and stuff
 const TYPES = new Map({radio: 'Raadionupud', checkbox: 'Linnukesed', fillblank: 'Täida lüngad', textarea: 'Tekstikast'});
 
 class NewQuizQuestion extends Component {
   static propTypes = {
     addQuestion: Types.func.isRequired,
+    setQuestionTitle: Types.func.isRequired,
+    questionId: Types.number.isRequired,
+    question: Types.instanceOf(Map),
   };
 
   constructor(props) {
     super(props);
-    this.state = {type: TYPES.keySeq().first()};
+    this.state = {
+      type: TYPES.keySeq().first(),
+      title: '',
+    };
 
     this.onSubmit = this.onSubmit.bind(this);
     this.onTypeChange = this.onTypeChange.bind(this);
+    this.onTitleChange = this.onTitleChange.bind(this);
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (this.props.question && prevState.title !== this.state.title) {
+      this.props.setQuestionTitle(this.props.questionId, this.state.title);
+    }
   }
 
   onSubmit(event) {
@@ -26,21 +41,38 @@ class NewQuizQuestion extends Component {
     this.setState({type: event.target.value});
   }
 
+  onTitleChange(event) {
+    this.setState({title: event.target.value.trim()});
+  }
+
   makeInputs(type) {
+    const {question} = this.props;
+    const questionString = question ? question.get('question') : '';
     switch (type) {
       case 'radio':
       case 'checkbox':
         return (
           <div>
-            <input type="text" className="editable-text h5" placeholder="Küsimus" />
-            <div className="form-group">
-              <input type="text" className="form-control form-control-sm" placeholder="Valikvastus" />
+            <QuestionTitle placeholder="Küsimus" onChange={this.onTitleChange}>
+              {questionString}
+            </QuestionTitle>
+            <div className="input-group input-group-sm">
+              <input type="text" className="form-control" placeholder="Valikvastus" />
             </div>
           </div>
         );
       case 'fillblank':
+        return (
+          <QuestionTitle ref="fillb" placeholder="Küsimus stiilis: Ohmi seaduse kohaselt: takistus = ___ / ___" onChange={this.onTitleChange}>
+            {questionString}
+          </QuestionTitle>
+        );
       case 'textarea':
-        return <input type="text" className="editable-text h5" placeholder={type === 'fillblank' ? 'Küsimus stiilis: Ohmi seaduse kohaselt takistus = ___ / ___' : 'Küsimus stiilis: Mis on elu mõte?'} />;
+        return (
+          <QuestionTitle placeholder="Küsimus stiilis: Mis on elu mõte?" onChange={this.onTitleChange}>
+            {questionString}
+          </QuestionTitle>
+          );
       default:
         return <code>Type '{type}' is incorrect</code>;
     }

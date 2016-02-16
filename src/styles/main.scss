@@ -12,7 +12,7 @@
 
 .fill-blank {
   @extend .form-control;
-  display: inline-block;
+  @extend .form-control-sm;
   line-height: 1;
   max-width: 6rem;
   padding: .3rem;
@@ -27,8 +27,8 @@
 
 .editable-text {
   @extend .form-control;
+  border: 0;
   cursor: pointer;
-  border: none;
 
   &.h1 {
     @extend h1;

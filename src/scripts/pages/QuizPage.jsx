@@ -16,11 +16,12 @@ class QuizPage extends Component {
 
   render() {
     const {quiz, actions: {timeStop, ...actions}} = this.props;
+    const {isRunning, timeLimit} = quiz;
     return (
       <div className="container">
-        {quiz.get('isRunning') ?
+        {isRunning ?
           <Timer
-            timeLimit={quiz.get('timeLimit')}
+            timeLimit={timeLimit}
             finish={timeStop} /> : null}
         <QuizForm quiz={quiz} actions={actions} />
       </div>

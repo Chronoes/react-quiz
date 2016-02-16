@@ -4,8 +4,12 @@ export function setAnswer(questionIdx, answer) {
   return {type: 'SET_USER_ANSWER', questionIdx, answer};
 }
 
-export function setMultiAnswer(questionIdx, answer, answerIdx) {
-  return {type: 'SET_USER_MULTI_ANSWER', questionIdx, answer, answerIdx};
+export function setCheckboxAnswer(questionIdx, answer) {
+  return {type: 'SET_USER_ANSWER_CHECKBOX', questionIdx, answer};
+}
+
+export function setFillblankAnswer(questionIdx, answerIdx, answer) {
+  return {type: 'SET_USER_ANSWER_FILLBLANK', questionIdx, answerIdx, answer};
 }
 
 export function getQuiz(name) {
@@ -29,10 +33,10 @@ export function sendResults({userId, timeSpent, questions}) {
       userId,
       timeSpent,
       questions: questions
-        .map(q => {
+        .map(({id, userAnswers}) => {
           return {
-            id: q.get('id'),
-            answers: q.get('userAnswers'),
+            id,
+            answers: userAnswers,
           };
         }).toJS(),
     };
@@ -56,4 +60,8 @@ export function deleteQuestion(idx) {
 
 export function setTitle(title) {
   return {type: 'SET_TITLE', title};
+}
+
+export function setQuestionTitle(idx, title) {
+  return {type: 'SET_QUESTION_TITLE', idx, title};
 }
