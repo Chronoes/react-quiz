@@ -65,3 +65,11 @@ export function setTitle(title) {
 export function setQuestionTitle(idx, title) {
   return {type: 'SET_QUESTION_TITLE', idx, title};
 }
+
+export function addChoice(questionIdx) {
+  return {type: 'ADD_CHOICE', questionIdx};
+}
+
+export function setChoiceValue(questionIdx, choiceIdx, value) {
+  return {type: 'SET_CHOICE_VALUE', questionIdx, choiceIdx, value};
+}

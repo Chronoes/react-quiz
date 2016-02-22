@@ -1,11 +1,13 @@
 'use !extensible';
-import {fromJS as immutableJS} from 'immutable';
+import {fromJS as immutableJS, Map} from 'immutable';
+
+const choiceFormat = new Map({id: 0, value: ''});
 
 const questionFormat = immutableJS({
   id: 0,
   type: 'radio',
   question: '',
-  choices: [{id: 0, value: ''}],
+  choices: [],
   userAnswer: '',
   userAnswers: [],
 });
@@ -37,9 +39,8 @@ export default function quiz(state = quizState, {type, ...action}) {
       return state.setIn(['questions', action.questionIdx, 'userAnswers', action.answerIdx], action.answer);
     case 'GET_QUIZ_SUCCESS':
       return state.set('isRunning', true)
-        .mergeWith((prev, next, key) => {
-          return key === 'questions' ? next.map(question => questionFormat.mergeDeep(question)) : next;
-        }, action.quiz);
+        .mergeWith((prev, next, key) => key === 'questions' ?
+          next.map(question => questionFormat.mergeDeep(question)) : next, action.quiz);
     case 'GET_QUIZ_ERROR':
       return state;
     case 'TIME_STOP':
@@ -53,9 +54,17 @@ export default function quiz(state = quizState, {type, ...action}) {
     case 'SET_TITLE':
       return state.set('title', action.title);
     case 'ADD_QUESTION':
-      return state.update('questions', questions => questions.push(questionFormat.set('id', questions.size + 1).set('type', action.questionType)));
+      return state.update('questions',
+        questions => questions.push(questionFormat.set('id', questions.size + 1).set('type', action.questionType))
+      );
     case 'SET_QUESTION_TITLE':
       return state.setIn(['questions', action.idx, 'question'], action.title);
+    case 'ADD_CHOICE':
+      return state.updateIn(['questions', action.questionIdx, 'choices'],
+        choices => choices.push(choiceFormat.set('id', choices.size + 1))
+      );
+    case 'SET_CHOICE_VALUE':
+      return state.setIn(['questions', action.questionIdx, 'choices', action.choiceIdx, 'value'], action.value);
     case 'DELETE_QUESTION':
       return state.deleteIn(['questions', action.idx]);
     case 'RESET_QUIZ_STATE':

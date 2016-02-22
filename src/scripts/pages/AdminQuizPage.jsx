@@ -25,7 +25,7 @@ class AdminQuizPage extends Component {
   }
 
   render() {
-    const {quiz, actions: {addQuestion, setQuestionTitle, ...actions}} = this.props;
+    const {quiz, actions: {addQuestion, setQuestionTitle, addChoices, setChoiceValue, ...actions}} = this.props;
     const {title, questions} = quiz;
     return (
       <div className="container">
@@ -38,7 +38,13 @@ class AdminQuizPage extends Component {
         <div className="form-group row">
           <label className="form-control-label col-lg-2">Küsimuse tüüp</label>
           <div className="col-lg-10">
-            <NewQuizQuestion question={questions.last()} questionId={questions.size - 1} addQuestion={addQuestion} setQuestionTitle={setQuestionTitle} />
+            <NewQuizQuestion
+              question={questions.last()}
+              questionId={questions.size - 1}
+              add={addQuestion}
+              setTitle={setQuestionTitle}
+              addChoices={addChoices}
+              setChoiceValue={setChoiceValue} />
           </div>
         </div>
         <StrikedText>Eelvaade</StrikedText>
