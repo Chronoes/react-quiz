@@ -1,6 +1,12 @@
 import React, {Component, PropTypes as Types} from 'react';
 
 class Choice extends Component {
+  static propTypes = {
+    onChange: Types.func.isRequired,
+    id: Types.number.isRequired,
+    children: Types.string,
+  };
+
   constructor(props) {
     super(props);
 
@@ -16,18 +22,12 @@ class Choice extends Component {
     return (
       <input
         type="text"
-        className="form-control"
+        className="form-control form-control-sm"
         placeholder="Valikvastus"
         defaultValue={children}
         onChange={this.onChange} />
     );
   }
 }
-
-Choice.propTypes = {
-  onChange: Types.func.isRequired,
-  id: Types.number.isRequired,
-  children: Types.string,
-};
 
 export default Choice;

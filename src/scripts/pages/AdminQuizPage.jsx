@@ -25,7 +25,7 @@ class AdminQuizPage extends Component {
   }
 
   render() {
-    const {quiz, actions: {addQuestion, setQuestionTitle, addChoices, setChoiceValue, ...actions}} = this.props;
+    const {quiz, actions: {addQuestion, setQuestionTitle, setChoices, ...actions}} = this.props;
     const {title, questions} = quiz;
     return (
       <div className="container">
@@ -43,8 +43,7 @@ class AdminQuizPage extends Component {
               questionId={questions.size - 1}
               add={addQuestion}
               setTitle={setQuestionTitle}
-              addChoices={addChoices}
-              setChoiceValue={setChoiceValue} />
+              setChoices={setChoices} />
           </div>
         </div>
         <StrikedText>Eelvaade</StrikedText>

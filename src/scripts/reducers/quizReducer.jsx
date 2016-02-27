@@ -59,12 +59,10 @@ export default function quiz(state = quizState, {type, ...action}) {
       );
     case 'SET_QUESTION_TITLE':
       return state.setIn(['questions', action.idx, 'question'], action.title);
-    case 'ADD_CHOICE':
-      return state.updateIn(['questions', action.questionIdx, 'choices'],
-        choices => choices.push(choiceFormat.set('id', choices.size + 1))
+    case 'SET_CHOICES':
+      return state.setIn(['questions', action.questionIdx, 'choices'],
+        action.choices.map((value, i) => choiceFormat.set('id', i).set('value', value))
       );
-    case 'SET_CHOICE_VALUE':
-      return state.setIn(['questions', action.questionIdx, 'choices', action.choiceIdx, 'value'], action.value);
     case 'DELETE_QUESTION':
       return state.deleteIn(['questions', action.idx]);
     case 'RESET_QUIZ_STATE':

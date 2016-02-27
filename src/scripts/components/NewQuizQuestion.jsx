@@ -1,5 +1,5 @@
 import React, {Component, PropTypes as Types} from 'react';
-import {Map, List} from 'immutable';
+import {Map} from 'immutable';
 
 import QuestionTitle from './QuestionTitle';
 import QuestionChoices from './QuestionChoices';
@@ -11,8 +11,7 @@ class NewQuizQuestion extends Component {
   static propTypes = {
     add: Types.func.isRequired,
     setTitle: Types.func.isRequired,
-    addChoices: Types.func.isRequired,
-    setChoiceValue: Types.func.isRequired,
+    setChoices: Types.func.isRequired,
     questionId: Types.number.isRequired,
     question: Types.instanceOf(Map),
   };
@@ -22,24 +21,22 @@ class NewQuizQuestion extends Component {
     this.state = {
       type: TYPES.keySeq().first(),
       title: '',
-      choices: new List(''),
     };
 
     this.onSubmit = this.onSubmit.bind(this);
     this.onTypeChange = this.onTypeChange.bind(this);
     this.onTitleChange = this.onTitleChange.bind(this);
-    this.onChoiceAdd = this.onChoiceAdd.bind(this);
-    this.setChoiceValue = this.setChoiceValue.bind(this);
+    this.onChoicesChange = this.onChoicesChange.bind(this);
   }
 
   componentDidUpdate(_, prevState) {
     if (this.props.question) {
-      const {title, choices} = this.state;
+      const {title} = this.state;
       if (prevState.title !== title) {
         this.props.setTitle(this.props.questionId, title);
       }
-      if (prevState.choices.size < choices.size) {
-        this.props.addChoices(this.props.questionId, choices);
+      if (this.props.question.get('choices').size === 0) {
+        this.onChoicesChange(this.refs.choices.state.choices);
       }
     }
   }
@@ -57,16 +54,14 @@ class NewQuizQuestion extends Component {
     this.setState({title: event.target.value.trim()});
   }
 
-  onChoiceAdd() {
-    this.setState({choices: this.state.choices.push('')});
-  }
-
-  setChoiceValue(idx, value) {
-    this.props.setChoiceValue(this.props.questionId, idx, value);
+  onChoicesChange(choices) {
+    if (this.props.question) {
+      this.props.setChoices(this.props.questionId, choices);
+    }
   }
 
   makeInputs(type) {
-    const {title, choices} = this.state;
+    const {title} = this.state;
     switch (type) {
       case 'radio':
       case 'checkbox':
@@ -76,9 +71,9 @@ class NewQuizQuestion extends Component {
               {title}
             </QuestionTitle>
             <QuestionChoices
-              add={this.onChoiceAdd}
-              setValue={this.setChoiceValue}>
-              {choices.map(choice => choice.get('value'))}
+              ref="choices"
+              setChoices={this.onChoicesChange}>
+              {this.props.question ? this.props.question.get('choices') : null}
             </QuestionChoices>
           </div>
         );
