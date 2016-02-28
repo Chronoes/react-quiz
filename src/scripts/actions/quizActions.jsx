@@ -1,15 +1,15 @@
 import {getQuizRequest, sendResultsRequest} from '../conf/apiService';
 
-export function setAnswer(questionIdx, answer) {
-  return {type: 'SET_USER_ANSWER', questionIdx, answer};
+export function setAnswer(idx, answer) {
+  return {type: 'SET_USER_ANSWER', idx, answer};
 }
 
-export function setCheckboxAnswer(questionIdx, answer) {
-  return {type: 'SET_USER_ANSWER_CHECKBOX', questionIdx, answer};
+export function setCheckboxAnswer(idx, answer) {
+  return {type: 'SET_USER_ANSWER_CHECKBOX', idx, answer};
 }
 
-export function setFillblankAnswer(questionIdx, answerIdx, answer) {
-  return {type: 'SET_USER_ANSWER_FILLBLANK', questionIdx, answerIdx, answer};
+export function setFillblankAnswer(idx, answerIdx, answer) {
+  return {type: 'SET_USER_ANSWER_FILLBLANK', idx, answerIdx, answer};
 }
 
 export function getQuiz(name) {
@@ -58,6 +58,10 @@ export function editQuestion(idx) {
   return {type: 'EDIT_QUESTION', idx};
 }
 
+export function moveQuestion(idx, direction) {
+  return {type: 'MOVE_QUESTION', idx, direction};
+}
+
 export function deleteQuestion(idx) {
   return {type: 'DELETE_QUESTION', idx};
 }
@@ -66,10 +70,10 @@ export function setTitle(title) {
   return {type: 'SET_TITLE', title};
 }
 
-export function setQuestionTitle(idx, title) {
-  return {type: 'SET_QUESTION_TITLE', idx, title};
+export function setQuestionTitle(title) {
+  return {type: 'SET_QUESTION_TITLE', title};
 }
 
-export function setChoices(questionIdx, choices) {
-  return {type: 'SET_CHOICES', questionIdx, choices: choices.filter(value => value.length > 0)};
+export function setChoices(choices) {
+  return {type: 'SET_CHOICES', choices: choices.filter(value => value.length > 0)};
 }

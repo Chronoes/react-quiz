@@ -92,3 +92,20 @@
     margin-left: 15px;
   }
 }
+
+.arrow-group {
+  @extend .btn-group-vertical;
+  @extend .btn-group-sm;
+
+  & > .btn {
+    &:not(:only-child) {
+      line-height: .5;
+      padding-bottom: .1em;
+      padding-top: .1em;
+    }
+
+    & > .fa {
+      font-size: .8em;
+    }
+  }
+}

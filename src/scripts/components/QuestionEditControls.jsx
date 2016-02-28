@@ -4,9 +4,11 @@ class QuestionEditControls extends Component {
   static propTypes = {
     children: Types.element.isRequired,
     id: Types.number,
-    delete: Types.func,
-    edit: Types.func,
-    move: Types.func,
+    delete: Types.func.isRequired,
+    edit: Types.func.isRequired,
+    move: Types.func.isRequired,
+    first: Types.bool,
+    last: Types.bool,
   };
 
   constructor(props) {
@@ -14,6 +16,7 @@ class QuestionEditControls extends Component {
 
     this.onDeleteClick = this.onDeleteClick.bind(this);
     this.onEditClick = this.onEditClick.bind(this);
+    this.onMoveClick = this.onMoveClick.bind(this);
   }
 
   onDeleteClick(event) {
@@ -26,23 +29,47 @@ class QuestionEditControls extends Component {
     this.props.edit(this.props.id);
   }
 
+  onMoveClick(event) {
+    event.preventDefault();
+    this.props.move(this.props.id, event.target.value);
+  }
+
   render() {
-    const {children} = this.props;
+    const {children, first, last} = this.props;
+    const arrows = ['up', 'down'];
+    if (first) {
+      arrows.shift();
+    } else if (last) {
+      arrows.pop();
+    }
     return (
       <div className="question-edit-controls">
         <div className="col-xs-10">{children}</div>
-        <fieldset className="form-group pull-right">
-          <button
-            className="btn btn-warning-outline btn-sm"
-            onClick={this.onEditClick}>
-            <i className="fa fa-pencil-square-o" />
-          </button>
-          <button
-            className="btn btn-danger-outline btn-sm"
-            onClick={this.onDeleteClick}>
-            <i className="fa fa-minus" />
-          </button>
-        </fieldset>
+        <div className="btn-toolbar pull-right">
+          <div className="arrow-group pull-left">
+            {arrows.map((value, i) => (
+              <button
+                key={i}
+                className="btn btn-primary-outline"
+                value={value}
+                onClick={this.onMoveClick}>
+                <i className={`fa fa-chevron-${value}`} />
+              </button>
+            ))}
+          </div>
+          <div className="btn-group btn-group-sm">
+            <button
+              className="btn btn-warning-outline"
+              onClick={this.onEditClick}>
+              <i className="fa fa-pencil-square-o" />
+            </button>
+            <button
+              className="btn btn-danger-outline"
+              onClick={this.onDeleteClick}>
+              <i className="fa fa-minus" />
+            </button>
+        </div>
+        </div>
       </div>
     );
   }

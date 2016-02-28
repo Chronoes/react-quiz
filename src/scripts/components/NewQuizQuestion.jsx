@@ -31,7 +31,7 @@ class NewQuizQuestion extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.question && nextProps.questionId !== this.props.questionId) {
-      this.setState({title: nextProps.question.get('question')});
+      this.setState({title: nextProps.question.get('question'), type: nextProps.question.get('type')});
     }
   }
 
@@ -40,9 +40,9 @@ class NewQuizQuestion extends Component {
     if (question) {
       const {title} = this.state;
       if (prevState.title !== title) {
-        setTitle(this.props.questionId, title);
+        setTitle(title);
       }
-      if (question.get('choices').size === 0) {
+      if (this.refs.choices && question.get('choices').size === 0) {
         this.onChoicesChange(this.refs.choices.state.choices);
       }
     }
@@ -63,7 +63,7 @@ class NewQuizQuestion extends Component {
 
   onChoicesChange(choices) {
     if (this.props.question) {
-      this.props.setChoices(this.props.questionId, choices);
+      this.props.setChoices(choices);
     }
   }
 
@@ -105,7 +105,9 @@ class NewQuizQuestion extends Component {
     return (
       <form onSubmit={this.onSubmit}>
         <select className="form-group c-select col-xs-4" onChange={this.onTypeChange}>
-          {TYPES.map((title, type) => <option key={type} value={type}>{title}</option>).toArray()}
+          {TYPES.map((title, type) => (
+            <option key={type} value={type} selected={type === this.state.type}>{title}</option>))
+            .toArray()}
         </select>
         <div className="col-xs-1">
           <button type="submit" className="btn btn-success pull-left"><i className="fa fa-plus" /></button>

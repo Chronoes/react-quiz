@@ -1,7 +1,7 @@
 import React, {PropTypes as Types} from 'react';
 
 function QuestionTitle({children, ...props}) {
-  return <input type="text" className="editable-text h5" defaultValue={children} {...props} />;
+  return <input type="text" className="editable-text h5" value={children} {...props} />;
 }
 
 QuestionTitle.propTypes = {
