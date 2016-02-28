@@ -21,9 +21,36 @@ const quizState = immutableJS({
   timeSpent: 0,
   userId: 0,
   questions: [],
+  editingQuestion: 0,
   correctAnswers: 0,
 });
 
+function admin(state, type, action) {
+  switch (type) {
+    case 'SET_TITLE':
+      return state.set('title', action.title);
+    case 'ADD_QUESTION':
+      return state.set('editingQuestion', state.get('questions').size)
+        .update('questions',
+          questions => questions.push(
+            questionFormat.set('id', questions.size).set('type', action.questionType).set('question', action.title))
+        );
+    case 'SET_QUESTION_TITLE':
+      return state.setIn(['questions', action.idx, 'question'], action.title);
+    case 'SET_CHOICES':
+      return state.setIn(['questions', action.questionIdx, 'choices'],
+        action.choices.map((value, i) => choiceFormat.set('id', i).set('value', value))
+      );
+    case 'EDIT_QUESTION':
+      return state.set('editingQuestion', action.idx);
+    case 'DELETE_QUESTION':
+      return state.deleteIn(['questions', action.idx]).update('editingQuestion', value => value - 1);
+    case 'RESET_QUIZ_STATE':
+      return quizState;
+    default:
+      return state;
+  }
+}
 
 export default function quiz(state = quizState, {type, ...action}) {
   switch (type) {
@@ -51,23 +78,7 @@ export default function quiz(state = quizState, {type, ...action}) {
       return state.set('resultsSent', true);
     case 'SEND_RESULTS_SUCCESS':
       return state.set('correctAnswers', action.correctAnswers);
-    case 'SET_TITLE':
-      return state.set('title', action.title);
-    case 'ADD_QUESTION':
-      return state.update('questions',
-        questions => questions.push(questionFormat.set('id', questions.size + 1).set('type', action.questionType))
-      );
-    case 'SET_QUESTION_TITLE':
-      return state.setIn(['questions', action.idx, 'question'], action.title);
-    case 'SET_CHOICES':
-      return state.setIn(['questions', action.questionIdx, 'choices'],
-        action.choices.map((value, i) => choiceFormat.set('id', i).set('value', value))
-      );
-    case 'DELETE_QUESTION':
-      return state.deleteIn(['questions', action.idx]);
-    case 'RESET_QUIZ_STATE':
-      return quizState;
     default:
-      return state;
+      return admin(state, type, action);
   }
 }

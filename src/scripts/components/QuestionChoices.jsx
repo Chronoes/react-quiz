@@ -11,14 +11,18 @@ class QuestionChoices extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {choices: List.of('')};
+    this.state = {choices: new List()};
 
     this.onChoiceChange = this.onChoiceChange.bind(this);
   }
 
+  componentWillMount() {
+    this.setState({choices: this.state.choices.push('')});
+  }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.children) {
-      this.setState({choices: nextProps.children.merge(this.state.choices)});
+      this.setState({choices: nextProps.children.push('')});
     }
   }
 

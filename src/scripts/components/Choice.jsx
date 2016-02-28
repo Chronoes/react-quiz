@@ -24,7 +24,7 @@ class Choice extends Component {
         type="text"
         className="form-control form-control-sm"
         placeholder="Valikvastus"
-        defaultValue={children}
+        value={children}
         onChange={this.onChange} />
     );
   }

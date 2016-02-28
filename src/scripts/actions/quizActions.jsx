@@ -50,8 +50,12 @@ export function resetQuizState() {
   return {type: 'RESET_QUIZ_STATE'};
 }
 
-export function addQuestion(questionType) {
-  return {type: 'ADD_QUESTION', questionType};
+export function addQuestion(questionType, title) {
+  return {type: 'ADD_QUESTION', questionType, title};
+}
+
+export function editQuestion(idx) {
+  return {type: 'EDIT_QUESTION', idx};
 }
 
 export function deleteQuestion(idx) {

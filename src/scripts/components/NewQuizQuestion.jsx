@@ -29,13 +29,20 @@ class NewQuizQuestion extends Component {
     this.onChoicesChange = this.onChoicesChange.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.question && nextProps.questionId !== this.props.questionId) {
+      this.setState({title: nextProps.question.get('question')});
+    }
+  }
+
   componentDidUpdate(_, prevState) {
-    if (this.props.question) {
+    const {question, setTitle} = this.props;
+    if (question) {
       const {title} = this.state;
       if (prevState.title !== title) {
-        this.props.setTitle(this.props.questionId, title);
+        setTitle(this.props.questionId, title);
       }
-      if (this.props.question.get('choices').size === 0) {
+      if (question.get('choices').size === 0) {
         this.onChoicesChange(this.refs.choices.state.choices);
       }
     }
@@ -43,7 +50,7 @@ class NewQuizQuestion extends Component {
 
   onSubmit(event) {
     event.preventDefault();
-    this.props.add(this.state.type);
+    this.props.add(this.state.type, this.state.title);
   }
 
   onTypeChange(event) {
@@ -73,7 +80,7 @@ class NewQuizQuestion extends Component {
             <QuestionChoices
               ref="choices"
               setChoices={this.onChoicesChange}>
-              {this.props.question ? this.props.question.get('choices') : null}
+              {this.props.question ? this.props.question.get('choices').map(choice => choice.get('value')) : null}
             </QuestionChoices>
           </div>
         );

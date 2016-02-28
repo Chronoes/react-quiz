@@ -45,7 +45,13 @@ class QuizForm extends Component {
       case 'radio':
         return <MultiInputGroup setAnswer={setAnswer} Input={Radio} {...defaultProps}>{choices}</MultiInputGroup>;
       case 'checkbox':
-        return <MultiInputGroup setAnswer={setCheckboxAnswer} Input={Checkbox} {...defaultProps}>{choices}</MultiInputGroup>;
+        return (
+          <MultiInputGroup
+            setAnswer={setCheckboxAnswer}
+            Input={Checkbox}
+            {...defaultProps}>
+            {choices}
+          </MultiInputGroup>);
       case 'fillblank':
         return <FillBlankGroup setAnswer={setFillblankAnswer} {...defaultProps} />;
       case 'textarea':
@@ -63,11 +69,13 @@ class QuizForm extends Component {
         <h1>{title}</h1>
         <form onSubmit={this.onSubmitForm}>
           {questions.map((question, key) => this.makeQuizElement(question, key, !isRunning))}
-          {resultsSent ?
-            <p className="bg-success">
-              Õigeid vastuseid on {correctAnswers}/{allQuestions}-st. (Ülejäänud kuuluvad ülevaatamisele)
-            </p> :
-            <button type="submit" className="btn btn-primary">Saada</button>}
+          <fieldset className="form-group col-xs-12">
+            {resultsSent ?
+              <p className="bg-success">
+                Õigeid vastuseid on {correctAnswers}/{allQuestions}-st. (Ülejäänud kuuluvad ülevaatamisele)
+              </p> :
+              <button type="submit" className="btn btn-primary">Saada</button>}
+          </fieldset>
         </form>
       </div>
     );

@@ -9,6 +9,7 @@ class AdminQuizForm extends QuizForm {
     ...QuizForm.propTypes,
     actions: Types.shape({
       deleteQuestion: Types.func,
+      editQuestion: Types.func,
     }).isRequired,
   };
 
@@ -19,9 +20,9 @@ class AdminQuizForm extends QuizForm {
   }
 
   makeQuizElement(question, key, disabled) {
-    const {deleteQuestion} = this.props.actions;
+    const {deleteQuestion, editQuestion} = this.props.actions;
     return (
-      <QuestionEditControls key={key} id={key} delete={deleteQuestion} edit move>
+      <QuestionEditControls key={key} id={key} delete={deleteQuestion} edit={editQuestion} move>
         {super.makeQuizElement(question, key, disabled)}
       </QuestionEditControls>
     );
