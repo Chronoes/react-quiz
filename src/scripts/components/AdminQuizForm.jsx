@@ -29,8 +29,8 @@ class AdminQuizForm extends QuizForm {
         delete={deleteQuestion}
         edit={editQuestion}
         move={moveQuestion}
-        first={key === 0}
-        last={key === questions.size - 1}>
+        isFirst={key === 0}
+        isLast={key === questions.size - 1}>
         {super.makeQuizElement(question, key, disabled)}
       </QuestionEditControls>
     );

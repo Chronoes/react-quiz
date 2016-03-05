@@ -67,8 +67,7 @@ class NewQuizQuestion extends Component {
     }
   }
 
-  makeInputs(type) {
-    const {title} = this.state;
+  makeInputs(type, title) {
     switch (type) {
       case 'radio':
       case 'checkbox':
@@ -102,11 +101,12 @@ class NewQuizQuestion extends Component {
   }
 
   render() {
+    const {type, title} = this.state;
     return (
       <form onSubmit={this.onSubmit}>
-        <select className="form-group c-select col-xs-4" onChange={this.onTypeChange}>
-          {TYPES.map((title, type) => (
-            <option key={type} value={type} selected={type === this.state.type}>{title}</option>))
+        <select className="form-group c-select col-xs-4" value={type} onChange={this.onTypeChange}>
+          {TYPES.map((value, key) => (
+            <option key={key} value={key}>{value}</option>))
             .toArray()}
         </select>
         <div className="col-xs-1">
@@ -114,7 +114,7 @@ class NewQuizQuestion extends Component {
         </div>
         <small className="text-muted">Abistav tekst</small>
         <div className="form-group">
-          {this.makeInputs(this.state.type)}
+          {this.makeInputs(type, title)}
         </div>
       </form>
     );

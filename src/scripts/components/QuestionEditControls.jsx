@@ -7,8 +7,8 @@ class QuestionEditControls extends Component {
     delete: Types.func.isRequired,
     edit: Types.func.isRequired,
     move: Types.func.isRequired,
-    first: Types.bool,
-    last: Types.bool,
+    isFirst: Types.bool,
+    isLast: Types.bool,
   };
 
   constructor(props) {
@@ -35,11 +35,11 @@ class QuestionEditControls extends Component {
   }
 
   render() {
-    const {children, first, last} = this.props;
+    const {children, isFirst, isLast} = this.props;
     const arrows = ['up', 'down'];
-    if (first) {
+    if (isFirst) {
       arrows.shift();
-    } else if (last) {
+    } else if (isLast) {
       arrows.pop();
     }
     return (

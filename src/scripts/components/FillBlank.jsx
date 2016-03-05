@@ -9,6 +9,7 @@ class FillBlank extends Component {
 
   constructor(props) {
     super(props);
+
     this.onChange = this.onChange.bind(this);
   }
 

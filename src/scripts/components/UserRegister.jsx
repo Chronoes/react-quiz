@@ -7,6 +7,7 @@ class UserRegister extends Component {
 
   constructor(props) {
     super(props);
+
     this.onSubmitForm = this.onSubmitForm.bind(this);
   }
 

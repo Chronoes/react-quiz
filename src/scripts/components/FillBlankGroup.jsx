@@ -13,6 +13,7 @@ class FillBlankGroup extends Component {
 
   constructor(props) {
     super(props);
+
     this.onInputChange = this.onInputChange.bind(this);
   }
 

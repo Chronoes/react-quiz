@@ -21,6 +21,7 @@ class QuizForm extends Component {
 
   constructor(props) {
     super(props);
+
     this.onSubmitForm = this.onSubmitForm.bind(this);
     this.makeQuizElement = this.makeQuizElement.bind(this);
   }
