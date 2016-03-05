@@ -1,5 +1,6 @@
 import moment from 'moment';
 
+/* eslint no-console: 0 */
 export function getQuizRequest(name) {
   if (!name) {
     console.log(`getQuizRequest: ${typeof name}`);
@@ -51,6 +52,23 @@ export function sendResultsRequest(payload) {
     return Promise.reject({message: 'Payload is of wrong type'});
   }
   return Promise.resolve({data: {correctAnswers: 2}});
+}
+
+export function saveQuizRequest(payload) {
+  if (typeof payload !== 'object') {
+    return Promise.reject({message: 'Payload is of wrong type'});
+  }
+  return Promise.resolve({data: {
+    id: 8,
+    title: payload.title,
+    questions: payload.questions.map(
+      ({type, question, choices}, i) => ({
+        id: i + 1,
+        type,
+        question,
+        choices: choices.map((value, j) => ({id: j + 1, value})),
+      })),
+  }});
 }
 
 export function getQuizListRequest() {

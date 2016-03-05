@@ -21,7 +21,7 @@ class QuestionChoices extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.children) {
+    if (nextProps.children && nextProps.children.size > 0) {
       this.setState({choices: nextProps.children.push('')});
     }
   }

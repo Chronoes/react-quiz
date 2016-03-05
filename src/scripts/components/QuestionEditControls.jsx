@@ -37,13 +37,16 @@ class QuestionEditControls extends Component {
   render() {
     const {children, isFirst, isLast} = this.props;
     const arrows = ['up', 'down'];
-    if (isFirst) {
+    if (isFirst && isLast) {
+      arrows.pop();
+      arrows.pop();
+    } else if (isFirst) {
       arrows.shift();
     } else if (isLast) {
       arrows.pop();
     }
     return (
-      <div className="question-edit-controls">
+      <div className="question-edit-controls clearfix">
         <div className="col-xs-10">{children}</div>
         <div className="btn-toolbar pull-right">
           <div className="arrow-group pull-left">
@@ -68,7 +71,7 @@ class QuestionEditControls extends Component {
               onClick={this.onDeleteClick}>
               <i className="fa fa-minus" />
             </button>
-        </div>
+          </div>
         </div>
       </div>
     );

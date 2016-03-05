@@ -79,7 +79,7 @@ class NewQuizQuestion extends Component {
             <QuestionChoices
               ref="choices"
               setChoices={this.onChoicesChange}>
-              {this.props.question ? this.props.question.get('choices').map(choice => choice.get('value')) : null}
+              {this.props.question ? this.props.question.get('choices').map(({value}) => value) : null}
             </QuestionChoices>
           </div>
         );

@@ -14,11 +14,11 @@ class QuizListPage extends Component {
     quizList: Types.instanceOf(List).isRequired,
     actions: Types.object.isRequired,
     routeActions: Types.object.isRequired,
-    isAdmin: Types.bool,
   };
 
   constructor(props) {
     super(props);
+
     this.onClickNewQuiz = this.onClickNewQuiz.bind(this);
   }
 
@@ -28,7 +28,7 @@ class QuizListPage extends Component {
 
   onClickNewQuiz() {
     this.props.actions.resetQuizState();
-    this.props.routeActions.push({pathname: '/admin/quiz', state: {isAdmin: this.props.isAdmin}});
+    this.props.routeActions.push('/admin/quiz');
   }
 
   render() {
@@ -50,6 +50,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(({quizList}) => {
-  return {quizList};
-}, mapDispatchToProps)(QuizListPage);
+export default connect(({quizList}) => ({quizList}), mapDispatchToProps)(QuizListPage);

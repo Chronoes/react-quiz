@@ -35,6 +35,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(({quiz}) => {
-  return {quiz};
-}, mapDispatchToProps)(QuizPage);
+export default connect(({quiz}) => ({quiz}), mapDispatchToProps)(QuizPage);

@@ -33,13 +33,13 @@ function admin(state, type, action) {
       return state.set('editingQuestion', state.get('questions').size)
         .update('questions',
           questions => questions.push(
-            questionFormat.set('id', questions.size).set('type', action.questionType).set('question', action.title))
+            questionFormat.set('type', action.questionType).set('question', action.title))
         );
     case 'SET_QUESTION_TITLE':
       return state.setIn(['questions', state.get('editingQuestion'), 'question'], action.title);
     case 'SET_CHOICES':
       return state.setIn(['questions', state.get('editingQuestion'), 'choices'],
-        action.choices.map((value, i) => choiceFormat.set('id', i).set('value', value))
+        action.choices.map((value) => choiceFormat.set('value', value))
       );
     case 'EDIT_QUESTION':
       return state.set('editingQuestion', action.idx);
@@ -49,6 +49,8 @@ function admin(state, type, action) {
       );
     case 'DELETE_QUESTION':
       return state.deleteIn(['questions', action.idx]).update('editingQuestion', value => value - 1);
+    case 'SAVE_QUIZ_SUCCESS':
+      return state.mergeDeep(action.quiz);
     case 'RESET_QUIZ_STATE':
       return quizState;
     default:

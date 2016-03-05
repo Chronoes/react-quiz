@@ -10,30 +10,33 @@ import UserRegister from '../components/UserRegister';
 class UserPage extends Component {
   static displayName = 'UserPage';
   static propTypes = {
-    dispatch: Types.func.isRequired,
+    actions: Types.shapeOf({
+      getQuiz: Types.func,
+      routeTo: Types.func,
+    }).isRequired,
     quizReceived: Types.bool,
   };
 
-  constructor(props) {
-    super(props);
-    this.actions = bindActionCreators({getQuiz}, props.dispatch);
-  }
-
   componentDidUpdate() {
     if (this.props.quizReceived) {
-      this.props.dispatch(routeActions.push('/quiz'));
+      this.props.actions.routeTo('/quiz');
     }
   }
 
   render() {
     return (
       <div>
-        <UserRegister getQuiz={this.actions.getQuiz} />
+        <UserRegister getQuiz={this.props.actions.getQuiz} />
       </div>
     );
   }
 }
 
-export default connect(({quiz}) => {
-  return {quizReceived: quiz.get('id') > 0};
-})(UserPage);
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators({getQuiz, routeTo: routeActions.push}, dispatch),
+  };
+}
+
+
+export default connect(({quiz: id}) => ({quizReceived: id > 0}), mapDispatchToProps)(UserPage);

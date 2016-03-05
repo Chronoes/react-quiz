@@ -17,11 +17,17 @@ class AdminQuizPage extends Component {
 
   constructor(props) {
     super(props);
+
     this.onQuizTitleChange = this.onQuizTitleChange.bind(this);
+    this.onQuizSave = this.onQuizSave.bind(this);
   }
 
   onQuizTitleChange(event) {
     this.props.actions.setTitle(event.target.value);
+  }
+
+  onQuizSave() {
+    this.props.actions.saveQuiz(this.props.quiz);
   }
 
   render() {
@@ -46,6 +52,9 @@ class AdminQuizPage extends Component {
               setChoices={setChoices} />
           </div>
         </div>
+        <div className="center-block">
+          <button className="btn btn-primary" onClick={this.onQuizSave}>Salvesta test</button>
+        </div>
         <StrikedText>Eelvaade</StrikedText>
         <AdminQuizForm quiz={quiz} actions={actions} />
       </div>
@@ -59,6 +68,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(({quiz}) => {
-  return {quiz};
-}, mapDispatchToProps)(AdminQuizPage);
+export default connect(({quiz}) => ({quiz}), mapDispatchToProps)(AdminQuizPage);
