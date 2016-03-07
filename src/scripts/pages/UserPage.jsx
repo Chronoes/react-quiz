@@ -10,7 +10,7 @@ import UserRegister from '../components/UserRegister';
 class UserPage extends Component {
   static displayName = 'UserPage';
   static propTypes = {
-    actions: Types.shapeOf({
+    actions: Types.shape({
       getQuiz: Types.func,
       routeTo: Types.func,
     }).isRequired,

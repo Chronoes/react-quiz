@@ -107,3 +107,10 @@ export function getQuizListRequest() {
     },
   ]});
 }
+
+export function getQuizByIdRequest(id) {
+  if (parseInt(id, 10) <= 0) {
+    return Promise.reject(`Parameter '${id}' is not positive integer or NaN.`);
+  }
+  return getQuizRequest('test');
+}

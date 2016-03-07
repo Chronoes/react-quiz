@@ -1,4 +1,4 @@
-import {getQuizRequest, sendResultsRequest, saveQuizRequest} from '../conf/apiService';
+import {getQuizRequest, getQuizByIdRequest, sendResultsRequest, saveQuizRequest} from '../conf/apiService';
 
 export function setAnswer(idx, answer) {
   return {type: 'SET_USER_ANSWER', idx, answer};
@@ -16,6 +16,15 @@ export function getQuiz(name) {
   return (dispatch) => getQuizRequest(name)
     .then(({data}) => dispatch({type: 'GET_QUIZ_SUCCESS', quiz: data}))
     .catch(({message}) => dispatch({type: 'GET_QUIZ_ERROR', message}));
+}
+
+export function getQuizById(id) {
+  return (dispatch) => {
+    dispatch({type: 'GET_QUIZ_BY_ID'});
+    return getQuizByIdRequest(id)
+      .then(({data}) => dispatch({type: 'GET_QUIZ_BY_ID_SUCCESS', quiz: data}))
+      .catch((err) => dispatch({type: 'GET_QUIZ_BY_ID_ERROR', err}));
+  };
 }
 
 export function timeStop(time) {

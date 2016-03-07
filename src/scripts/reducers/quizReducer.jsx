@@ -70,6 +70,7 @@ export default function quiz(state = quizState, {type, ...action}) {
       });
     case 'SET_USER_ANSWER_FILLBLANK':
       return state.setIn(['questions', action.questionIdx, 'userAnswers', action.answerIdx], action.answer);
+    case 'GET_QUIZ_BY_ID_SUCCESS':
     case 'GET_QUIZ_SUCCESS':
       return state.set('isRunning', true)
         .mergeWith((prev, next, key) => key === 'questions' ?

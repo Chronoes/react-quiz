@@ -7,7 +7,7 @@ import {List} from 'immutable';
 import QuizList from '../components/QuizList';
 
 import * as quizListActions from '../actions/quizListActions';
-import {resetQuizState} from '../actions/quizActions';
+import {resetQuizState, getQuizById} from '../actions/quizActions';
 
 class QuizListPage extends Component {
   static propTypes = {
@@ -20,6 +20,7 @@ class QuizListPage extends Component {
     super(props);
 
     this.onClickNewQuiz = this.onClickNewQuiz.bind(this);
+    this.onEditQuiz = this.onEditQuiz.bind(this);
   }
 
   componentWillMount() {
@@ -31,13 +32,18 @@ class QuizListPage extends Component {
     this.props.routeActions.push('/admin/quiz');
   }
 
+  onEditQuiz(id) {
+    this.props.actions.getQuizById(id);
+    this.props.routeActions.push('/admin/quiz');
+  }
+
   render() {
     const {quizList} = this.props;
     return (
       <div className="container">
         <button className="btn btn-primary" onClick={this.onClickNewQuiz}>Uus</button>
         <hr />
-        <QuizList>{quizList}</QuizList>
+        <QuizList getQuiz={this.onEditQuiz}>{quizList}</QuizList>
       </div>
     );
   }
@@ -45,7 +51,7 @@ class QuizListPage extends Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({resetQuizState, ...quizListActions}, dispatch),
+    actions: bindActionCreators({resetQuizState, getQuizById, ...quizListActions}, dispatch),
     routeActions: bindActionCreators(routeActions, dispatch),
   };
 }
