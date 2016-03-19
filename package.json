@@ -26,18 +26,25 @@
   "license": "UNLICENSED",
   "dependencies": {
     "axios": "^0.8.1",
+    "bcrypt-as-promised": "^1.1.0",
+    "body-parser": "^1.15.0",
     "bootstrap": "^4.0.0-alpha.2",
+    "express": "^4.13.4",
     "font-awesome": "^4.5.0",
     "history": "^2.0.0",
     "immutable": "^3.7.6",
+    "jsonwebtoken": "^5.7.0",
     "moment": "^2.11.2",
+    "pg": "^4.5.1",
+    "pg-hstore": "^2.3.2",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
     "react-redux": "^4.3.0",
     "react-router": "^2.0.0-rc6",
     "react-router-redux": "^3.0.0",
     "redux": "^3.2.1",
-    "redux-thunk": "^1.0.3"
+    "redux-thunk": "^1.0.3",
+    "sequelize": "^3.19.3"
   },
   "devDependencies": {
     "babel-core": "^6.4.5",

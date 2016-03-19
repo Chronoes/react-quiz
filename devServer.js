@@ -1,28 +1,22 @@
 require('babel-core/register');
-const path = require('path');
-const express = require('express');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
-const historyApiFallback = require('connect-history-api-fallback');
+
+// Patch for extensible destructuring
+require('extensible-polyfill').patch('safe');
 
 const config = require('./webpack.config.dev').default;
 
-const app = express();
+process.title = 'quiz-dev-server';
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
+const application = require('./app');
+const app = application.default;
+
+const database = require('./server/database').default;
+
 const compiler = webpack(config);
-
-const address = process.env.address || 'localhost';
-const port = process.env.port || 1337;
-
-app.use(historyApiFallback({
-  verbose: false,
-  rewrites: [
-    {
-      from: /\.(ttf|eot|svg|woff2?)(\?v=[0-9]\.[0-9]\.[0-9])?|\.hot-update\.js(on)?$/,
-      to: context => `/${path.basename(context.parsedUrl.pathname)}`,
-    },
-  ],
-}));
 
 app.use(webpackDevMiddleware(compiler, {
   noInfo: true,
@@ -41,15 +35,16 @@ app.use((req, res, next) => {
   next();
 });
 
-const index = path.join(__dirname, 'static', 'index.html');
-
-app.all('/*', (_, res) => res.sendFile(index));
+app.all('/*', application.staticFiles);
 
 /* eslint no-console: 0 */
-app.listen(port, err => {
-  if (err) {
-    return console.log(err);
-  }
+database.sync().then(() => {
+  const server = app.listen(process.env.PORT || 1337, err => {
+    if (err) {
+      return console.log(err);
+    }
 
-  console.log(`Listening at http://${address}:${port}`);
-});
+    return console.log(`Listening at http://localhost:${server.address().port}`);
+  });
+})
+.catch(console.error);
