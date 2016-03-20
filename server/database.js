@@ -16,27 +16,52 @@ const database = new Sequelize(name, user, password, {
   },
 });
 
+export const QuestionChoice = database.define('question_choice', models.QuestionChoice, {
+  timestamps: false,
+});
+
+export const Question = database.define('question', models.Question, {
+  scopes: {
+    withChoices: {
+      include: [QuestionChoice],
+    },
+  },
+  timestamps: false,
+});
+
 export const Quiz = database.define('quiz', models.Quiz, {
   scopes: {
     active: {
       where: {status: constants.QUIZ_STATUS_ACTIVE},
     },
+    user: {
+      attributes: {
+        exclude: ['createdAt', 'updatedAt', 'status'],
+      },
+    },
+    withQuestions: {
+      include: [Question.scope('withChoices')],
+    },
   },
 });
 
-export const Question = database.define('question', models.Question);
 Quiz.hasMany(Question);
 
-export const QuestionChoice = database.define('question_choice', models.QuestionChoice);
 Question.hasMany(QuestionChoice);
+
+export const UserTextAnswer = database.define('user_text_answer', models.UserTextAnswer, {
+  timestamps: false,
+});
+
+export const UserChoiceAnswer = database.define('user_choice_answer', models.UserChoiceAnswer, {
+  timestamps: false,
+});
 
 export const User = database.define('user', models.User);
 
-export const UserChoiceAnswer = database.define('user_choice_answer', models.UserChoiceAnswer);
 User.hasMany(UserChoiceAnswer);
 UserChoiceAnswer.belongsTo(QuestionChoice);
 
-export const UserTextAnswer = database.define('user_text_answer', models.UserTextAnswer);
 User.hasMany(UserTextAnswer);
 UserTextAnswer.belongsTo(Question);
 
