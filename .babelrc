@@ -15,6 +15,11 @@
           }]
         }]
       ]
+    },
+    "testing": {
+      "plugins": [
+        ["extensible-destructuring", {"mode": "optout"}]
+      ]
     }
   }
 }

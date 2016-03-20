@@ -26,9 +26,9 @@ app.use(historyApiFallback({
   ],
 }));
 
-readFile(conf.secretPath, 'utf8', (err, secret) => {
+readFile(conf.get('secretPath'), 'utf8', (err, secret) => {
   if (err || secret.trim() === '') {
-    throw new Error(`Make sure you have secret at ${conf.secretPath}`);
+    throw new Error(`Make sure you have secret at ${conf.get('secretPath')}`);
   }
   app.set('secret', secret);
 });

@@ -1,6 +1,4 @@
-require('babel-core/register')({
-  optional: ['es7'],
-});
+require('babel-core/register');
 import gulp from 'gulp';
 import eslint from 'gulp-eslint';
 import sasslint from 'gulp-sass-lint';
@@ -8,6 +6,8 @@ import sloc from 'gulp-sloc';
 import cache from 'gulp-cached';
 import remember from 'gulp-remember';
 import minifyHtml from 'gulp-htmlmin';
+import mocha from 'gulp-mocha';
+import env from 'gulp-env';
 
 import {spawn} from 'child_process';
 import runSequence from 'run-sequence';
@@ -27,8 +27,18 @@ const directories = {
     styles: './src/styles/**/*.scss',
     images: './src/images/**/*',
   },
+  test: './test/*.js',
+  server: './server/**/*.js',
   distribution: './static',
 };
+
+gulp.task('env-testing', () => {
+  env({
+    vars: {
+      NODE_ENV: 'testing',
+    },
+  });
+});
 
 gulp.task('notify', () => {
   notifier.notify({
@@ -38,71 +48,81 @@ gulp.task('notify', () => {
   });
 });
 
-gulp.task('line-count', () => {
-  return gulp.src(
+gulp.task('line-count', () =>
+  gulp.src(
     [
       directories.root,
       directories.source.scripts,
     ])
-    .pipe(remember('scripts'))
-    .pipe(sloc());
-});
+  .pipe(remember('scripts'))
+  .pipe(sloc())
+);
 
-gulp.task('lint:sass', () => {
-  return gulp.src(directories.source.styles)
-    .pipe(remember('styles'))
-    .pipe(sasslint())
-    .pipe(sasslint.format())
-    .pipe(sasslint.failOnError());
-});
+gulp.task('lint:sass', () =>
+  gulp.src(directories.source.styles)
+  .pipe(remember('styles'))
+  .pipe(sasslint())
+  .pipe(sasslint.format())
+  .pipe(sasslint.failOnError())
+);
 
-gulp.task('lint:scripts', () => {
-  return gulp.src(directories.source.scripts)
-    .pipe(remember('scripts'))
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError());
-});
+gulp.task('lint:scripts', () =>
+  gulp.src(directories.source.scripts)
+  .pipe(remember('scripts'))
+  .pipe(eslint())
+  .pipe(eslint.format())
+  .pipe(eslint.failAfterError())
+);
 
 gulp.task('lint', ['lint:scripts', 'lint:sass']);
 
-gulp.task('html', () => {
-  return gulp.src(directories.source.index)
-    .pipe(cache('html'))
-    .pipe(gulp.dest(directories.distribution));
+gulp.task('html', () =>
+  gulp.src(directories.source.index)
+  .pipe(cache('html'))
+  .pipe(gulp.dest(directories.distribution))
+);
+
+gulp.task('html:production', () =>
+  gulp.src(directories.source.index)
+  .pipe(minifyHtml({collapseWhitespace: true}))
+  .pipe(gulp.dest(directories.distribution))
+);
+
+gulp.task('images', () =>
+  gulp.src(directories.source.images)
+  .pipe(cache('images'))
+  .pipe(gulp.dest(directories.distribution))
+);
+
+gulp.task('test', ['env-testing'], () => {
+  // Patch for extensible destructuring
+  require('extensible-polyfill').patch('safe');
+
+  return gulp.src(directories.test, {read: false})
+  .pipe(remember('test'))
+  .pipe(mocha({reporter: 'spec', timeout: 10000, globals: '__extensible_get__'}));
 });
 
-gulp.task('html:production', () => {
-  return gulp.src(directories.source.index)
-    .pipe(minifyHtml({collapseWhitespace: true}))
-    .pipe(gulp.dest(directories.distribution));
-});
 
-gulp.task('images', () => {
-  return gulp.src(directories.source.images)
-    .pipe(cache('images'))
-    .pipe(gulp.dest(directories.distribution));
-});
+gulp.task('webpack', (done) =>
+  webpack(webpackConfigDev).run(() => done())
+);
 
-gulp.task('webpack', done => {
-  return webpack(webpackConfigDev).run(() => done());
-});
+gulp.task('webpack:production', (done) =>
+  webpack(webpackConfigProd).run(() => done())
+);
 
-gulp.task('webpack:production', done => {
-  return webpack(webpackConfigProd).run(() => done());
-});
+gulp.task('build', (done) =>
+  runSequence(['line-count', 'lint'], ['webpack', 'html', 'images'], 'notify', done)
+);
 
-gulp.task('build', done => {
-  runSequence(['line-count', 'lint'], ['webpack', 'html', 'images'], 'notify', done);
-});
+gulp.task('build:watch', (done) =>
+  runSequence(['line-count', 'lint'], ['html', 'images'], done)
+);
 
-gulp.task('build:watch', done => {
-  runSequence(['line-count', 'lint'], ['html', 'images'], done);
-});
-
-gulp.task('build:production', done => {
-  runSequence(['line-count', 'lint'], ['webpack:production', 'html:production', 'images'], 'notify', done);
-});
+gulp.task('build:production', (done) =>
+  runSequence(['line-count', 'lint'], ['webpack:production', 'html:production', 'images'], 'notify', done)
+);
 
 gulp.task('server', () => {
   const server = spawn('node', ['devServer']);
@@ -110,13 +130,12 @@ gulp.task('server', () => {
   server.stderr.on('data', data => process.stderr.write(`webpack-server: ${data}`));
 });
 
-gulp.task('watch', () => {
-  return gulp.watch(
+gulp.task('watch', () =>
+  gulp.watch(
     [
-      directories.source.styles,
       directories.source.images,
       directories.source.index,
-    ], ['build:watch']);
-});
+    ], ['build:watch'])
+);
 
 gulp.task('default', ['build:watch', 'server', 'watch']);
