@@ -20,4 +20,6 @@ const production = base.setIn(['database', 'name'], 'quiz');
 
 export default new Map({development, testing, production,
   secretPath: path.join(__dirname, 'secret'),
+  logOutput: path.join(__dirname, 'server.log'),
+  errorLogOutput: path.join(__dirname, 'server.error.log'),
 });

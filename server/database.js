@@ -59,6 +59,8 @@ export const UserChoiceAnswer = database.define('user_choice_answer', models.Use
 
 export const User = database.define('user', models.User);
 
+Quiz.hasMany(User);
+
 User.hasMany(UserChoiceAnswer);
 UserChoiceAnswer.belongsTo(QuestionChoice);
 
