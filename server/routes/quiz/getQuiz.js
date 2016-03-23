@@ -4,7 +4,7 @@ import logger from '../../logger';
 export default (req, res) => {
   const {name = ''} = req.query;
   if (!name) {
-    return res.json({message: 'Missing parameter \'name\''});
+    return res.status(400).json({message: 'Missing parameter \'name\''});
   }
   return Quiz.scope('active', 'user', 'withQuestions').findOne()
   .then((quiz) => {

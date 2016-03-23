@@ -7,11 +7,11 @@ import conf from './conf';
 
 class LogTransformer extends Transform {
   getLogSuffix() {
-    return new Buffer(`[${moment.utc().format('YYYY/MM/DD HH:mm:ss')} UTC] `);
+    return `[${moment.utc().format('YYYY-MM-DD HH:mm:ss')} UTC] `;
   }
 
   _transform(chunk, encoding, callback) {
-    this.push(this.getLogSuffix());
+    this.push(new Buffer(this.getLogSuffix()));
     this.push(chunk);
     callback();
   }
@@ -19,11 +19,11 @@ class LogTransformer extends Transform {
 
 class LogConsole extends Console {
   error(...args) {
-    return `ERROR: ${super.error(...args)}`;
+    return super.error('ERROR:', ...args);
   }
 
   warn(...args) {
-    return `WARNING: ${super.warn(...args)}`;
+    return super.warn('WARNING:', ...args);
   }
 }
 
