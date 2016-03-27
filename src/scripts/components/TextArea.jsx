@@ -16,7 +16,7 @@ class TextArea extends Component {
   }
 
   onChange(event) {
-    this.props.setAnswer(this.props.questionId, event.target.value.trim());
+    this.props.setAnswer(this.props.questionId, event.target.value);
   }
 
   render() {

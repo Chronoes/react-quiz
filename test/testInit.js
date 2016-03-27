@@ -1,7 +1,13 @@
 import database from '../server/database';
 
 before((done) => {
-  database.sync({force: true})
+  database.sync()
+  .then(() => done())
+  .catch(done);
+});
+
+after((done) => {
+  database.truncate({cascade: true})
   .then(() => done())
   .catch(done);
 });

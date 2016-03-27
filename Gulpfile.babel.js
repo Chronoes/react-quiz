@@ -53,9 +53,10 @@ gulp.task('line-count', () =>
     [
       directories.root,
       directories.source.scripts,
+      directories.test,
     ])
   .pipe(remember('scripts'))
-  .pipe(sloc())
+  .pipe(sloc({tolerant: true}))
 );
 
 gulp.task('lint:sass', () =>

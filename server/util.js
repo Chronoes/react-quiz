@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt-as-promised';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 export function genSaltyHash(password) {
   return bcrypt.hash(password, 10);
@@ -27,4 +28,12 @@ export function verifyAuthorization(authHeader, secret) {
     return verifyToken(token, secret);
   }
   return Promise.reject(new Error('No Authorization header.'));
+}
+
+export function genChecksum(payload) {
+  return crypto.createHash('sha1').update(JSON.stringify(payload)).digest('hex');
+}
+
+export function verifyChecksum(payload, hash) {
+  return genChecksum(payload) === hash;
 }

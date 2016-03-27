@@ -12,7 +12,7 @@ export default {
     allowNull: false,
     defaultValue: QUIZ_STATUS_ACTIVE,
     validate: {
-      isIn: [mapping.toArray()],
+      isIn: [mapping.keySeq().toArray()],
     },
     get() { return mapping.get(`${this.getDataValue('status')}`); },
     set(value) { this.setDataValue('status', parseInt(mapping.findEntry((v) => v === value)[0], 10)); },

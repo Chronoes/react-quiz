@@ -1,5 +1,6 @@
 import {STRING, INTEGER} from 'sequelize';
 
+/* eslint new-cap: 0 */
 export default {
   username: {
     type: STRING,
@@ -15,4 +16,6 @@ export default {
   },
 
   timeSpent: INTEGER,
+
+  hash: STRING(40),
 };

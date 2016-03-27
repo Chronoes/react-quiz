@@ -57,4 +57,18 @@ describe('Utility functions', () => {
       });
     });
   });
+
+  context('#genChecksum()', () => {
+    it('should return a SHA-1 hash of given payload', () => {
+      expect(util.genChecksum({id: 30, name: 'not my name'})).to.equal('96c25ed3edb27be12e2d4852194b7e6ca463e639');
+      expect(util.genChecksum({value: 23023, index: 3, name: ''})).to.equal('17b2809b18200c1ebf4b9f5cd49f53cdbee3067e');
+    });
+  });
+
+  context('#verifyChecksum()', () => {
+    it('should verify given payload against given hash', () => {
+      expect(util.verifyChecksum({id: 30, name: 'not name'}, '02cae401802f199f6881ec800fac0e978be527d2')).to.be.true;
+      expect(util.verifyChecksum({id: 31, name: 'not name'}, '02cae401802f199f6881ec800fac0e978be527d2')).to.be.false;
+    });
+  });
 });

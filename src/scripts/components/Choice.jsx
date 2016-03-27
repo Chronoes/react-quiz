@@ -14,7 +14,7 @@ class Choice extends Component {
   }
 
   onChange(event) {
-    this.props.onChange(this.props.id, event.target.value.trim());
+    this.props.onChange(this.props.id, event.target.value);
   }
 
   render() {

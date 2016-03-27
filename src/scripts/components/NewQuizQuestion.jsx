@@ -58,7 +58,7 @@ class NewQuizQuestion extends Component {
   }
 
   onTitleChange(event) {
-    this.setState({title: event.target.value.trim()});
+    this.setState({title: event.target.value});
   }
 
   onChoicesChange(choices) {
