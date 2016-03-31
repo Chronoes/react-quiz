@@ -46,7 +46,7 @@ describe('API Quiz route', () => {
   });
 
   describe('POST request', () => {
-    it('should validate and save sent answers and respond with correct answers');
+    it('should validate and save sent answers and respond with number of correct answers');
 
     it('should respond with Bad Request on invalid body parameters');
   });

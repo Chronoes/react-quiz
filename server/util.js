@@ -37,3 +37,11 @@ export function genChecksum(payload) {
 export function verifyChecksum(payload, hash) {
   return genChecksum(payload) === hash;
 }
+
+export function isInvalidDatabaseId(value) {
+  return isNaN(value) || value <= 0;
+}
+
+export function parseIntBase10(nr) {
+  return parseInt(nr, 10);
+}
