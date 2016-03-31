@@ -62,11 +62,13 @@ export const User = database.define('user', models.User);
 Quiz.hasMany(User);
 User.belongsTo(Quiz);
 
-User.hasMany(UserChoiceAnswer);
-UserChoiceAnswer.belongsTo(QuestionChoice);
+User.hasMany(UserChoiceAnswer, {as: 'choiceAnswers'});
+UserChoiceAnswer.belongsTo(User);
+UserChoiceAnswer.belongsTo(QuestionChoice, {as: 'choiceAnswer'});
 
-User.hasMany(UserTextAnswer);
-UserTextAnswer.belongsTo(Question);
+User.hasMany(UserTextAnswer, {as: 'textAnswers'});
+UserTextAnswer.belongsTo(User);
+UserTextAnswer.belongsTo(Question, {as: 'textAnswer'});
 
 export {constants};
 
