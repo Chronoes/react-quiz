@@ -86,6 +86,20 @@ describe('Quiz utility functions', () => {
       it('should reject with ValidationError on invalid answer type for fillblank');
 
       it('should reject with ValidationError on invalid answer type for textarea');
+
+      it('should reject with ValidationError on invalid question type');
     });
+  });
+
+  describe('#verifyAnswer()', () => {
+    it('should resolve with verified answer for radio');
+
+    it('should resolve with verified answer for checkbox');
+
+    it('should resolve with verified answer for fillblank');
+
+    it('should resolve with verified answer for textarea');
+
+    it('should reject with ValidationError on invalid question type');
   });
 });

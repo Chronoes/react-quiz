@@ -1,6 +1,6 @@
 import database, {Quiz, User} from '../../database';
 import logger from '../../logger';
-import {mapQuestionsById, normaliseAnswers} from './utilQuiz';
+import {mapQuestionsById, verifyAnswer, validateAnswer} from './utilQuiz';
 
 function saveTextAnswer(transaction, user) {
   return (relationId) => (values) =>
@@ -57,16 +57,19 @@ export default (req, res) => {
       return res.status(404).json({message: 'No such user exists.'});
     }
     const originalQuestions = mapQuestionsById(user.toJSON().quiz.questions);
-    return Promise.all(
-      normaliseAnswers(originalQuestions, questions)
-      .map((answer) => answer.catch((err) => { errors.push(err.message); return err; })))
-    .then((validated) => Promise.resolve(validated.filter((answer) => !(answer instanceof Error))))
-    .then((filtered) => saveAnswersToUser(originalQuestions, filtered, user)
+    const validate = validateAnswer(originalQuestions);
+    const verify = verifyAnswer(originalQuestions);
+    return Promise.all(questions.map((answer) =>
+      validate(answer)
+      .then(verify)
+      .catch((err) => { errors.push(err.message); return err; })))
+    .then((verified) => Promise.resolve(verified.filter((answer) => !(answer instanceof Error))))
+    .then((normalised) => saveAnswersToUser(originalQuestions, normalised, user)
       .then(() => {
         if (errors.length > 0) {
           logger.warn(`Errors with user ID ${user.id}: ${errors.join('; ')}`);
         }
-        return res.json({correctAnswers: filtered.filter(({isCorrect}) => isCorrect).length});
+        return res.json({correctAnswers: normalised.filter(({isCorrect}) => isCorrect).length});
       }));
   })
   .catch((err) => {

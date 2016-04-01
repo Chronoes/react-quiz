@@ -20,8 +20,8 @@ export function mapQuestionsById(questions) {
   return mappedQuestions;
 }
 
-export function validateAnswer(userAnswer, questions) {
-  return new Promise((resolve, reject) => {
+export function validateAnswer(questions) {
+  return (userAnswer) => new Promise((resolve, reject) => {
     if (typeof userAnswer !== 'object') {
       return reject(new ValidationError('userAnswer must be an object'));
     }
@@ -59,6 +59,8 @@ export function validateAnswer(userAnswer, questions) {
       } else {
         return resolve({questionId, answer: parsed});
       }
+    } else {
+      return reject(new ValidationError(`No such question type ${type} is implemented`));
     }
 
     if (error.expected) {
@@ -69,26 +71,24 @@ export function validateAnswer(userAnswer, questions) {
   });
 }
 
-export function normaliseAnswers(questions, userAnswers) {
-  return userAnswers.map((userAnswer) =>
-    validateAnswer(userAnswer, questions)
-    .then(({answer, questionId}) =>
-      new Promise((resolve, reject) => {
-        const {type, choices} = questions[questionId];
-        const resolvable = {questionId, answer, isCorrect: null};
-        if (type === 'textarea') {
-          return resolve(resolvable);
-        } else if (type === 'radio') {
-          return resolve({...resolvable, isCorrect: isChoiceAnswer(choices, answer)});
-        } else if (type === 'checkbox') {
-          const checkedAnswers = answer.map((a) => isChoiceAnswer(choices, a));
-          return resolve({...resolvable,
-            isCorrect: !!(checkedAnswers.length > 0 && checkedAnswers.every((a) => a))});
-        } else if (type === 'fillblank') {
-          const checkedAnswers = answer.map((a) => isChoiceAnswer(choices, a) && choices[questionId].value === a);
-          return resolve({...resolvable,
-            isCorrect: !!(checkedAnswers.length > 0 && checkedAnswers.every((a) => a))});
-        }
-        return reject(new ValidationError(`No such question type ${type} is implemented`));
-      })));
+export function verifyAnswer(questions) {
+  return ({answer, questionId}) => new Promise((resolve, reject) => {
+    const {type, choices} = questions[questionId];
+    const resolvable = {questionId, answer, isCorrect: null};
+    if (type === 'textarea') {
+      return resolve(resolvable);
+    } else if (type === 'radio') {
+      return resolve({...resolvable, isCorrect: isChoiceAnswer(choices, answer)});
+    } else if (type === 'checkbox') {
+      const checkedAnswers = answer.map((a) => isChoiceAnswer(choices, a));
+      return resolve({...resolvable,
+        isCorrect: !!(checkedAnswers.length > 0 && checkedAnswers.every((a) => a))});
+    } else if (type === 'fillblank') {
+      const choiceList = Object.values(choices);
+      const checkedAnswers = answer.map((a) => choiceList.some(({value}) => value === a.trim()));
+      return resolve({...resolvable,
+        isCorrect: !!(checkedAnswers.length > 0 && checkedAnswers.every((a) => a))});
+    }
+    return reject(new ValidationError(`No such question type ${type} is implemented`));
+  });
 }
