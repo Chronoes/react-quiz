@@ -12,9 +12,9 @@ export function isChoiceAnswer(choices) {
 
 export function mapQuestionsById(questions) {
   const mappedQuestions = {};
-  questions.forEach(({id, question_choices, ...other}) => {
+  questions.forEach(({id, questionChoices, ...other}) => {
     const choices = {};
-    question_choices.forEach(({id: choiceId, ...values}) => { choices[choiceId] = values; });
+    questionChoices.forEach(({id: choiceId, ...values}) => { choices[choiceId] = values; });
     mappedQuestions[id] = {choices, ...other};
   });
   return mappedQuestions;

@@ -1,17 +1,18 @@
 import database, {Quiz, User} from '../../database';
 import logger from '../../logger';
 import {mapQuestionsById, verifyAnswer, validateAnswer} from './utilQuiz';
+import {parseIntBase10} from '../../util';
 
 function saveTextAnswer(transaction, user) {
   return (relationId) => (values) =>
-    user.createTextAnswer(values, {transaction})
-    .then((textAnswer) => textAnswer.setTextAnswer(relationId, {transaction}));
+    user.createUserTextAnswer(values, {transaction})
+    .then((textAnswer) => textAnswer.setQuestion(relationId, {transaction}));
 }
 
 function saveChoiceAnswer(transaction, user) {
   return (values) => (relationId) =>
-    user.createChoiceAnswer(values, {transaction})
-    .then((choiceAnswer) => choiceAnswer.setChoiceAnswer(relationId, {transaction}));
+    user.createUserChoiceAnswer(values, {transaction})
+    .then((choiceAnswer) => choiceAnswer.setQuestionChoice(relationId, {transaction}));
 }
 
 export function saveAnswersToUser(questions, answers, user) {
@@ -35,16 +36,17 @@ export function saveAnswersToUser(questions, answers, user) {
 }
 
 export default (req, res) => {
-  const {userHash = '', timeSpent = 0, questions = []} = req.body;
+  const {userHash = '', timeSpent: timeSpentUnparsed = 0, questions = []} = req.body;
   const errors = [];
   if (userHash.length === 0) {
-    errors.push('userHash must be a hash string');
+    errors.push('userHash must be a hash String');
   }
-  if (timeSpent <= 0) {
-    errors.push('timeSpent must be a positive integer');
+  const timeSpent = parseIntBase10(timeSpentUnparsed);
+  if (isNaN(timeSpent) || timeSpent <= 0) {
+    errors.push('timeSpent must be a positive Number');
   }
-  if (!Array.isArray(questions) || questions.length === 0) {
-    errors.push('questions must be an array of length at least 1');
+  if (Array.isArray(questions) && questions.length === 0) {
+    errors.push('questions must be an Array with length of at least 1');
   }
 
   if (errors.length > 0) {

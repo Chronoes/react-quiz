@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
 
 import conf from './conf';
-import models, {constants} from './models/index';
+import models from './models/index';
 
 const {name, user, password, dialect, logging, host} = conf.getIn([process.env.NODE_ENV, 'database']);
 
@@ -16,7 +16,7 @@ const database = new Sequelize(name, user, password, {
   },
 });
 
-export const QuestionChoice = database.define('question_choice', models.QuestionChoice, {
+export const QuestionChoice = database.define('questionChoice', models.QuestionChoice, {
   timestamps: false,
 });
 
@@ -32,7 +32,7 @@ export const Question = database.define('question', models.Question, {
 export const Quiz = database.define('quiz', models.Quiz, {
   scopes: {
     active: {
-      where: {status: constants.QUIZ_STATUS_ACTIVE},
+      where: {status: 'active'},
     },
     user: {
       attributes: {
@@ -49,27 +49,31 @@ Quiz.hasMany(Question);
 
 Question.hasMany(QuestionChoice);
 
-export const UserTextAnswer = database.define('user_text_answer', models.UserTextAnswer, {
+export const UserTextAnswer = database.define('userTextAnswer', models.UserTextAnswer, {
   timestamps: false,
 });
 
-export const UserChoiceAnswer = database.define('user_choice_answer', models.UserChoiceAnswer, {
+export const UserChoiceAnswer = database.define('userChoiceAnswer', models.UserChoiceAnswer, {
   timestamps: false,
 });
 
-export const User = database.define('user', models.User);
+export const User = database.define('user', models.User, {
+  scopes: {
+    withAnswers: {
+      include: [UserTextAnswer, UserChoiceAnswer],
+    },
+  },
+});
 
 Quiz.hasMany(User);
 User.belongsTo(Quiz);
 
-User.hasMany(UserChoiceAnswer, {as: 'choiceAnswers'});
+User.hasMany(UserChoiceAnswer);
 UserChoiceAnswer.belongsTo(User);
-UserChoiceAnswer.belongsTo(QuestionChoice, {as: 'choiceAnswer'});
+UserChoiceAnswer.belongsTo(QuestionChoice);
 
-User.hasMany(UserTextAnswer, {as: 'textAnswers'});
+User.hasMany(UserTextAnswer);
 UserTextAnswer.belongsTo(User);
-UserTextAnswer.belongsTo(Question, {as: 'textAnswer'});
-
-export {constants};
+UserTextAnswer.belongsTo(Question);
 
 export default database;

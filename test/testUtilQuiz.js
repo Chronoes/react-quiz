@@ -41,7 +41,7 @@ describe('Quiz utility functions', () => {
           id: 1,
           type: 'checkbox',
           question: 'is it ok?',
-          question_choices: [
+          questionChoices: [
             {id: 1, isAnswer: true, value: 'yes'},
             {id: 2, isAnswer: false, value: 'maybe'},
             {id: 3, isAnswer: true, value: 'no'},
@@ -51,7 +51,7 @@ describe('Quiz utility functions', () => {
           id: 2,
           type: 'radio',
           question: 'maybe it is now?',
-          question_choices: [
+          questionChoices: [
             {id: 5, isAnswer: false, value: 'yes'},
             {id: 6, isAnswer: true, value: 'maybe'},
           ],
@@ -60,7 +60,7 @@ describe('Quiz utility functions', () => {
           id: 40,
           type: 'fillblank',
           question: 'oh dear',
-          question_choices: [
+          questionChoices: [
             {id: 10, isAnswer: true, value: 'yes'},
           ],
         },
@@ -68,7 +68,7 @@ describe('Quiz utility functions', () => {
           id: 11,
           type: 'textarea',
           question: 'oh dear',
-          question_choices: [],
+          questionChoices: [],
         },
       ];
 

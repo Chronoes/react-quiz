@@ -1,6 +1,12 @@
 export class Request {
   constructor(query = {}) {
     this.query = query;
+    this.body = {};
+  }
+
+  setBody(body) {
+    this.body = body;
+    return this;
   }
 }
 

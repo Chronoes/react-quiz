@@ -6,7 +6,7 @@ export default {
     type: STRING(50),
     allowNull: false,
     validate: {
-      isIn: ['checkbox', 'radio', 'fillblank', 'textarea'],
+      isIn: [['checkbox', 'radio', 'fillblank', 'textarea']],
     },
   },
 
