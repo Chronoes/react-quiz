@@ -6,8 +6,8 @@ export function getChecksumPayload({id, createdAt}) {
   return {id, createdAt};
 }
 
-export function isChoiceAnswer(choices, answer) {
-  return !!(choices[answer] && choices[answer].isAnswer);
+export function isChoiceAnswer(choices) {
+  return (answer) => !!(choices[answer] && choices[answer].isAnswer);
 }
 
 export function mapQuestionsById(questions) {
@@ -74,18 +74,23 @@ export function validateAnswer(questions) {
 export function verifyAnswer(questions) {
   return ({answer, questionId}) => new Promise((resolve) => {
     const {type, choices} = questions[questionId];
+    const boundIsChoiceAnswer = isChoiceAnswer(choices);
     const resolvable = {questionId, answer, isCorrect: null};
     if (type === 'radio') {
-      return resolve({...resolvable, isCorrect: isChoiceAnswer(choices, answer)});
+      return resolve({...resolvable, isCorrect: boundIsChoiceAnswer(answer)});
     } else if (type === 'checkbox') {
-      const checkedAnswers = answer.map((a) => isChoiceAnswer(choices, a));
-      return resolve({...resolvable,
-        isCorrect: !!(checkedAnswers.length > 0 && checkedAnswers.every((a) => a))});
+      if (answer.length === 0) {
+        return resolve({...resolvable, isCorrect: false});
+      }
+      return resolve({...resolvable, isCorrect: answer.every(boundIsChoiceAnswer)});
     } else if (type === 'fillblank') {
+      if (answer.length === 0) {
+        return resolve({...resolvable, isCorrect: false});
+      }
       const choiceList = Object.keys(choices);
-      const checkedAnswers = answer.map((a) => choiceList.some((key) => choices[key].value === a.trim()));
       return resolve({...resolvable,
-        isCorrect: !!(checkedAnswers.length > 0 && checkedAnswers.every((a) => a))});
+        isCorrect: answer.every((a) => choiceList.some((key) => choices[key].value === a.trim())),
+      });
     }
     return resolve(resolvable);
   });
