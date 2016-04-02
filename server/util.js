@@ -45,3 +45,16 @@ export function isInvalidDatabaseId(value) {
 export function parseIntBase10(nr) {
   return parseInt(nr, 10);
 }
+
+export function parseNumberDefault(value, end, start = 0) {
+  const parsed = parseIntBase10(value);
+  if (!isNaN(parsed)) {
+    if (parsed > end) {
+      return end;
+    } else if (parsed < start) {
+      return start;
+    }
+    return parsed;
+  }
+  return end;
+}

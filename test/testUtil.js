@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import * as util from '../server/util';
 
 describe('Utility functions', () => {
-  context('#verifyToken()', () => {
+  describe('#verifyToken()', () => {
     it('should return payload with correct token', (done) => {
       const secret = 'shhhhh';
       const token = jwt.sign({id: 1, username: 'ayylmao'}, secret);
@@ -31,7 +31,7 @@ describe('Utility functions', () => {
     });
   });
 
-  context('#verifyAuthorization()', () => {
+  describe('#verifyAuthorization()', () => {
     it('should return with token if Authorization header exists', (done) => {
       const secret = 'shhhhh';
       const token = jwt.sign({id: 1, username: 'ayylmao'}, secret);
@@ -58,17 +58,23 @@ describe('Utility functions', () => {
     });
   });
 
-  context('#genChecksum()', () => {
+  describe('#genChecksum()', () => {
     it('should return a SHA-1 hash of given payload', () => {
       expect(util.genChecksum({id: 30, name: 'not my name'})).to.equal('96c25ed3edb27be12e2d4852194b7e6ca463e639');
       expect(util.genChecksum({value: 23023, index: 3, name: ''})).to.equal('17b2809b18200c1ebf4b9f5cd49f53cdbee3067e');
     });
   });
 
-  context('#verifyChecksum()', () => {
+  describe('#verifyChecksum()', () => {
     it('should verify given payload against given hash', () => {
       expect(util.verifyChecksum({id: 30, name: 'not name'}, '02cae401802f199f6881ec800fac0e978be527d2')).to.be.true;
       expect(util.verifyChecksum({id: 31, name: 'not name'}, '02cae401802f199f6881ec800fac0e978be527d2')).to.be.false;
     });
+  });
+
+  describe('#parseNumberDefault()', () => {
+    it('should return a number within given range if value is a number');
+
+    it('should return the end of the range if value is not a number');
   });
 });
