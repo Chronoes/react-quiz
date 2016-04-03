@@ -7,7 +7,6 @@ const base = new Map({
     host: 'localhost',
     name: 'quiz_dev',
     user: 'vesikonna',
-    logging: false,
     password: '',
   }),
 });

@@ -73,8 +73,16 @@ describe('Utility functions', () => {
   });
 
   describe('#parseNumberDefault()', () => {
-    it('should return a number within given range if value is a number');
+    it('should return a number within given range if value is a number', () => {
+      expect(util.parseNumberDefault(13, 30)).to.equal(13);
+      expect(util.parseNumberDefault(18, 12)).to.equal(12);
+      expect(util.parseNumberDefault(-5, 121)).to.equal(0);
+      expect(util.parseNumberDefault(-11, 10, -1)).to.equal(-1);
+    });
 
-    it('should return the end of the range if value is not a number');
+    it('should return the end of the range if value is not a number', () => {
+      expect(util.parseNumberDefault('eew', 30)).to.equal(30);
+      expect(util.parseNumberDefault(undefined, 10, 1)).to.equal(10);
+    });
   });
 });

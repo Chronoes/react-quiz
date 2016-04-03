@@ -3,12 +3,12 @@ import Sequelize from 'sequelize';
 import conf from './conf';
 import models from './models/index';
 
-const {name, user, password, dialect, logging, host} = conf.getIn([process.env.NODE_ENV, 'database']);
+const {name, user, password, dialect, host} = conf.getIn([process.env.NODE_ENV, 'database']);
 
 const database = new Sequelize(name, user, password, {
   dialect,
   host,
-  logging,
+  logging: false,
   pool: {
     max: 100,
     min: 0,

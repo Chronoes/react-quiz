@@ -34,13 +34,14 @@ describe('API Quiz route', () => {
         const req = new Request({name: 'dis be name'});
         const res = new Response();
 
-        return Quiz.truncate({cascade: true})
+        return Quiz.update({status: 'passive'}, {where: {status: 'active'}})
         .then(() => getQuiz(req, res))
         .then(() => {
           expect(res.statusCode).to.equal(404);
           expect(res.sentBody.message).to.have.length.above(0);
-          done();
+          return Promise.resolve();
         })
+        .then(() => Quiz.update({status: 'active'}, {where: {status: 'passive'}}))
         .catch(done);
       });
     });

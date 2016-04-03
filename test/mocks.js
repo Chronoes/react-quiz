@@ -1,6 +1,7 @@
 export class Request {
-  constructor(query = {}) {
+  constructor(query = {}, params = {}) {
     this.query = query;
+    this.params = params;
     this.body = {};
   }
 
@@ -21,8 +22,15 @@ export class Response {
     return this;
   }
 
+  _convertToJSON(object) {
+    if (Array.isArray(object)) {
+      return object.map(this._convertToJSON);
+    }
+    return typeof object.toJSON === 'function' ? object.toJSON() : object;
+  }
+
   json(object) {
-    this.sentBody = object;
+    this.sentBody = this._convertToJSON(object);
     return this;
   }
 }

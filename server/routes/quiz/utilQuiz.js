@@ -2,10 +2,6 @@ import {isInvalidDatabaseId, parseIntBase10} from '../../util';
 
 export class ValidationError extends Error {}
 
-export function getChecksumPayload({id, createdAt}) {
-  return {id, createdAt};
-}
-
 export function isChoiceAnswer(choices) {
   return (answer) => !!(choices[answer] && choices[answer].isAnswer);
 }

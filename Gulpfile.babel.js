@@ -114,15 +114,15 @@ gulp.task('webpack:production', (done) =>
 );
 
 gulp.task('build', (done) =>
-  runSequence(['line-count', 'lint'], ['webpack', 'html', 'images'], 'notify', done)
+  runSequence(['line-count', 'lint'], 'test', ['webpack', 'html', 'images'], 'notify', done)
 );
 
 gulp.task('build:watch', (done) =>
-  runSequence(['line-count', 'lint'], ['html', 'images'], done)
+  runSequence('lint', 'test', ['html', 'images'], done)
 );
 
 gulp.task('build:production', (done) =>
-  runSequence(['line-count', 'lint'], ['webpack:production', 'html:production', 'images'], 'notify', done)
+  runSequence(['line-count', 'lint'], 'test', ['webpack:production', 'html:production', 'images'], 'notify', done)
 );
 
 gulp.task('server', () => {
@@ -136,6 +136,8 @@ gulp.task('watch', () =>
     [
       directories.source.images,
       directories.source.index,
+      directories.server,
+      directories.test,
     ], ['build:watch'])
 );
 

@@ -1,13 +1,17 @@
-import database from '../server/database';
+import database, {Quiz} from '../server/database';
 
 before((done) => {
-  database.sync()
-  .then(() => done())
-  .catch(done);
-});
-
-after((done) => {
-  database.truncate({cascade: true})
+  database.sync({force: true})
+  .then(() => Quiz.bulkCreate([
+    {
+      title: 'testing quiz1',
+      timeLimit: 15 * 60,
+    },
+    {
+      title: 'testing quiz2',
+      timeLimit: 25 * 60,
+    },
+  ]))
   .then(() => done())
   .catch(done);
 });
