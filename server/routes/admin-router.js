@@ -14,13 +14,13 @@ admin.route('/quiz')
 export function validateIdParam(req, res, next) {
   const id = parseIntBase10(req.params.id);
   if (isInvalidDatabaseId(id)) {
-    return res.status(400).json({message: 'Invalid ID parameter'});
+    return res.status(400).json({message: `Invalid ID parameter: ${req.params.id}`});
   }
   req.params.id = id;
   return next();
 }
 
-admin.use(validateIdParam);
+admin.param('id', validateIdParam);
 
 admin.route('/quiz/:id')
 .get(getQuizHandler);
