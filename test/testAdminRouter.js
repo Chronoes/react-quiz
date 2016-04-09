@@ -4,6 +4,7 @@ import {Request, Response} from './mocks';
 import {validateIdParam} from '../server/routes/admin-router.js';
 import getQuizList from '../server/routes/admin/getQuizList';
 import getQuiz from '../server/routes/admin/getQuiz';
+import getQuizUsers from '../server/routes/admin/getQuizUsers';
 
 describe('API Admin route', () => {
   describe('/quiz route', () => {
@@ -67,7 +68,7 @@ describe('API Admin route', () => {
         const req = new Request({}, {id: 1});
         const res = new Response();
 
-        return getQuiz(req, res)
+        return getQuiz(req.setPath('/quiz/1'), res)
         .then(() => {
           expect(res.statusCode).to.equal(200);
           expect(res.sentBody).to.have.all.keys(
@@ -88,6 +89,42 @@ describe('API Admin route', () => {
           done();
         })
         .catch(done);
+      });
+
+      it('should call next handler if path does not end with ID', (done) => {
+        const req = new Request({}, {id: 1});
+        const res = new Response();
+
+        return getQuiz(req.setPath('/quiz/1/something'), res, () => true)
+        .then((called) => {
+          expect(called).to.be.true;
+          expect(req).to.have.any.keys('quiz');
+          done();
+        })
+        .catch(done);
+      });
+
+      describe('/users route', () => {
+        describe('GET request', () => {
+          it('should respond with a list of users who have answered the quiz', (done) => {
+            const req = new Request({}, {id: 1});
+            const res = new Response();
+
+            return getQuiz(req.setPath('/quiz/1/users'), res, () => true)
+            .then((called) => {
+              expect(called).to.be.true;
+              expect(req).to.have.any.keys('quiz');
+              return getQuizUsers(req, res);
+            })
+            .then(() => {
+              expect(res.sentBody).to.be.an('array');
+              expect(res.sentBody).to.have.length.at.least(3);
+              expect(res.sentBody[0]).to.have.all.keys('id', 'name', 'timeSpent', 'createdAt');
+              done();
+            })
+            .catch(done);
+          });
+        });
       });
     });
   });

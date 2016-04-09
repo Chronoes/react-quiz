@@ -1,12 +1,12 @@
 import {Router} from 'express';
 
-import getQuizHandler from './quiz/getQuiz';
-import saveQuizAnswersHandler from './quiz/saveQuizAnswers';
+import getQuiz from './quiz/getQuiz';
+import saveQuizAnswers from './quiz/saveQuizAnswers';
 
 const quiz = new Router();
 
 quiz.route('/')
-  .get(getQuizHandler)
-  .post(saveQuizAnswersHandler);
+  .get(getQuiz)
+  .post(saveQuizAnswers);
 
 export default quiz;

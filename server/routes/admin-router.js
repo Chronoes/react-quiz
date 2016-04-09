@@ -1,7 +1,8 @@
 import {Router} from 'express';
 
-import getQuizListHandler from './admin/getQuizList';
-import getQuizHandler from './admin/getQuiz';
+import getQuizList from './admin/getQuizList';
+import getQuiz from './admin/getQuiz';
+import getQuizUsers from './admin/getQuizUsers';
 
 import {parseIntBase10, isInvalidDatabaseId} from '../util';
 
@@ -9,7 +10,7 @@ const admin = new Router();
 
 // admin.post('/login', loginHandler);
 admin.route('/quiz')
-.get(getQuizListHandler);
+.get(getQuizList);
 
 export function validateIdParam(req, res, next) {
   const id = parseIntBase10(req.params.id);
@@ -23,8 +24,10 @@ export function validateIdParam(req, res, next) {
 admin.param('id', validateIdParam);
 
 admin.route('/quiz/:id')
-.get(getQuizHandler);
+.get(getQuiz);
 // .post(saveQuizHandler)
 // .put();
+
+admin.get('/quiz/:id/users', getQuiz, getQuizUsers);
 
 export default admin;

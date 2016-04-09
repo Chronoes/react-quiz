@@ -3,10 +3,16 @@ export class Request {
     this.query = query;
     this.params = params;
     this.body = {};
+    this.path = '/';
   }
 
   setBody(body) {
     this.body = body;
+    return this;
+  }
+
+  setPath(path) {
+    this.path = path;
     return this;
   }
 }
