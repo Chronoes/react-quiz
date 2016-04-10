@@ -58,3 +58,12 @@ export function parseNumberDefault(value, end, start = 0) {
   }
   return end;
 }
+
+export function partialPick(keys) {
+  return (object) => keys.reduce((carry, key) => {
+    if (object[key] !== undefined) {
+      carry[key] = object[key];
+    }
+    return carry;
+  }, {});
+}

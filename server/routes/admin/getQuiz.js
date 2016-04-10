@@ -2,14 +2,14 @@ import {Quiz} from '../../database';
 import logger from '../../logger';
 
 export default (req, res, next) => {
-  const {id} = req.params;
-  return Quiz.scope('withQuestions').findById(id)
+  const {quizId} = req.params;
+  return Quiz.scope('withQuestions').findById(quizId)
   .then((quiz) => {
     if (quiz === null) {
-      return res.status(404).json({message: `No quiz with ID ${id} exists.`});
+      return res.status(404).json({message: `No quiz with ID ${quizId} exists.`});
     }
 
-    if (req.path.split('/').pop() !== `${id}`) {
+    if (req.path.split('/').pop() !== `${quizId}`) {
       req.quiz = quiz;
       return next();
     }

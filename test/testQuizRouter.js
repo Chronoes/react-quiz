@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import getQuiz from '../server/routes/quiz/getQuiz';
 import saveQuizAnswers from '../server/routes/quiz/saveQuizAnswers';
-import {Quiz, Question, QuestionChoice, User} from '../server/database';
+import {Quiz, User} from '../server/database';
 import {Request, Response} from './mocks';
 
 describe('API Quiz route', () => {
@@ -10,13 +10,12 @@ describe('API Quiz route', () => {
       const req = new Request({name: 'dis be name'});
       const res = new Response();
 
-      return Quiz.create({title: 'Quiz test', timeLimit: 300})
-      .then(() => getQuiz(req, res)
-        .then(() => {
-          expect(res.statusCode).to.equal(200);
-          expect(res.sentBody).to.have.all.keys('id', 'userHash', 'title', 'timeLimit', 'questions');
-          done();
-        }))
+      return getQuiz(req, res)
+      .then(() => {
+        expect(res.statusCode).to.equal(200);
+        expect(res.sentBody).to.have.all.keys('id', 'userHash', 'title', 'timeLimit', 'questions');
+        done();
+      })
       .catch(done);
     });
 
@@ -39,9 +38,8 @@ describe('API Quiz route', () => {
         .then(() => {
           expect(res.statusCode).to.equal(404);
           expect(res.sentBody.message).to.have.length.above(0);
-          return Promise.resolve();
+          return Quiz.update({status: 'active'}, {where: {status: 'passive'}});
         })
-        .then(() => Quiz.update({status: 'active'}, {where: {status: 'passive'}}))
         .catch(done);
       });
     });
@@ -63,38 +61,14 @@ describe('API Quiz route', () => {
       const req = (new Request()).setBody(answers);
       const res = new Response();
 
-      return Quiz.create(
-        {
-          title: 'a testing quiz',
-          timeLimit: 30 * 60,
-          questions: [
-            {id: 100, type: 'radio', question: 'a nice title', questionChoices: [
-              {id: 100, value: 'impossible', isAnswer: false},
-              {id: 101, value: 'improbable', isAnswer: true},
-              {id: 102, value: 'inexplicable', isAnswer: false},
-            ]},
-            {id: 101, type: 'checkbox', question: 'some other title', questionChoices: [
-              {id: 103, value: 'irrevocable', isAnswer: false},
-              {id: 104, value: 'illogical', isAnswer: true},
-              {id: 105, value: 'insurmountable', isAnswer: true},
-              {id: 106, value: 'illegal', isAnswer: false},
-            ]},
-            {id: 102, type: 'fillblank', question: 'irrelevant', questionChoices: [
-              {value: 'correct answer', isAnswer: true},
-            ]},
-            {id: 103, type: 'textarea', question: 'lorem ipsum', questionChoices: []},
-          ],
-        }, {include: [{model: Question, include: [QuestionChoice]}]})
-        .then((quiz) => User.create({name: 'random name', hash: 'testhash'})
-          .then((user) => user.setQuiz(quiz.id)
-            .then(() => saveQuizAnswers(req, res))
-            .then(() => User.scope('withAnswers').count({where: {id: user.id}}))))
-        .then((answerCount) => {
-          expect(answerCount).to.equal(6);
-          expect(res.sentBody).to.deep.equal({correctAnswers: 2});
-          done();
-        })
-        .catch(done);
+      return saveQuizAnswers(req, res)
+      .then(() => User.scope('withAnswers').count({where: {hash: answers.userHash}}))
+      .then((answerCount) => {
+        expect(answerCount).to.equal(6);
+        expect(res.sentBody).to.deep.equal({correctAnswers: 2});
+        done();
+      })
+      .catch(done);
     });
 
     context('on faulty parameters', () => {

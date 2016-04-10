@@ -1,10 +1,7 @@
 import {isInvalidDatabaseId, parseIntBase10} from '../../util';
+import {Seq} from 'immutable';
 
 export class ValidationError extends Error {}
-
-export function isChoiceAnswer(choices) {
-  return (answer) => !!(choices[answer] && choices[answer].isAnswer);
-}
 
 export function mapQuestionsById(questions) {
   const mappedQuestions = {};
@@ -70,22 +67,28 @@ export function validateAnswer(questions) {
 export function verifyAnswer(questions) {
   return ({answer, questionId}) => new Promise((resolve) => {
     const {type, choices} = questions[questionId];
-    const boundIsChoiceAnswer = isChoiceAnswer(choices);
     const resolvable = {questionId, answer, isCorrect: null};
     if (type === 'radio') {
-      return resolve({...resolvable, isCorrect: boundIsChoiceAnswer(answer)});
+      return resolve({...resolvable, isCorrect: !!(choices[answer] && choices[answer].isAnswer)});
     } else if (type === 'checkbox') {
-      if (answer.length === 0) {
-        return resolve({...resolvable, isCorrect: false});
-      }
-      return resolve({...resolvable, isCorrect: answer.every(boundIsChoiceAnswer)});
-    } else if (type === 'fillblank') {
-      if (answer.length === 0) {
-        return resolve({...resolvable, isCorrect: false});
-      }
-      const choiceList = Object.keys(choices);
+      const choiceSeq = new Seq(choices).filter((value) => value.isAnswer).cacheResult();
+      const answerSeq = new Seq.Set(answer);
       return resolve({...resolvable,
-        isCorrect: answer.every((a) => choiceList.some((key) => choices[key].value === a.trim())),
+        isCorrect: choiceSeq.count() === answerSeq.count() &&
+          choiceSeq.keySeq()
+          .map(parseIntBase10)
+          .toSetSeq()
+          .equals(answerSeq),
+      });
+    } else if (type === 'fillblank') {
+      const choiceSeq = new Seq(choices);
+      const answerSeq = new Seq(answer.map((a) => a.trim()));
+      return resolve({...resolvable,
+        isCorrect: choiceSeq.count() === answerSeq.count() &&
+        choiceSeq.sort()
+        .map((choice) => choice.value)
+        .valueSeq()
+        .equals(answerSeq),
       });
     }
     return resolve(resolvable);

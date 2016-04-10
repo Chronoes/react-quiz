@@ -85,4 +85,16 @@ describe('Utility functions', () => {
       expect(util.parseNumberDefault(undefined, 10, 1)).to.equal(10);
     });
   });
+
+  describe('#partialPick()', () => {
+    it('should return a function that creates a new object based on given prop names', () => {
+      const keys = ['some', 'stuff'];
+      const boundPartialPick = util.partialPick(keys);
+
+      expect(boundPartialPick).to.be.a('function');
+      expect(boundPartialPick({})).to.be.empty;
+      expect(boundPartialPick(
+        {some: '142', things: 13.9, to: [2, 3, 5, 7], be: {}, stuff: true})).to.deep.equal({some: '142', stuff: true});
+    });
+  });
 });

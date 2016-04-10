@@ -25,6 +25,8 @@ describe('Quiz utility functions', () => {
       question: 'oh dear',
       choices: {
         10: {isAnswer: true, value: 'yes'},
+        11: {isAnswer: true, value: 'yes twice'},
+        12: {isAnswer: true, value: '30'},
       },
     },
     11: {
@@ -62,6 +64,8 @@ describe('Quiz utility functions', () => {
           question: 'oh dear',
           questionChoices: [
             {id: 10, isAnswer: true, value: 'yes'},
+            {id: 11, isAnswer: true, value: 'yes twice'},
+            {id: 12, isAnswer: true, value: '30'},
           ],
         },
         {
@@ -228,10 +232,11 @@ describe('Quiz utility functions', () => {
       runVerificationTest({questionId: 2, answer: 5}, {questionId: 2, answer: 6}));
 
     it('should resolve with verified answer for checkbox',
-      runVerificationTest({questionId: 1, answer: [1, 2, 3]}, {questionId: 1, answer: [1, 3]}));
+      runVerificationTest({questionId: 1, answer: [1, 2, 3]}, {questionId: 1, answer: [3, 1]}));
 
     it('should resolve with verified answer for fillblank',
-      runVerificationTest({questionId: 40, answer: ['yes', 'no']}, {questionId: 40, answer: ['yes']}));
+      runVerificationTest(
+        {questionId: 40, answer: ['yes', 'no']}, {questionId: 40, answer: ['yes', 'yes twice', '30']}));
 
     it('should resolve with verified answer for textarea', (done) => {
       const answer = {questionId: 11, answer: 'some random text'};

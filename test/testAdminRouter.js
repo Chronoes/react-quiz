@@ -5,6 +5,7 @@ import {validateIdParam} from '../server/routes/admin-router.js';
 import getQuizList from '../server/routes/admin/getQuizList';
 import getQuiz from '../server/routes/admin/getQuiz';
 import getQuizUsers from '../server/routes/admin/getQuizUsers';
+import getUser from '../server/routes/admin/getUser';
 
 describe('API Admin route', () => {
   describe('/quiz route', () => {
@@ -43,21 +44,23 @@ describe('API Admin route', () => {
     });
   });
 
-  describe('/quiz/:id route', () => {
+  describe('/quiz/:quizId route', () => {
     describe('parameter validation', () => {
+      const validateQuizIdParam = validateIdParam('quizId')[1];
+
       it('should assign valid ID to request parameters', () => {
-        const req = new Request({}, {id: 3});
+        const req = new Request({}, {quizId: 3});
         const res = new Response();
 
-        expect(validateIdParam(req, res, () => true)).to.be.true;
-        expect(req.params.id).to.equal(3);
+        expect(validateQuizIdParam(req, res, () => true)).to.be.true;
+        expect(req.params.quizId).to.equal(3);
       });
 
       it('should respond with Bad Request if ID is not a number', () => {
-        const req = new Request({}, {id: 'not a number'});
+        const req = new Request({}, {quizId: 'not a number'});
         const res = new Response();
 
-        validateIdParam(req, res, () => true);
+        validateQuizIdParam(req, res, () => true);
         expect(res.statusCode).to.equal(400);
         expect(res.sentBody.message).to.have.length.above(0);
       });
@@ -65,7 +68,7 @@ describe('API Admin route', () => {
 
     describe('GET request', () => {
       it('should respond with a quiz on existing ID', (done) => {
-        const req = new Request({}, {id: 1});
+        const req = new Request({}, {quizId: 1});
         const res = new Response();
 
         return getQuiz(req.setPath('/quiz/1'), res)
@@ -79,7 +82,7 @@ describe('API Admin route', () => {
       });
 
       it('should respond with Not Found if quiz with given ID does not exist', (done) => {
-        const req = new Request({}, {id: 9999999});
+        const req = new Request({}, {quizId: 9999999});
         const res = new Response();
 
         return getQuiz(req, res)
@@ -92,7 +95,7 @@ describe('API Admin route', () => {
       });
 
       it('should call next handler if path does not end with ID', (done) => {
-        const req = new Request({}, {id: 1});
+        const req = new Request({}, {quizId: 1});
         const res = new Response();
 
         return getQuiz(req.setPath('/quiz/1/something'), res, () => true)
@@ -107,7 +110,7 @@ describe('API Admin route', () => {
       describe('/users route', () => {
         describe('GET request', () => {
           it('should respond with a list of users who have answered the quiz', (done) => {
-            const req = new Request({}, {id: 1});
+            const req = new Request({}, {quizId: 1});
             const res = new Response();
 
             return getQuiz(req.setPath('/quiz/1/users'), res, () => true)
@@ -117,6 +120,7 @@ describe('API Admin route', () => {
               return getQuizUsers(req, res);
             })
             .then(() => {
+              expect(res.statusCode).to.equal(200);
               expect(res.sentBody).to.be.an('array');
               expect(res.sentBody).to.have.length.at.least(3);
               expect(res.sentBody[0]).to.have.all.keys('id', 'name', 'timeSpent', 'createdAt');
@@ -126,6 +130,21 @@ describe('API Admin route', () => {
           });
         });
       });
+    });
+  });
+
+  describe('/user/:userId', () => {
+    it('should respond with user and their answers', (done) => {
+      const req = new Request({}, {userId: 2});
+      const res = new Response();
+
+      return getUser(req, res)
+      .then(() => {
+        expect(res.statusCode).to.equal(200);
+        expect(res.sentBody).to.have.all.keys('quizId', 'questions', 'createdAt', 'timeSpent', 'name');
+        expect(res.sentBody.questions).to.be.an('array');
+      })
+      .catch(done);
     });
   });
 });
