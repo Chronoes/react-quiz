@@ -1,4 +1,4 @@
-import React, {Component, PropTypes as Types} from 'react';
+import React, { Component, PropTypes as Types } from 'react';
 
 class UserRegister extends Component {
   static propTypes = {

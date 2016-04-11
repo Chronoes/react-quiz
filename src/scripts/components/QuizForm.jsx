@@ -1,5 +1,5 @@
-import React, {Component, PropTypes as Types} from 'react';
-import {Map} from 'immutable';
+import React, { Component, PropTypes as Types } from 'react';
+import { Map } from 'immutable';
 
 import MultiInputGroup from './MultiInputGroup';
 import Radio from './Radio';
@@ -27,8 +27,8 @@ class QuizForm extends Component {
   }
 
   componentDidUpdate() {
-    const {quiz} = this.props;
-    const {resultsSent, isRunning, timeSpent} = quiz;
+    const { quiz } = this.props;
+    const { resultsSent, isRunning, timeSpent } = quiz;
     if (!resultsSent && !isRunning && timeSpent > 0) {
       this.props.actions.sendResults(quiz);
     }
@@ -39,9 +39,9 @@ class QuizForm extends Component {
     this.props.actions.finishQuiz();
   }
 
-  makeQuizElement({type, question, choices}, key, disabled) {
-    const {actions: {setAnswer, setCheckboxAnswer, setFillblankAnswer}} = this.props;
-    const defaultProps = {key, questionId: key, disabled, question, Title: 'h5'};
+  makeQuizElement({ type, question, choices }, key, disabled) {
+    const { actions: { setAnswer, setCheckboxAnswer, setFillblankAnswer } } = this.props;
+    const defaultProps = { key, questionId: key, disabled, question, Title: 'h5' };
     switch (type) {
       case 'radio':
         return <MultiInputGroup setAnswer={setAnswer} Input={Radio} {...defaultProps}>{choices}</MultiInputGroup>;
@@ -63,8 +63,8 @@ class QuizForm extends Component {
   }
 
   render() {
-    const {quiz: {title, questions, resultsSent, correctAnswers, isRunning}} = this.props;
-    const allQuestions = questions.filter(({type}) => type !== 'textarea').size;
+    const { quiz: { title, questions, resultsSent, correctAnswers, isRunning } } = this.props;
+    const allQuestions = questions.filter(({ type }) => type !== 'textarea').size;
     return (
       <div className="form-container">
         <h1>{title}</h1>

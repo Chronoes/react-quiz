@@ -1,4 +1,4 @@
-import {STRING} from 'sequelize';
+import { STRING } from 'sequelize';
 
 /* eslint new-cap: 0 */
 export default {

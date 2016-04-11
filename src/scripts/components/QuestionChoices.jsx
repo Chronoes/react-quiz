@@ -1,5 +1,5 @@
-import React, {Component, PropTypes as Types} from 'react';
-import {List} from 'immutable';
+import React, { Component, PropTypes as Types } from 'react';
+import { List } from 'immutable';
 
 import Choice from './Choice';
 
@@ -11,18 +11,18 @@ class QuestionChoices extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {choices: new List()};
+    this.state = { choices: new List() };
 
     this.onChoiceChange = this.onChoiceChange.bind(this);
   }
 
   componentWillMount() {
-    this.setState({choices: this.state.choices.push('')});
+    this.setState({ choices: this.state.choices.push('') });
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.children && nextProps.children.size > 0) {
-      this.setState({choices: nextProps.children.push('')});
+      this.setState({ choices: nextProps.children.push('') });
     }
   }
 
@@ -36,13 +36,13 @@ class QuestionChoices extends Component {
     const choices = this.state.choices.set(idx, value);
     switch (choices.takeLast(2).count(val => val.length === 0)) {
       case 0:
-        this.setState({choices: choices.push('')});
+        this.setState({ choices: choices.push('') });
         break;
       case 2:
-        this.setState({choices: choices.pop()});
+        this.setState({ choices: choices.pop() });
         break;
       default:
-        this.setState({choices});
+        this.setState({ choices });
         break;
     }
   }

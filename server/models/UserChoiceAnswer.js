@@ -1,4 +1,4 @@
-import {BOOLEAN} from 'sequelize';
+import { BOOLEAN } from 'sequelize';
 
 export default {
   isCorrect: BOOLEAN,

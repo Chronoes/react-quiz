@@ -6,4 +6,4 @@ import User from './User';
 import UserTextAnswer from './UserTextAnswer';
 import UserChoiceAnswer from './UserChoiceAnswer';
 
-export default {Quiz, Question, QuestionChoice, User, UserTextAnswer, UserChoiceAnswer};
+export default { Quiz, Question, QuestionChoice, User, UserTextAnswer, UserChoiceAnswer };

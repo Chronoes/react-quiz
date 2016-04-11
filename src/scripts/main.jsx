@@ -1,4 +1,4 @@
-import {render} from 'react-dom';
+import { render } from 'react-dom';
 import patchDestructuring from 'extensible-polyfill';
 
 // Patch ImmutableJS for extensible destructuring

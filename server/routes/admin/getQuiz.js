@@ -1,12 +1,12 @@
-import {Quiz} from '../../database';
+import { Quiz } from '../../database';
 import logger from '../../logger';
 
 export default (req, res, next) => {
-  const {quizId} = req.params;
+  const { quizId } = req.params;
   return Quiz.scope('withQuestions').findById(quizId)
   .then((quiz) => {
     if (quiz === null) {
-      return res.status(404).json({message: `No quiz with ID ${quizId} exists.`});
+      return res.status(404).json({ message: `No quiz with ID ${quizId} exists.` });
     }
 
     if (req.path.split('/').pop() !== `${quizId}`) {
@@ -17,6 +17,6 @@ export default (req, res, next) => {
   })
   .catch((err) => {
     logger.error(err);
-    return res.status(500).json({message: 'Something happened.'});
+    return res.status(500).json({ message: 'Something happened.' });
   });
 };

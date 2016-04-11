@@ -1,11 +1,11 @@
-import {Router} from 'express';
+import { Router } from 'express';
 
 import getQuizList from './admin/getQuizList';
 import getQuiz from './admin/getQuiz';
 import getQuizUsers from './admin/getQuizUsers';
 import getUser from './admin/getUser';
 
-import {parseIntBase10, isInvalidDatabaseId} from '../util';
+import { parseIntBase10, isInvalidDatabaseId } from '../util';
 
 const admin = new Router();
 
@@ -17,7 +17,7 @@ export function validateIdParam(name) {
   return [name, (req, res, next) => {
     const id = parseIntBase10(req.params[name]);
     if (isInvalidDatabaseId(id)) {
-      return res.status(400).json({message: `Invalid ID parameter: ${req.params[name]}`});
+      return res.status(400).json({ message: `Invalid ID parameter: ${req.params[name]}` });
     }
     req.params[name] = id;
     return next();

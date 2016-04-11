@@ -1,5 +1,5 @@
 'use !extensible';
-import {fromJS as immutableJS} from 'immutable';
+import { fromJS as immutableJS } from 'immutable';
 import moment from 'moment';
 
 const quizFormat = immutableJS({
@@ -13,7 +13,7 @@ const quizFormat = immutableJS({
 
 const quizListState = immutableJS([]);
 
-export default function quizList(state = quizListState, {type, ...action}) {
+export default function quizList(state = quizListState, { type, ...action }) {
   switch (type) {
     case 'GET_QUIZ_LIST_SUCCESS':
       return immutableJS(action.list.map(quiz => quizFormat.merge(quiz)));

@@ -1,4 +1,4 @@
-import React, {Component, PropTypes as Types} from 'react';
+import React, { Component, PropTypes as Types } from 'react';
 
 class Choice extends Component {
   static propTypes = {
@@ -18,7 +18,7 @@ class Choice extends Component {
   }
 
   render() {
-    const {children} = this.props;
+    const { children } = this.props;
     return (
       <input
         type="text"

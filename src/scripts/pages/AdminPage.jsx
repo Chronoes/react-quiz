@@ -1,4 +1,4 @@
-import React, {Component, PropTypes as Types} from 'react';
+import React, { Component, PropTypes as Types } from 'react';
 
 import Navbar from '../components/Navbar';
 
@@ -8,7 +8,7 @@ import Navbar from '../components/Navbar';
  * TODO: Create new or edit existing quizzes
 */
 // FIXME: Temporary route title position, relocate somewhere else
-const ROUTE_TITLES = {admin: 'Admin', quiz: 'Quiz'};
+const ROUTE_TITLES = { admin: 'Admin', quiz: 'Quiz' };
 
 class AdminPage extends Component {
   static propTypes = {
@@ -17,11 +17,11 @@ class AdminPage extends Component {
   };
 
   render() {
-    const {route, children} = this.props;
+    const { route, children } = this.props;
     return (
       <div>
         <Navbar root={route.path} brand={ROUTE_TITLES[route.path]}>
-          {route.childRoutes.map((childRoute) => ({path: childRoute.path, title: ROUTE_TITLES[childRoute.path]}))}
+          {route.childRoutes.map((childRoute) => ({ path: childRoute.path, title: ROUTE_TITLES[childRoute.path] }))}
         </Navbar>
         <div className="container m-t-1">
           {children}

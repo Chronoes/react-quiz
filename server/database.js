@@ -3,7 +3,7 @@ import Sequelize from 'sequelize';
 import conf from './conf';
 import models from './models/index';
 
-const {name, user, password, dialect, host} = conf.getIn([process.env.NODE_ENV, 'database']);
+const { name, user, password, dialect, host } = conf.getIn([process.env.NODE_ENV, 'database']);
 
 const database = new Sequelize(name, user, password, {
   dialect,
@@ -32,7 +32,7 @@ export const Question = database.define('question', models.Question, {
 export const Quiz = database.define('quiz', models.Quiz, {
   scopes: {
     active: {
-      where: {status: 'active'},
+      where: { status: 'active' },
     },
     user: {
       attributes: {
@@ -62,9 +62,9 @@ export const User = database.define('user', models.User, {
   scopes: {
     withAnswers: {
       include: [
-        {model: UserTextAnswer, attributes: ['isCorrect', 'questionId', 'value']},
-        {model: UserChoiceAnswer, attributes: ['isCorrect', 'questionChoiceId'],
-          include: [{model: QuestionChoice, attributes: ['questionId']}]},
+        { model: UserTextAnswer, attributes: ['isCorrect', 'questionId', 'value'] },
+        { model: UserChoiceAnswer, attributes: ['isCorrect', 'questionChoiceId'],
+          include: [{ model: QuestionChoice, attributes: ['questionId'] }] },
       ],
     },
   },

@@ -1,14 +1,14 @@
-import {isInvalidDatabaseId, parseIntBase10} from '../../util';
-import {Seq} from 'immutable';
+import { isInvalidDatabaseId, parseIntBase10 } from '../../util';
+import { Seq } from 'immutable';
 
 export class ValidationError extends Error {}
 
 export function mapQuestionsById(questions) {
   const mappedQuestions = {};
-  questions.forEach(({id, questionChoices, ...other}) => {
+  questions.forEach(({ id, questionChoices, ...other }) => {
     const choices = {};
-    questionChoices.forEach(({id: choiceId, ...values}) => { choices[choiceId] = values; });
-    mappedQuestions[id] = {choices, ...other};
+    questionChoices.forEach(({ id: choiceId, ...values }) => { choices[choiceId] = values; });
+    mappedQuestions[id] = { choices, ...other };
   });
   return mappedQuestions;
 }
@@ -18,7 +18,7 @@ export function validateAnswer(questions) {
     if (typeof userAnswer !== 'object') {
       return reject(new ValidationError('User answer must be an object'));
     }
-    const {id = 0, answer = null} = userAnswer;
+    const { id = 0, answer = null } = userAnswer;
     const questionId = parseIntBase10(id);
     if (isInvalidDatabaseId(questionId) || answer === null) {
       return reject(new ValidationError('User answer format: {id: Number, answer: Number || String || Array}'));
@@ -26,8 +26,8 @@ export function validateAnswer(questions) {
     if (!questions[questionId]) {
       return reject(new ValidationError(`Question ID ${questionId} does not exist`));
     }
-    const {type} = questions[questionId];
-    const error = {expected: ''};
+    const { type } = questions[questionId];
+    const error = { expected: '' };
     if (type === 'checkbox') {
       if (!Array.isArray(answer)) {
         error.expected = 'Array of Numbers';
@@ -36,7 +36,7 @@ export function validateAnswer(questions) {
         if (answers.some(isInvalidDatabaseId)) {
           error.expected = 'Array of Numbers';
         } else {
-          return resolve({questionId, answer: answers});
+          return resolve({ questionId, answer: answers });
         }
       }
     } else if (type === 'fillblank') {
@@ -52,7 +52,7 @@ export function validateAnswer(questions) {
       if (isInvalidDatabaseId(parsed)) {
         error.expected = 'Number';
       } else {
-        return resolve({questionId, answer: parsed});
+        return resolve({ questionId, answer: parsed });
       }
     }
 
@@ -60,20 +60,20 @@ export function validateAnswer(questions) {
       return reject(new ValidationError(
         `Malformed user answer '${answer}': expected ${error.expected} for type ${type}, question ID ${questionId}`));
     }
-    return resolve({questionId, answer});
+    return resolve({ questionId, answer });
   });
 }
 
 export function verifyAnswer(questions) {
-  return ({answer, questionId}) => new Promise((resolve) => {
-    const {type, choices} = questions[questionId];
-    const resolvable = {questionId, answer, isCorrect: null};
+  return ({ answer, questionId }) => new Promise((resolve) => {
+    const { type, choices } = questions[questionId];
+    const resolvable = { questionId, answer, isCorrect: null };
     if (type === 'radio') {
-      return resolve({...resolvable, isCorrect: !!(choices[answer] && choices[answer].isAnswer)});
+      return resolve({ ...resolvable, isCorrect: !!(choices[answer] && choices[answer].isAnswer) });
     } else if (type === 'checkbox') {
       const choiceSeq = new Seq(choices).filter((value) => value.isAnswer).cacheResult();
       const answerSeq = new Seq.Set(answer);
-      return resolve({...resolvable,
+      return resolve({ ...resolvable,
         isCorrect: choiceSeq.count() === answerSeq.count() &&
           choiceSeq.keySeq()
           .map(parseIntBase10)
@@ -81,7 +81,7 @@ export function verifyAnswer(questions) {
           .equals(answerSeq),
       });
     } else if (type === 'fillblank') {
-      return resolve({...resolvable,
+      return resolve({ ...resolvable,
         isCorrect: new Seq(choices)
         .sort()
         .map((choice) => choice.value)

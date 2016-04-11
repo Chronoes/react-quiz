@@ -1,7 +1,7 @@
 'use !extensible';
-import {fromJS as immutableJS, Map} from 'immutable';
+import { fromJS as immutableJS, Map } from 'immutable';
 
-const choiceFormat = new Map({id: 0, value: ''});
+const choiceFormat = new Map({ id: 0, value: '' });
 
 const questionFormat = immutableJS({
   id: 0,
@@ -58,13 +58,13 @@ function admin(state, type, action) {
   }
 }
 
-export default function quiz(state = quizState, {type, ...action}) {
+export default function quiz(state = quizState, { type, ...action }) {
   switch (type) {
     case 'SET_USER_ANSWER':
       return state.setIn(['questions', action.questionIdx, 'userAnswer'], action.answer);
     case 'SET_USER_ANSWER_CHECKBOX':
       return state.updateIn(['questions', action.questionIdx, 'userAnswers'], list => {
-        const {answer} = action;
+        const { answer } = action;
         const index = list.indexOf(answer);
         return index === -1 ? list.push(answer) : list.delete(index);
       });

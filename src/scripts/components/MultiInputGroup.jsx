@@ -1,5 +1,5 @@
-import React, {Component, PropTypes as Types} from 'react';
-import {List} from 'immutable';
+import React, { Component, PropTypes as Types } from 'react';
+import { List } from 'immutable';
 
 import Radio from './Radio';
 import Checkbox from './Checkbox';
@@ -26,12 +26,12 @@ class MultiInputGroup extends Component {
   }
 
   render() {
-    const {question, questionId, children, disabled, Title, Input} = this.props;
+    const { question, questionId, children, disabled, Title, Input } = this.props;
     return (
       <fieldset className="form-group">
         <Title>{question}</Title>
         <div className={`c-inputs-stacked m-l-1 ${disabled ? 'disabled' : ''}`}>
-          {children.map(({id, value}, i) => (
+          {children.map(({ id, value }, i) => (
             <Input
               key={i}
               name={questionId}

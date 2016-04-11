@@ -1,6 +1,6 @@
-import React, {PropTypes as Types} from 'react';
+import React, { PropTypes as Types } from 'react';
 
-function Radio({children, ...props}) {
+function Radio({ children, ...props }) {
   return (
     <label className="c-input c-radio">
       <input type="radio" required {...props} />

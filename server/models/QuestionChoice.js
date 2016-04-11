@@ -1,4 +1,4 @@
-import {TEXT, BOOLEAN} from 'sequelize';
+import { TEXT, BOOLEAN } from 'sequelize';
 
 export default {
   value: {

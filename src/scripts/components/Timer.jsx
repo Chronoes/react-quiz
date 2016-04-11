@@ -1,4 +1,4 @@
-import React, {Component, PropTypes as Types} from 'react';
+import React, { Component, PropTypes as Types } from 'react';
 
 import moment from 'moment';
 
@@ -10,18 +10,18 @@ class Timer extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {time: 0};
+    this.state = { time: 0 };
     this.timer = null;
   }
 
   componentDidMount() {
     this.timer = setInterval(() => {
-      const {timeLimit} = this.props;
-      const {time} = this.state;
+      const { timeLimit } = this.props;
+      const { time } = this.state;
       if (timeLimit && timeLimit <= time) {
         this.endTimer();
       } else {
-        this.setState({time: this.state.time + 1});
+        this.setState({ time: this.state.time + 1 });
       }
     }, 1000);
   }
@@ -39,8 +39,8 @@ class Timer extends Component {
   }
 
   render() {
-    const {timeLimit} = this.props;
-    const {time} = this.state;
+    const { timeLimit } = this.props;
+    const { time } = this.state;
     const timeDisplay = moment.unix(timeLimit - time);
     return (
       <div>

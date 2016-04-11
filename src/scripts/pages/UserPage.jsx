@@ -1,9 +1,9 @@
-import React, {Component, PropTypes as Types} from 'react';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import {routeActions} from 'react-router-redux';
+import React, { Component, PropTypes as Types } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { routeActions } from 'react-router-redux';
 
-import {getQuiz} from '../actions/quizActions';
+import { getQuiz } from '../actions/quizActions';
 
 import UserRegister from '../components/UserRegister';
 
@@ -34,9 +34,9 @@ class UserPage extends Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({getQuiz, routeTo: routeActions.push}, dispatch),
+    actions: bindActionCreators({ getQuiz, routeTo: routeActions.push }, dispatch),
   };
 }
 
 
-export default connect(({quiz: id}) => ({quizReceived: id > 0}), mapDispatchToProps)(UserPage);
+export default connect(({ quiz: id }) => ({ quizReceived: id > 0 }), mapDispatchToProps)(UserPage);

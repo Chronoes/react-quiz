@@ -1,5 +1,5 @@
-import React, {Component, PropTypes as Types} from 'react';
-import {Map} from 'immutable';
+import React, { Component, PropTypes as Types } from 'react';
+import { Map } from 'immutable';
 
 class QuizInfoCard extends Component {
   static propTypes = {
@@ -18,7 +18,7 @@ class QuizInfoCard extends Component {
   }
 
   render() {
-    const {quiz: {title, createdAt, updatedAt, users, isActive}} = this.props;
+    const { quiz: { title, createdAt, updatedAt, users, isActive } } = this.props;
     return (
       <div className="card">
         <div className="card-block">

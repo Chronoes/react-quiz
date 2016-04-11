@@ -1,4 +1,4 @@
-import React, {Component, PropTypes as Types} from 'react';
+import React, { Component, PropTypes as Types } from 'react';
 
 import FillBlank from './FillBlank';
 
@@ -22,7 +22,7 @@ class FillBlankGroup extends Component {
   }
 
   render() {
-    const {question, disabled, Title} = this.props;
+    const { question, disabled, Title } = this.props;
     const blanks = question.split(/_{3,}/);
     return (
       <fieldset className="form-group form-inline">

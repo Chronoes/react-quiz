@@ -1,4 +1,4 @@
-import {Router} from 'express';
+import { Router } from 'express';
 import quizRouter from './routes/quiz-router';
 import adminRouter from './routes/admin-router';
 

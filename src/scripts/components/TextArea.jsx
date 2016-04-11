@@ -1,4 +1,4 @@
-import React, {Component, PropTypes as Types} from 'react';
+import React, { Component, PropTypes as Types } from 'react';
 
 class TextArea extends Component {
   static propTypes = {
@@ -20,7 +20,7 @@ class TextArea extends Component {
   }
 
   render() {
-    const {question, disabled, Title} = this.props;
+    const { question, disabled, Title } = this.props;
     return (
       <fieldset className="form-group">
         <Title>{question}</Title>

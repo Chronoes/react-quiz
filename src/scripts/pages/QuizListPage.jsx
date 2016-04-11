@@ -1,13 +1,13 @@
-import React, {Component, PropTypes as Types} from 'react';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import {routeActions} from 'react-router-redux';
-import {List} from 'immutable';
+import React, { Component, PropTypes as Types } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { routeActions } from 'react-router-redux';
+import { List } from 'immutable';
 
 import QuizList from '../components/QuizList';
 
 import * as quizListActions from '../actions/quizListActions';
-import {resetQuizState, getQuizById} from '../actions/quizActions';
+import { resetQuizState, getQuizById } from '../actions/quizActions';
 
 class QuizListPage extends Component {
   static propTypes = {
@@ -38,7 +38,7 @@ class QuizListPage extends Component {
   }
 
   render() {
-    const {quizList} = this.props;
+    const { quizList } = this.props;
     return (
       <div className="container">
         <button className="btn btn-primary" onClick={this.onClickNewQuiz}>Uus</button>
@@ -51,9 +51,9 @@ class QuizListPage extends Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({resetQuizState, getQuizById, ...quizListActions}, dispatch),
+    actions: bindActionCreators({ resetQuizState, getQuizById, ...quizListActions }, dispatch),
     routeActions: bindActionCreators(routeActions, dispatch),
   };
 }
 
-export default connect(({quizList}) => ({quizList}), mapDispatchToProps)(QuizListPage);
+export default connect(({ quizList }) => ({ quizList }), mapDispatchToProps)(QuizListPage);

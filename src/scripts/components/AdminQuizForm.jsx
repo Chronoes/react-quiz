@@ -1,4 +1,4 @@
-import React, {PropTypes as Types} from 'react';
+import React, { PropTypes as Types } from 'react';
 
 import QuizForm from './QuizForm';
 import QuestionEditControls from './QuestionEditControls';
@@ -21,7 +21,7 @@ class AdminQuizForm extends QuizForm {
   }
 
   makeQuizElement(question, key, disabled) {
-    const {quiz: {questions}, actions: {deleteQuestion, editQuestion, moveQuestion}} = this.props;
+    const { quiz: { questions }, actions: { deleteQuestion, editQuestion, moveQuestion } } = this.props;
     return (
       <QuestionEditControls
         key={key}

@@ -4,9 +4,9 @@ import moment from 'moment';
 export function getQuizRequest(name) {
   if (!name) {
     console.log(`getQuizRequest: ${typeof name}`);
-    return Promise.reject({message: 'Problem with parameters'});
+    return Promise.reject({ message: 'Problem with parameters' });
   }
-  return Promise.resolve({data: {
+  return Promise.resolve({ data: {
     id: 1,
     title: 'ayyy lmao',
     userId: 1,
@@ -16,10 +16,10 @@ export function getQuizRequest(name) {
         type: 'radio',
         question: 'Question 1',
         choices: [
-          {id: 1, value: 'One answer'},
-          {id: 2, value: 'Two answer'},
-          {id: 3, value: 'Three answer'},
-          {id: 4, value: 'Ha- Ha- Ha-'},
+          { id: 1, value: 'One answer' },
+          { id: 2, value: 'Two answer' },
+          { id: 3, value: 'Three answer' },
+          { id: 4, value: 'Ha- Ha- Ha-' },
         ],
       },
       {
@@ -27,9 +27,9 @@ export function getQuizRequest(name) {
         type: 'checkbox',
         question: 'Question 1',
         choices: [
-          {id: 5, value: 'Interesting'},
-          {id: 6, value: 'Boring'},
-          {id: 7, value: 'Compelling'},
+          { id: 5, value: 'Interesting' },
+          { id: 6, value: 'Boring' },
+          { id: 7, value: 'Compelling' },
         ],
       },
       {
@@ -44,35 +44,35 @@ export function getQuizRequest(name) {
       },
     ],
     timeLimit: 900,
-  }});
+  } });
 }
 
 export function sendResultsRequest(payload) {
   if (typeof payload !== 'object') {
-    return Promise.reject({message: 'Payload is of wrong type'});
+    return Promise.reject({ message: 'Payload is of wrong type' });
   }
-  return Promise.resolve({data: {correctAnswers: 2}});
+  return Promise.resolve({ data: { correctAnswers: 2 } });
 }
 
 export function saveQuizRequest(payload) {
   if (typeof payload !== 'object') {
-    return Promise.reject({message: 'Payload is of wrong type'});
+    return Promise.reject({ message: 'Payload is of wrong type' });
   }
-  return Promise.resolve({data: {
+  return Promise.resolve({ data: {
     id: 8,
     title: payload.title,
     questions: payload.questions.map(
-      ({type, question, choices}, i) => ({
+      ({ type, question, choices }, i) => ({
         id: i + 1,
         type,
         question,
-        choices: choices.map((value, j) => ({id: j + 1, value})),
+        choices: choices.map((value, j) => ({ id: j + 1, value })),
       })),
-  }});
+  } });
 }
 
 export function getQuizListRequest() {
-  return Promise.resolve({data: [
+  return Promise.resolve({ data: [
     {
       id: 1,
       title: 'ayyy lmao',
@@ -105,7 +105,7 @@ export function getQuizListRequest() {
       users: parseInt(Math.random() * 50, 10),
       isActive: false,
     },
-  ]});
+  ] });
 }
 
 export function getQuizByIdRequest(id) {

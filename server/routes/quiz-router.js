@@ -1,4 +1,4 @@
-import {Router} from 'express';
+import { Router } from 'express';
 
 import getQuiz from './quiz/getQuiz';
 import saveQuizAnswers from './quiz/saveQuizAnswers';

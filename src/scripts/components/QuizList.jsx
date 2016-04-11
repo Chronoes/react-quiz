@@ -1,5 +1,5 @@
-import React, {Component, PropTypes as Types} from 'react';
-import {List} from 'immutable';
+import React, { Component, PropTypes as Types } from 'react';
+import { List } from 'immutable';
 
 import QuizInfoCard from '../components/QuizInfoCard';
 
@@ -12,7 +12,7 @@ class QuizList extends Component {
   static GROUP_SIZE = 3;
 
   render() {
-    const {children, getQuiz} = this.props;
+    const { children, getQuiz } = this.props;
     return (
       <div>
         {children.groupBy((_, i) => Math.floor(i / QuizList.GROUP_SIZE))

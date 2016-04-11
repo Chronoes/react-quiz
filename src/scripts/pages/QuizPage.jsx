@@ -1,7 +1,7 @@
-import React, {Component, PropTypes as Types} from 'react';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import {Map} from 'immutable';
+import React, { Component, PropTypes as Types } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { Map } from 'immutable';
 
 import * as quizActions from '../actions/quizActions';
 
@@ -15,8 +15,8 @@ class QuizPage extends Component {
   };
 
   render() {
-    const {quiz, actions: {timeStop, ...actions}} = this.props;
-    const {isRunning, timeLimit} = quiz;
+    const { quiz, actions: { timeStop, ...actions } } = this.props;
+    const { isRunning, timeLimit } = quiz;
     return (
       <div className="container">
         {isRunning ?
@@ -35,4 +35,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(({quiz}) => ({quiz}), mapDispatchToProps)(QuizPage);
+export default connect(({ quiz }) => ({ quiz }), mapDispatchToProps)(QuizPage);

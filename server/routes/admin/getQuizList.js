@@ -1,5 +1,5 @@
-import database, {Quiz, User} from '../../database';
-import {parseNumberDefault} from '../../util';
+import database, { Quiz, User } from '../../database';
+import { parseNumberDefault } from '../../util';
 import logger from '../../logger';
 
 // Sequelize has issues counting associations, so I do a raw query
@@ -18,7 +18,7 @@ function findAllAndCountAssociation(limit, offset) {
     LIMIT :limit OFFSET :offset
     `, {
       type: database.QueryTypes.SELECT,
-      replacements: {limit, offset},
+      replacements: { limit, offset },
       model: Quiz,
     });
 }
@@ -30,6 +30,6 @@ export default (req, res) => {
   .then((quizzes) => res.json(quizzes))
   .catch((err) => {
     logger.error(err);
-    return res.status(500).json({message: 'Something happened.'});
+    return res.status(500).json({ message: 'Something happened.' });
   });
 };

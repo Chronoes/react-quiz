@@ -1,6 +1,6 @@
-import React, {PropTypes as Types} from 'react';
+import React, { PropTypes as Types } from 'react';
 
-function Checkbox({children, ...props}) {
+function Checkbox({ children, ...props }) {
   return (
     <label className="c-input c-checkbox">
       <input type="checkbox" {...props} />

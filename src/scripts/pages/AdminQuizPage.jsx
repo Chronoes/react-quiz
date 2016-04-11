@@ -1,7 +1,7 @@
-import React, {Component, PropTypes as Types} from 'react';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import {Map} from 'immutable';
+import React, { Component, PropTypes as Types } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { Map } from 'immutable';
 
 import * as quizActions from '../actions/quizActions';
 
@@ -31,8 +31,8 @@ class AdminQuizPage extends Component {
   }
 
   render() {
-    const {quiz, actions: {addQuestion, setQuestionTitle, setChoices, ...actions}} = this.props;
-    const {title, questions, editingQuestion} = quiz;
+    const { quiz, actions: { addQuestion, setQuestionTitle, setChoices, ...actions } } = this.props;
+    const { title, questions, editingQuestion } = quiz;
     return (
       <div className="container">
         <div className="form-group row">
@@ -68,4 +68,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(({quiz}) => ({quiz}), mapDispatchToProps)(AdminQuizPage);
+export default connect(({ quiz }) => ({ quiz }), mapDispatchToProps)(AdminQuizPage);

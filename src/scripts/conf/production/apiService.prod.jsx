@@ -1,9 +1,9 @@
-import {create} from 'axios';
+import { create } from 'axios';
 
 const api = create();
 
 export function getQuizRequest(name) {
-  return api.get('/api/test', {name});
+  return api.get('/api/test', { name });
 }
 
 export function sendResultsRequest(payload) {

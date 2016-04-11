@@ -1,6 +1,6 @@
-import React, {PropTypes as Types} from 'react';
+import React, { PropTypes as Types } from 'react';
 
-function StrikedText({children}) {
+function StrikedText({ children }) {
   return (
     <div className="striked-text-wrapper">
       <span className="striked-text">

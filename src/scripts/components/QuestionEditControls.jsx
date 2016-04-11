@@ -1,4 +1,4 @@
-import React, {Component, PropTypes as Types} from 'react';
+import React, { Component, PropTypes as Types } from 'react';
 
 class QuestionEditControls extends Component {
   static propTypes = {
@@ -35,7 +35,7 @@ class QuestionEditControls extends Component {
   }
 
   render() {
-    const {children, isFirst, isLast} = this.props;
+    const { children, isFirst, isLast } = this.props;
     const arrows = ['up', 'down'];
     if (isFirst && isLast) {
       arrows.pop();

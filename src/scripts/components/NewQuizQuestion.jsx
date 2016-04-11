@@ -1,11 +1,11 @@
-import React, {Component, PropTypes as Types} from 'react';
-import {Map} from 'immutable';
+import React, { Component, PropTypes as Types } from 'react';
+import { Map } from 'immutable';
 
 import QuestionTitle from './QuestionTitle';
 import QuestionChoices from './QuestionChoices';
 
 // FIXME: Move this somewhere else along with translations and constants and stuff
-const TYPES = new Map({radio: 'Raadionupud', checkbox: 'Linnukesed', fillblank: 'Täida lüngad', textarea: 'Tekstikast'});
+const TYPES = new Map({ radio: 'Raadionupud', checkbox: 'Linnukesed', fillblank: 'Täida lüngad', textarea: 'Tekstikast' });
 
 class NewQuizQuestion extends Component {
   static propTypes = {
@@ -31,14 +31,14 @@ class NewQuizQuestion extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.question && nextProps.questionId !== this.props.questionId) {
-      this.setState({title: nextProps.question.get('question'), type: nextProps.question.get('type')});
+      this.setState({ title: nextProps.question.get('question'), type: nextProps.question.get('type') });
     }
   }
 
   componentDidUpdate(_, prevState) {
-    const {question, setTitle} = this.props;
+    const { question, setTitle } = this.props;
     if (question) {
-      const {title} = this.state;
+      const { title } = this.state;
       if (prevState.title !== title) {
         setTitle(title);
       }
@@ -54,11 +54,11 @@ class NewQuizQuestion extends Component {
   }
 
   onTypeChange(event) {
-    this.setState({type: event.target.value});
+    this.setState({ type: event.target.value });
   }
 
   onTitleChange(event) {
-    this.setState({title: event.target.value});
+    this.setState({ title: event.target.value });
   }
 
   onChoicesChange(choices) {
@@ -79,7 +79,7 @@ class NewQuizQuestion extends Component {
             <QuestionChoices
               ref="choices"
               setChoices={this.onChoicesChange}>
-              {this.props.question ? this.props.question.get('choices').map(({value}) => value) : null}
+              {this.props.question ? this.props.question.get('choices').map(({ value }) => value) : null}
             </QuestionChoices>
           </div>
         );
@@ -101,7 +101,7 @@ class NewQuizQuestion extends Component {
   }
 
   render() {
-    const {type, title} = this.state;
+    const { type, title } = this.state;
     return (
       <form onSubmit={this.onSubmit}>
         <select className="form-group c-select col-xs-4" value={type} onChange={this.onTypeChange}>
