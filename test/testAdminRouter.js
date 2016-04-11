@@ -141,8 +141,14 @@ describe('API Admin route', () => {
       return getUser(req, res)
       .then(() => {
         expect(res.statusCode).to.equal(200);
-        expect(res.sentBody).to.have.all.keys('quizId', 'questions', 'createdAt', 'timeSpent', 'name');
-        expect(res.sentBody.questions).to.be.an('array');
+        expect(res.sentBody).to.have.all.keys('quizId', 'answers', 'createdAt', 'timeSpent', 'name');
+        const {answers} = res.sentBody;
+        expect(answers).to.be.an('object');
+        expect(answers).to.have.all.keys('100', '101', '102', '103');
+        Object.keys(answers).forEach((key) => {
+          expect(answers[key]).to.have.all.keys('isCorrect', 'answer');
+        });
+        done();
       })
       .catch(done);
     });

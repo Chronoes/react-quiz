@@ -81,14 +81,12 @@ export function verifyAnswer(questions) {
           .equals(answerSeq),
       });
     } else if (type === 'fillblank') {
-      const choiceSeq = new Seq(choices);
-      const answerSeq = new Seq(answer.map((a) => a.trim()));
       return resolve({...resolvable,
-        isCorrect: choiceSeq.count() === answerSeq.count() &&
-        choiceSeq.sort()
+        isCorrect: new Seq(choices)
+        .sort()
         .map((choice) => choice.value)
         .valueSeq()
-        .equals(answerSeq),
+        .equals(new Seq(answer.map((ans) => ans.trim()))),
       });
     }
     return resolve(resolvable);

@@ -1,5 +1,18 @@
 import database, {Quiz, User, Question} from '../server/database';
 
+function saveTextAnswer(transaction, user) {
+  return (relationId) => (values) =>
+    user.createUserTextAnswer(values, {transaction})
+    .then((textAnswer) => textAnswer.setQuestion(relationId, {transaction}));
+}
+
+function saveChoiceAnswer(transaction, user) {
+  return (values) => (relationId) =>
+    user.createUserChoiceAnswer(values, {transaction})
+    .then((choiceAnswer) => choiceAnswer.setQuestionChoice(relationId, {transaction}));
+}
+
+
 before((done) => {
   database.sync({force: true})
   .then(() => Quiz.bulkCreate([
@@ -51,7 +64,20 @@ before((done) => {
         {id: 103, type: 'textarea', question: 'lorem ipsum', questionChoices: []},
       ],
     }, {include: [Question.scope('withChoices')]}))
-    .then((quiz) => quiz.createUser({name: 'random name', hash: 'testhash'}))
+    .then((quiz) => quiz.createUser({name: 'random name', hash: 'testhash'})
+      .then(() => User.findOne({where: {id: 2}}))
+      .then((user) => database.transaction((transaction) => {
+        const textAnswer = saveTextAnswer(transaction, user);
+        const choiceAnswer = saveChoiceAnswer(transaction, user);
+        return Promise.all([
+          choiceAnswer({isCorrect: true})(101),
+          choiceAnswer({isCorrect: false})(103),
+          choiceAnswer({isCorrect: false})(105),
+          choiceAnswer({isCorrect: false})(106),
+          textAnswer(102)({value: 'correct answer', isCorrect: true}),
+          textAnswer(103)({value: 'some random stuff', isCorrect: null}),
+        ]);
+      })))
   .then(() => done())
   .catch(done);
 });

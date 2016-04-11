@@ -21,12 +21,12 @@ export const QuestionChoice = database.define('questionChoice', models.QuestionC
 });
 
 export const Question = database.define('question', models.Question, {
+  timestamps: false,
   scopes: {
     withChoices: {
       include: [QuestionChoice],
     },
   },
-  timestamps: false,
 });
 
 export const Quiz = database.define('quiz', models.Quiz, {
@@ -58,9 +58,14 @@ export const UserChoiceAnswer = database.define('userChoiceAnswer', models.UserC
 });
 
 export const User = database.define('user', models.User, {
+  updatedAt: false,
   scopes: {
     withAnswers: {
-      include: [UserTextAnswer, UserChoiceAnswer],
+      include: [
+        {model: UserTextAnswer, attributes: ['isCorrect', 'questionId', 'value']},
+        {model: UserChoiceAnswer, attributes: ['isCorrect', 'questionChoiceId'],
+          include: [{model: QuestionChoice, attributes: ['questionId']}]},
+      ],
     },
   },
 });
