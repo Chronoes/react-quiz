@@ -1,13 +1,13 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import getQuiz from '../server/routes/quiz/getQuiz';
 import saveQuizAnswers from '../server/routes/quiz/saveQuizAnswers';
-import {Quiz, User} from '../server/database';
-import {Request, Response} from './mocks';
+import { Quiz, User } from '../server/database';
+import { Request, Response } from './mocks';
 
 describe('API Quiz route', () => {
   describe('GET request', () => {
     it('should respond with quiz data and created user hash', (done) => {
-      const req = new Request({name: 'dis be name'});
+      const req = new Request({ name: 'dis be name' });
       const res = new Response();
 
       return getQuiz(req, res)
@@ -20,7 +20,7 @@ describe('API Quiz route', () => {
     });
 
     it('should respond with Bad Request if name parameter missing or invalid', () => {
-      const req = new Request({name: ''});
+      const req = new Request({ name: '' });
       const res = new Response();
 
       getQuiz(req, res);
@@ -30,15 +30,15 @@ describe('API Quiz route', () => {
 
     before(() => {
       it('should respond with Not Found if no quizzes are active', (done) => {
-        const req = new Request({name: 'dis be name'});
+        const req = new Request({ name: 'dis be name' });
         const res = new Response();
 
-        return Quiz.update({status: 'passive'}, {where: {status: 'active'}})
+        return Quiz.update({ status: 'passive' }, { where: { status: 'active' } })
         .then(() => getQuiz(req, res))
         .then(() => {
           expect(res.statusCode).to.equal(404);
           expect(res.sentBody.message).to.have.length.above(0);
-          return Quiz.update({status: 'active'}, {where: {status: 'passive'}});
+          return Quiz.update({ status: 'active' }, { where: { status: 'passive' } });
         })
         .catch(done);
       });
@@ -51,10 +51,10 @@ describe('API Quiz route', () => {
         userHash: 'testhash',
         timeSpent: 930,
         questions: [
-          {id: 100, answer: 101},
-          {id: 101, answer: [103, 105]},
-          {id: 102, answer: ['correct answer']},
-          {id: 103, answer: '<irrelevant text here>'},
+          { id: 100, answer: 101 },
+          { id: 101, answer: [103, 105] },
+          { id: 102, answer: ['correct answer'] },
+          { id: 103, answer: '<irrelevant text here>' },
         ],
       };
 
@@ -62,10 +62,10 @@ describe('API Quiz route', () => {
       const res = new Response();
 
       return saveQuizAnswers(req, res)
-      .then(() => User.scope('withAnswers').count({where: {hash: answers.userHash}}))
+      .then(() => User.scope('withAnswers').count({ where: { hash: answers.userHash } }))
       .then((answerCount) => {
         expect(answerCount).to.equal(6);
-        expect(res.sentBody).to.deep.equal({correctAnswers: 2});
+        expect(res.sentBody).to.deep.equal({ correctAnswers: 2 });
         done();
       })
       .catch(done);
@@ -76,20 +76,20 @@ describe('API Quiz route', () => {
         const req = new Request();
         const res = new Response();
 
-        saveQuizAnswers(req.setBody({userHash: '', questions: [{id: 3, answer: 'whatever'}]}), res);
+        saveQuizAnswers(req.setBody({ userHash: '', questions: [{ id: 3, answer: 'whatever' }] }), res);
         expect(res.statusCode).to.equal(400);
         expect(res.sentBody.message).to.have.length.above(0);
         expect(res.sentBody.errors).to.be.an('array');
         expect(res.sentBody.errors).to.have.lengthOf(2);
 
-        saveQuizAnswers(req.setBody({questions: [{id: 3, answer: 'whatever'}]}), res);
+        saveQuizAnswers(req.setBody({ questions: [{ id: 3, answer: 'whatever' }] }), res);
         expect(res.statusCode).to.equal(400);
         expect(res.sentBody.message).to.have.length.above(0);
         expect(res.sentBody.errors).to.be.an('array');
         expect(res.sentBody.errors).to.have.lengthOf(2);
 
         saveQuizAnswers(
-          req.setBody({questions: [{id: 3, answer: 'whatever'}], userHash: 'randomhash', timeSpent: -23}), res);
+          req.setBody({ questions: [{ id: 3, answer: 'whatever' }], userHash: 'randomhash', timeSpent: -23 }), res);
         expect(res.statusCode).to.equal(400);
         expect(res.sentBody.message).to.have.length.above(0);
         expect(res.sentBody.errors).to.be.an('array');
@@ -102,10 +102,10 @@ describe('API Quiz route', () => {
         userHash: 'this hash does not exist',
         timeSpent: 930,
         questions: [
-          {id: 100, answer: 101},
-          {id: 101, answer: [103, 105]},
-          {id: 102, answer: ['correct answer']},
-          {id: 103, answer: '<irrelevant text here>'},
+          { id: 100, answer: 101 },
+          { id: 101, answer: [103, 105] },
+          { id: 102, answer: ['correct answer'] },
+          { id: 103, answer: '<irrelevant text here>' },
         ],
       };
 

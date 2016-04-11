@@ -1,7 +1,7 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 
-import {Request, Response} from './mocks';
-import {validateIdParam} from '../server/routes/admin-router.js';
+import { Request, Response } from './mocks';
+import { validateIdParam } from '../server/routes/admin-router.js';
 import getQuizList from '../server/routes/admin/getQuizList';
 import getQuiz from '../server/routes/admin/getQuiz';
 import getQuizUsers from '../server/routes/admin/getQuizUsers';
@@ -27,7 +27,7 @@ describe('API Admin route', () => {
       });
 
       it('should return a list of quizzes limited by query options', (done) => {
-        const req = new Request({limit: 1, offset: 1});
+        const req = new Request({ limit: 1, offset: 1 });
         const res = new Response();
 
         return getQuizList(req, res)
@@ -49,7 +49,7 @@ describe('API Admin route', () => {
       const validateQuizIdParam = validateIdParam('quizId')[1];
 
       it('should assign valid ID to request parameters', () => {
-        const req = new Request({}, {quizId: 3});
+        const req = new Request({}, { quizId: 3 });
         const res = new Response();
 
         expect(validateQuizIdParam(req, res, () => true)).to.be.true;
@@ -57,7 +57,7 @@ describe('API Admin route', () => {
       });
 
       it('should respond with Bad Request if ID is not a number', () => {
-        const req = new Request({}, {quizId: 'not a number'});
+        const req = new Request({}, { quizId: 'not a number' });
         const res = new Response();
 
         validateQuizIdParam(req, res, () => true);
@@ -68,7 +68,7 @@ describe('API Admin route', () => {
 
     describe('GET request', () => {
       it('should respond with a quiz on existing ID', (done) => {
-        const req = new Request({}, {quizId: 1});
+        const req = new Request({}, { quizId: 1 });
         const res = new Response();
 
         return getQuiz(req.setPath('/quiz/1'), res)
@@ -82,7 +82,7 @@ describe('API Admin route', () => {
       });
 
       it('should respond with Not Found if quiz with given ID does not exist', (done) => {
-        const req = new Request({}, {quizId: 9999999});
+        const req = new Request({}, { quizId: 9999999 });
         const res = new Response();
 
         return getQuiz(req, res)
@@ -95,7 +95,7 @@ describe('API Admin route', () => {
       });
 
       it('should call next handler if path does not end with ID', (done) => {
-        const req = new Request({}, {quizId: 1});
+        const req = new Request({}, { quizId: 1 });
         const res = new Response();
 
         return getQuiz(req.setPath('/quiz/1/something'), res, () => true)
@@ -110,7 +110,7 @@ describe('API Admin route', () => {
       describe('/users route', () => {
         describe('GET request', () => {
           it('should respond with a list of users who have answered the quiz', (done) => {
-            const req = new Request({}, {quizId: 1});
+            const req = new Request({}, { quizId: 1 });
             const res = new Response();
 
             return getQuiz(req.setPath('/quiz/1/users'), res, () => true)
@@ -135,14 +135,14 @@ describe('API Admin route', () => {
 
   describe('/user/:userId', () => {
     it('should respond with user and their answers', (done) => {
-      const req = new Request({}, {userId: 2});
+      const req = new Request({}, { userId: 2 });
       const res = new Response();
 
       return getUser(req, res)
       .then(() => {
         expect(res.statusCode).to.equal(200);
         expect(res.sentBody).to.have.all.keys('quizId', 'answers', 'createdAt', 'timeSpent', 'name');
-        const {answers} = res.sentBody;
+        const { answers } = res.sentBody;
         expect(answers).to.be.an('object');
         expect(answers).to.have.all.keys('100', '101', '102', '103');
         Object.keys(answers).forEach((key) => {

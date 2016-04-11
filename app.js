@@ -1,15 +1,10 @@
-import express from 'express';
 import bodyParser from 'body-parser';
-import {readFile} from 'fs';
-import path from 'path';
 import historyApiFallback from 'connect-history-api-fallback';
-// import {join} from 'path';
-// import glob from 'glob';
-
-import conf from './server/conf';
-
+import express from 'express';
+import { readFile } from 'fs';
+import path from 'path';
 import api from './server/api-router';
-
+import conf from './server/conf';
 const app = express();
 
 app.use(bodyParser.json());
@@ -32,20 +27,6 @@ readFile(conf.get('secretPath'), 'utf8', (err, secret) => {
   }
   app.set('secret', secret);
 });
-
-// const staticPath = join(__dirname, '/static/');
-//
-// glob('**/*', {cwd: staticPath, nodir: true}, (err, files) => {
-//   if (err) {
-//     throw err;
-//   }
-//
-//   app.all('/*', (req, res) => {
-//     const sanitizedPath = req.path.replace(/\/{2,}/, '/');
-//     const staticFiles = files.filter(file => sanitizedPath.includes(file));
-//     res.sendFile(staticFiles.length ? join(staticPath, staticFiles[0]) : staticPath);
-//   });
-// });
 
 export const staticFiles = express.static(path.join(__dirname, 'static'));
 

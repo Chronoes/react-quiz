@@ -9,7 +9,7 @@ import minifyHtml from 'gulp-htmlmin';
 import mocha from 'gulp-mocha';
 import env from 'gulp-env';
 
-import {spawn} from 'child_process';
+import { spawn } from 'child_process';
 import runSequence from 'run-sequence';
 import notifier from 'node-notifier';
 
@@ -56,7 +56,7 @@ gulp.task('line-count', () =>
       directories.test,
     ])
   .pipe(remember('scripts'))
-  .pipe(sloc({tolerant: true}))
+  .pipe(sloc({ tolerant: true }))
 );
 
 gulp.task('lint:sass', () =>
@@ -85,7 +85,7 @@ gulp.task('html', () =>
 
 gulp.task('html:production', () =>
   gulp.src(directories.source.index)
-  .pipe(minifyHtml({collapseWhitespace: true}))
+  .pipe(minifyHtml({ collapseWhitespace: true }))
   .pipe(gulp.dest(directories.distribution))
 );
 
@@ -99,9 +99,9 @@ gulp.task('test', ['env-testing'], () => {
   // Patch for extensible destructuring
   require('extensible-polyfill').patch('safe');
 
-  return gulp.src(directories.test, {read: false})
+  return gulp.src(directories.test, { read: false })
   .pipe(remember('test'))
-  .pipe(mocha({reporter: 'spec', timeout: 10000, globals: '__extensible_get__'}));
+  .pipe(mocha({ reporter: 'spec', timeout: 10000, globals: '__extensible_get__' }));
 });
 
 
