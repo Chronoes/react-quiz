@@ -14,8 +14,6 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 const application = require('./app');
 const app = application.default;
 
-const database = require('./server/database').default;
-
 const compiler = webpack(config);
 
 app.use(webpackDevMiddleware(compiler, {
@@ -38,13 +36,22 @@ app.use((req, res, next) => {
 app.all('/*', application.staticFiles);
 
 /* eslint no-console: 0 */
-database.sync().then(() => {
+function initServer() {
   const server = app.listen(process.env.PORT || 1337, err => {
     if (err) {
-      return console.log(err);
+      throw err;
     }
 
     return console.log(`Listening at http://localhost:${server.address().port}`);
   });
-})
-.catch(console.error);
+}
+
+if (process.env.NODE_ENV_OPTS === 'live-api') {
+  const database = require('./server/database').default;
+
+  database.sync()
+  .then(initServer)
+  .catch(console.error);
+} else {
+  initServer();
+}
