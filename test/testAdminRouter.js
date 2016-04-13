@@ -143,10 +143,9 @@ describe('API Admin route', () => {
         expect(res.statusCode).to.equal(200);
         expect(res.sentBody).to.have.all.keys('quizId', 'answers', 'createdAt', 'timeSpent', 'name');
         const { answers } = res.sentBody;
-        expect(answers).to.be.an('object');
-        expect(answers).to.have.all.keys('100', '101', '102', '103');
-        Object.keys(answers).forEach((key) => {
-          expect(answers[key]).to.have.all.keys('isCorrect', 'answer');
+        expect(answers).to.be.an('array');
+        answers.forEach((answer) => {
+          expect(answer).to.have.all.keys('id', 'isCorrect', 'answer');
         });
         done();
       })

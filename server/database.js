@@ -22,6 +22,9 @@ export const QuestionChoice = database.define('questionChoice', models.QuestionC
 
 export const Question = database.define('question', models.Question, {
   timestamps: false,
+  defaultScope: {
+    order: [['order']],
+  },
   scopes: {
     withChoices: {
       include: [QuestionChoice],

@@ -14,6 +14,12 @@ describe('API Quiz route', () => {
       .then(() => {
         expect(res.statusCode).to.equal(200);
         expect(res.sentBody).to.have.all.keys('id', 'userHash', 'title', 'timeLimit', 'questions');
+        res.sentBody.questions.forEach((question) => {
+          expect(question).to.have.all.keys('id', 'question', 'type', 'order', 'choices');
+          question.choices.forEach((choice) => {
+            expect(choice).to.have.all.keys('id', 'value');
+          });
+        });
         done();
       })
       .catch(done);

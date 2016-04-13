@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import jwt from 'jsonwebtoken';
-
 import * as util from '../server/util';
 
 describe('Utility functions', () => {
@@ -61,7 +60,9 @@ describe('Utility functions', () => {
   describe('#genChecksum()', () => {
     it('should return a SHA-1 hash of given payload', () => {
       expect(util.genChecksum({ id: 30, name: 'not my name' })).to.equal('96c25ed3edb27be12e2d4852194b7e6ca463e639');
-      expect(util.genChecksum({ value: 23023, index: 3, name: '' })).to.equal('17b2809b18200c1ebf4b9f5cd49f53cdbee3067e');
+      expect(util.genChecksum({
+        value: 23023, index: 3, name: '',
+      })).to.equal('17b2809b18200c1ebf4b9f5cd49f53cdbee3067e');
     });
   });
 
@@ -94,7 +95,11 @@ describe('Utility functions', () => {
       expect(boundPartialPick).to.be.a('function');
       expect(boundPartialPick({})).to.be.empty;
       expect(boundPartialPick(
-        { some: '142', things: 13.9, to: [2, 3, 5, 7], be: {}, stuff: true })).to.deep.equal({ some: '142', stuff: true });
+        { some: '142', things: 13.9, to: [2, 3, 5, 7], be: {}, stuff: true }))
+        .to.deep.equal({ some: '142', stuff: true });
+      expect(util.partialPick([['change', 'take'], ['keys', 'cupcakes'], 'not'])({
+        change: 'these', keys: 'please', not: 'this', ignore: true,
+      })).to.deep.equal({ take: 'these', cupcakes: 'please', not: 'this' });
     });
   });
 });

@@ -1,39 +1,31 @@
-import { isInvalidDatabaseId, parseIntBase10 } from '../../util';
-import { Seq } from 'immutable';
+import { isPositiveNumber, parseIntBase10 } from '../../util';
+import { Seq, fromJS as immutableJS } from 'immutable';
 
 export class ValidationError extends Error {}
 
-export function mapQuestionsById(questions) {
-  const mappedQuestions = {};
-  questions.forEach(({ id, questionChoices, ...other }) => {
-    const choices = {};
-    questionChoices.forEach(({ id: choiceId, ...values }) => { choices[choiceId] = values; });
-    mappedQuestions[id] = { choices, ...other };
-  });
-  return mappedQuestions;
-}
-
-export function validateAnswer(questions) {
+export function validateAnswer(questionsRaw) {
+  const questions = immutableJS(questionsRaw);
   return (userAnswer) => new Promise((resolve, reject) => {
     if (typeof userAnswer !== 'object') {
       return reject(new ValidationError('User answer must be an object'));
     }
-    const { id = 0, answer = null } = userAnswer;
-    const questionId = parseIntBase10(id);
-    if (isInvalidDatabaseId(questionId) || answer === null) {
+    const { answer = null } = userAnswer;
+    const questionId = parseIntBase10(userAnswer.id);
+    if (!isPositiveNumber(questionId) || answer === null) {
       return reject(new ValidationError('User answer format: {id: Number, answer: Number || String || Array}'));
     }
-    if (!questions[questionId]) {
+    const question = questions.find(({ id }) => id === questionId);
+    if (!question) {
       return reject(new ValidationError(`Question ID ${questionId} does not exist`));
     }
-    const { type } = questions[questionId];
+    const { type } = question;
     const error = { expected: '' };
     if (type === 'checkbox') {
       if (!Array.isArray(answer)) {
         error.expected = 'Array of Numbers';
       } else {
         const answers = answer.map(parseIntBase10);
-        if (answers.some(isInvalidDatabaseId)) {
+        if (!answers.every(isPositiveNumber)) {
           error.expected = 'Array of Numbers';
         } else {
           return resolve({ questionId, answer: answers });
@@ -49,7 +41,7 @@ export function validateAnswer(questions) {
       }
     } else if (type === 'radio') {
       const parsed = parseIntBase10(answer);
-      if (isInvalidDatabaseId(parsed)) {
+      if (!isPositiveNumber(parsed)) {
         error.expected = 'Number';
       } else {
         return resolve({ questionId, answer: parsed });
@@ -64,28 +56,28 @@ export function validateAnswer(questions) {
   });
 }
 
-export function verifyAnswer(questions) {
+export function verifyAnswer(questionsRaw) {
+  const questions = immutableJS(questionsRaw);
   return ({ answer, questionId }) => new Promise((resolve) => {
-    const { type, choices } = questions[questionId];
+    const { type, questionChoices } = questions.find(({ id }) => id === questionId);
     const resolvable = { questionId, answer, isCorrect: null };
     if (type === 'radio') {
-      return resolve({ ...resolvable, isCorrect: !!(choices[answer] && choices[answer].isAnswer) });
+      const question = questionChoices.find(({ id }) => id === answer);
+      return resolve({ ...resolvable, isCorrect: !!(question && question.get('isAnswer')) });
     } else if (type === 'checkbox') {
-      const choiceSeq = new Seq(choices).filter((value) => value.isAnswer).cacheResult();
+      const choiceSeq = new Seq(questionChoices.filter(({ isAnswer }) => isAnswer));
       const answerSeq = new Seq.Set(answer);
       return resolve({ ...resolvable,
         isCorrect: choiceSeq.count() === answerSeq.count() &&
-          choiceSeq.keySeq()
-          .map(parseIntBase10)
+          choiceSeq.map(({ id }) => id)
           .toSetSeq()
           .equals(answerSeq),
       });
     } else if (type === 'fillblank') {
       return resolve({ ...resolvable,
-        isCorrect: new Seq(choices)
+        isCorrect: new Seq(questionChoices)
         .sort()
-        .map((choice) => choice.value)
-        .valueSeq()
+        .map(({ value }) => value)
         .equals(new Seq(answer.map((ans) => ans.trim()))),
       });
     }

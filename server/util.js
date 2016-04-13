@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt-as-promised';
-import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 
 export function genSaltyHash(password) {
   return bcrypt.hash(password, 10);
@@ -38,8 +38,8 @@ export function verifyChecksum(payload, hash) {
   return genChecksum(payload) === hash;
 }
 
-export function isInvalidDatabaseId(value) {
-  return isNaN(value) || value <= 0;
+export function isPositiveNumber(value) {
+  return !isNaN(value) && value > 0;
 }
 
 export function parseIntBase10(nr) {
@@ -61,7 +61,11 @@ export function parseNumberDefault(value, end, start = 0) {
 
 export function partialPick(keys) {
   return (object) => keys.reduce((carry, key) => {
-    if (object[key] !== undefined) {
+    if (Array.isArray(key)) {
+      if (object[key[0]] !== undefined) {
+        carry[key[1]] = object[key[0]];
+      }
+    } else if (object[key] !== undefined) {
       carry[key] = object[key];
     }
     return carry;

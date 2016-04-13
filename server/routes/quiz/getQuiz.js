@@ -1,8 +1,6 @@
 import { Quiz, User } from '../../database';
 import logger from '../../logger';
-import { genChecksum } from '../../util';
-
-// TODO: Questions need a proper order by, set by the admin
+import { genChecksum, partialPick } from '../../util';
 
 export default (req, res) => {
   const { name = '' } = req.query;
@@ -20,7 +18,13 @@ export default (req, res) => {
       .then(() => user.update({ hash: genChecksum({ id: user.id, createdAt: user.createdAt }) })))
     .then((user) => {
       logger.log(`Served quiz ID ${quiz.id} to hash ${user.hash}`);
-      return res.json({ ...(quiz.toJSON()), userHash: user.hash });
+      const quizJson = quiz.toJSON();
+      return res.json({ ...quizJson,
+        questions: quizJson.questions
+          .map(partialPick(['id', 'type', 'question', 'order', ['questionChoices', 'choices']]))
+          .map((question) => ({ ...question, choices: question.choices.map(partialPick(['id', 'value'])) })),
+        userHash: user.hash,
+      });
     });
   })
   .catch((err) => {

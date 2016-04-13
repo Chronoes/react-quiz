@@ -2,83 +2,44 @@ import { expect } from 'chai';
 import * as util from '../server/routes/quiz/utilQuiz';
 
 describe('Quiz utility functions', () => {
-  const questions = {
-    1: {
+  const questions = [
+    {
+      id: 1,
       type: 'checkbox',
       question: 'is it ok?',
-      choices: {
-        1: { isAnswer: true, value: 'yes' },
-        2: { isAnswer: false, value: 'maybe' },
-        3: { isAnswer: true, value: 'no' },
-      },
+      questionChoices: [
+        { id: 1, isAnswer: true, value: 'yes' },
+        { id: 2, isAnswer: false, value: 'maybe' },
+        { id: 3, isAnswer: true, value: 'no' },
+      ],
     },
-    2: {
+    {
+      id: 2,
       type: 'radio',
       question: 'maybe it is now?',
-      choices: {
-        5: { isAnswer: false, value: 'yes' },
-        6: { isAnswer: true, value: 'maybe' },
-      },
+      questionChoices: [
+        { id: 5, isAnswer: false, value: 'yes' },
+        { id: 6, isAnswer: true, value: 'maybe' },
+      ],
     },
-    40: {
+    {
+      id: 40,
       type: 'fillblank',
       question: 'oh dear',
-      choices: {
-        10: { isAnswer: true, value: 'yes' },
-        11: { isAnswer: true, value: 'yes twice' },
-        12: { isAnswer: true, value: '30' },
-      },
+      questionChoices: [
+        { id: 10, isAnswer: true, value: 'yes' },
+        { id: 11, isAnswer: true, value: 'yes twice' },
+        { id: 12, isAnswer: true, value: '30' },
+      ],
     },
-    11: {
+    {
+      id: 11,
       type: 'textarea',
       question: 'oh dear',
-      choices: {},
+      questionChoices: [],
     },
-  };
+  ];
 
-  describe('#mapQuestionsById()', () => {
-    it('should return a map of ids -> data from questions as queried from database', () => {
-      const originalQuestions = [
-        {
-          id: 1,
-          type: 'checkbox',
-          question: 'is it ok?',
-          questionChoices: [
-            { id: 1, isAnswer: true, value: 'yes' },
-            { id: 2, isAnswer: false, value: 'maybe' },
-            { id: 3, isAnswer: true, value: 'no' },
-          ],
-        },
-        {
-          id: 2,
-          type: 'radio',
-          question: 'maybe it is now?',
-          questionChoices: [
-            { id: 5, isAnswer: false, value: 'yes' },
-            { id: 6, isAnswer: true, value: 'maybe' },
-          ],
-        },
-        {
-          id: 40,
-          type: 'fillblank',
-          question: 'oh dear',
-          questionChoices: [
-            { id: 10, isAnswer: true, value: 'yes' },
-            { id: 11, isAnswer: true, value: 'yes twice' },
-            { id: 12, isAnswer: true, value: '30' },
-          ],
-        },
-        {
-          id: 11,
-          type: 'textarea',
-          question: 'oh dear',
-          questionChoices: [],
-        },
-      ];
-
-      expect(util.mapQuestionsById(originalQuestions)).to.deep.equal(questions);
-    });
-  });
   describe('#validateAnswer()', () => {
     const validateAnswer = util.validateAnswer(questions);
 

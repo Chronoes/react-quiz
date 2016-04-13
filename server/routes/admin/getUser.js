@@ -8,6 +8,7 @@ function transformQuestion(selector) {
   return (question) => question.reduce((carry, answer) =>
     carry.update('answer', List.of(carry.get(selector)), (list) => list.push(answer.get(selector))))
   .update((answerMap) => answerMap.has('answer') ? answerMap : answerMap.set('answer', answerMap.get(selector)))
+  .update((answerMap) => answerMap.set('id', answerMap.get('questionId')))
   .delete(selector)
   .delete('questionId');
 }
@@ -20,12 +21,13 @@ export default (req, res) => {
     const userJson = user.toJSON();
     return res.json({ ...partialPick(attributes)(userJson),
       answers: immutableJS(userJson.userChoiceAnswers)
-          .map((question) => question.flatten())
-          .groupBy(({ questionId }) => questionId)
-          .map(transformQuestion('questionChoiceId'))
+        .map((question) => question.flatten())
+        .groupBy(({ questionId }) => questionId)
+        .map(transformQuestion('questionChoiceId'))
         .concat(immutableJS(userJson.userTextAnswers)
           .groupBy(({ questionId }) => questionId)
           .map(transformQuestion('value')))
+        .valueSeq()
         .toJS(),
     });
   })

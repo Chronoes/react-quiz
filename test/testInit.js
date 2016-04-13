@@ -47,21 +47,21 @@ before((done) => {
       title: 'a testing quiz',
       timeLimit: 30 * 60,
       questions: [
-        { id: 100, type: 'radio', question: 'a nice title', questionChoices: [
+        { id: 100, type: 'radio', question: 'a nice title', order: 1, questionChoices: [
           { id: 100, value: 'impossible', isAnswer: false },
           { id: 101, value: 'improbable', isAnswer: true },
           { id: 102, value: 'inexplicable', isAnswer: false },
         ] },
-        { id: 101, type: 'checkbox', question: 'some other title', questionChoices: [
+        { id: 101, type: 'checkbox', question: 'some other title', order: 2, questionChoices: [
           { id: 103, value: 'irrevocable', isAnswer: false },
           { id: 104, value: 'illogical', isAnswer: true },
           { id: 105, value: 'insurmountable', isAnswer: true },
           { id: 106, value: 'illegal', isAnswer: false },
         ] },
-        { id: 102, type: 'fillblank', question: 'irrelevant', questionChoices: [
+        { id: 102, type: 'fillblank', question: 'irrelevant', order: 3, questionChoices: [
           { value: 'correct answer', isAnswer: true },
         ] },
-        { id: 103, type: 'textarea', question: 'lorem ipsum', questionChoices: [] },
+        { id: 103, type: 'textarea', question: 'lorem ipsum', order: 4, questionChoices: [] },
       ],
     }, { include: [Question.scope('withChoices')] }))
     .then((quiz) => quiz.createUser({ name: 'random name', hash: 'testhash' })

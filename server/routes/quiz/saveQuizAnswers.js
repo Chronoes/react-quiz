@@ -1,7 +1,8 @@
+import { fromJS as immutableJS } from 'immutable';
 import database, { Quiz, User } from '../../database';
 import logger from '../../logger';
-import { mapQuestionsById, verifyAnswer, validateAnswer } from './utilQuiz';
-import { parseIntBase10 } from '../../util';
+import { parseIntBase10, isPositiveNumber } from '../../util';
+import { verifyAnswer, validateAnswer } from './utilQuiz';
 
 function saveTextAnswer(transaction, user) {
   return (relationId) => (values) =>
@@ -15,12 +16,13 @@ function saveChoiceAnswer(transaction, user) {
     .then((choiceAnswer) => choiceAnswer.setQuestionChoice(relationId, { transaction }));
 }
 
-export function saveAnswersToUser(questions, answers, user) {
+export function saveAnswersToUser(questionsRaw, answers, user) {
+  const questions = immutableJS(questionsRaw);
   return database.transaction((transaction) => {
     const boundSaveTextAnswer = saveTextAnswer(transaction, user);
     const boundSaveChoiceAnswer = saveChoiceAnswer(transaction, user);
     return Promise.all(answers.map(({ questionId, answer, isCorrect }) => {
-      const { type } = questions[questionId];
+      const { type } = questions.find(({ id }) => id === questionId);
       const textAnswer = boundSaveTextAnswer(questionId);
       const choiceAnswer = boundSaveChoiceAnswer({ isCorrect });
       if (type === 'textarea') {
@@ -42,7 +44,7 @@ export default (req, res) => {
     errors.push('userHash must be a hash String');
   }
   const timeSpent = parseIntBase10(timeSpentUnparsed);
-  if (isNaN(timeSpent) || timeSpent <= 0) {
+  if (!isPositiveNumber(timeSpent)) {
     errors.push('timeSpent must be a positive Number');
   }
   if (Array.isArray(questions) && questions.length === 0) {
@@ -58,7 +60,7 @@ export default (req, res) => {
       logger.warn(`No user exists with hash ${userHash}`);
       return res.status(404).json({ message: 'No such user exists.' });
     }
-    const originalQuestions = mapQuestionsById(user.toJSON().quiz.questions);
+    const originalQuestions = user.toJSON().quiz.questions;
     const validate = validateAnswer(originalQuestions);
     const verify = verifyAnswer(originalQuestions);
     return Promise.all(questions.map((answer) =>
