@@ -1,6 +1,6 @@
 import { Quiz, User } from '../../database';
 import logger from '../../logger';
-import { genChecksum, partialPick } from '../../util';
+import { genChecksum, partialPick, partialOmit } from '../../util';
 
 export default (req, res) => {
   const { name = '' } = req.query;
@@ -18,7 +18,7 @@ export default (req, res) => {
       .then(() => user.update({ hash: genChecksum({ id: user.id, createdAt: user.createdAt }) })))
     .then((user) => {
       logger.log(`Served quiz ID ${quiz.id} to hash ${user.hash}`);
-      const quizJson = quiz.toJSON();
+      const quizJson = partialOmit(['status'])(quiz.toJSON());
       return res.json({ ...quizJson,
         questions: quizJson.questions
           .map(partialPick(['id', 'type', 'question', 'order', ['questionChoices', 'choices']]))

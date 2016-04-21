@@ -5,7 +5,7 @@ import { Quiz, User } from '../server/database';
 import { Request, Response } from './mocks';
 
 describe('API Quiz route', () => {
-  describe('GET request', () => {
+  describe('#getQuiz()', () => {
     it('should respond with quiz data and created user hash', (done) => {
       const req = new Request({ name: 'dis be name' });
       const res = new Response();
@@ -51,7 +51,7 @@ describe('API Quiz route', () => {
     });
   });
 
-  describe('POST request', () => {
+  describe('#saveQuizAnswers()', () => {
     it('should save sent answers and respond with number of correct answers', (done) => {
       const answers = {
         userHash: 'testhash',

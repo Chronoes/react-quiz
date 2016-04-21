@@ -1,15 +1,18 @@
 import { expect } from 'chai';
+import { Instance as SequelizeInstance } from 'sequelize';
 
+import { Quiz } from '../server/database';
 import { Request, Response } from './mocks';
 import { validateIdParam } from '../server/routes/admin-router.js';
 import getQuizList from '../server/routes/admin/getQuizList';
-import getQuiz from '../server/routes/admin/getQuiz';
+import getQuiz, { fetchQuiz } from '../server/routes/admin/getQuiz';
 import getQuizUsers from '../server/routes/admin/getQuizUsers';
 import getUser from '../server/routes/admin/getUser';
+import updateQuizStatus from '../server/routes/admin/updateQuizStatus';
 
 describe('API Admin route', () => {
   describe('/quiz route', () => {
-    describe('GET request', () => {
+    describe('#getQuizList()', () => {
       it('should return a list of quizzes', (done) => {
         const req = new Request();
         const res = new Response();
@@ -45,7 +48,7 @@ describe('API Admin route', () => {
   });
 
   describe('/quiz/:quizId route', () => {
-    describe('parameter validation', () => {
+    describe('#validateIdParam()', () => {
       const validateQuizIdParam = validateIdParam('quizId')[1];
 
       it('should assign valid ID to request parameters', () => {
@@ -66,15 +69,15 @@ describe('API Admin route', () => {
       });
     });
 
-    describe('GET request', () => {
-      it('should respond with a quiz on existing ID', (done) => {
+    describe('#fetchQuiz()', () => {
+      it('should assign quiz to request on existing ID', (done) => {
         const req = new Request({}, { quizId: 1 });
         const res = new Response();
 
-        return getQuiz(req.setPath('/quiz/1'), res)
+        return fetchQuiz(req, res)
         .then(() => {
-          expect(res.statusCode).to.equal(200);
-          expect(res.sentBody).to.have.all.keys(
+          expect(req.quiz).to.be.instanceof(SequelizeInstance);
+          expect(req.quiz.toJSON()).to.have.all.keys(
             'id', 'status', 'title', 'timeLimit', 'createdAt', 'updatedAt', 'questions');
           done();
         })
@@ -85,7 +88,7 @@ describe('API Admin route', () => {
         const req = new Request({}, { quizId: 9999999 });
         const res = new Response();
 
-        return getQuiz(req, res)
+        return fetchQuiz(req, res)
         .then(() => {
           expect(res.statusCode).to.equal(404);
           expect(res.sentBody.message).to.have.length.above(0);
@@ -93,41 +96,69 @@ describe('API Admin route', () => {
         })
         .catch(done);
       });
+    });
 
-      it('should call next handler if path does not end with ID', (done) => {
-        const req = new Request({}, { quizId: 1 });
+    describe('#getQuiz()', () => {
+      it('should respond with a quiz on existing ID', (done) => {
+        const req = new Request();
         const res = new Response();
 
-        return getQuiz(req.setPath('/quiz/1/something'), res, () => true)
-        .then((called) => {
-          expect(called).to.be.true;
-          expect(req).to.have.any.keys('quiz');
+        return Quiz.findOne({ where: { id: 1 } })
+        .then((quiz) => {
+          req.quiz = quiz;
+          getQuiz(req, res);
+          expect(res.statusCode).to.equal(200);
+          expect(res.sentBody).to.deep.equal(quiz.toJSON());
           done();
         })
         .catch(done);
       });
+    });
 
-      describe('/users route', () => {
-        describe('GET request', () => {
-          it('should respond with a list of users who have answered the quiz', (done) => {
-            const req = new Request({}, { quizId: 1 });
-            const res = new Response();
+    describe('#updateQuizStatus()', () => {
+      it('should respond with OK when status was changed', (done) => {
+        const req = new Request();
+        const res = new Response();
 
-            return getQuiz(req.setPath('/quiz/1/users'), res, () => true)
-            .then((called) => {
-              expect(called).to.be.true;
-              expect(req).to.have.any.keys('quiz');
-              return getQuizUsers(req, res);
-            })
-            .then(() => {
-              expect(res.statusCode).to.equal(200);
-              expect(res.sentBody).to.be.an('array');
-              expect(res.sentBody).to.have.length.at.least(3);
-              expect(res.sentBody[0]).to.have.all.keys('id', 'name', 'timeSpent', 'createdAt');
-              done();
-            })
-            .catch(done);
+        req.setBody({ status: 'passive' });
+        return Quiz.findOne({ where: { id: 3 } })
+        .then((quiz) => {
+          expect(quiz.status).to.equal('active');
+          req.quiz = quiz;
+          return updateQuizStatus(req, res, () => true)
+          .then(() => {
+            expect(res.sentBody).to.have.all.keys('id', 'status', 'title', 'timeLimit', 'createdAt', 'updatedAt');
+            expect(res.sentBody.status).to.equal('passive');
+            return quiz.reload();
           });
+        })
+        .then((quiz) => {
+          expect(quiz.status).to.equal('passive');
+          done();
+        })
+        .catch(done);
+      });
+    });
+
+    describe('/users route', () => {
+      describe('#getQuizUsers()', () => {
+        it('should respond with a list of users who have answered the quiz', (done) => {
+          const req = new Request({}, { quizId: 1 });
+          const res = new Response();
+
+          return Quiz.findOne({ where: { id: 1 } })
+          .then((quiz) => {
+            req.quiz = quiz;
+            return getQuizUsers(req, res);
+          })
+          .then(() => {
+            expect(res.statusCode).to.equal(200);
+            expect(res.sentBody).to.be.an('array');
+            expect(res.sentBody).to.have.length.at.least(3);
+            expect(res.sentBody[0]).to.have.all.keys('id', 'name', 'timeSpent', 'createdAt');
+            done();
+          })
+          .catch(done);
         });
       });
     });

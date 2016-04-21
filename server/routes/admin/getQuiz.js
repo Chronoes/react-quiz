@@ -1,7 +1,7 @@
 import { Quiz } from '../../database';
 import logger from '../../logger';
 
-export default (req, res, next) => {
+export function fetchQuiz(req, res, next) {
   const { quizId } = req.params;
   return Quiz.scope('withQuestions').findById(quizId)
   .then((quiz) => {
@@ -9,14 +9,13 @@ export default (req, res, next) => {
       return res.status(404).json({ message: `No quiz with ID ${quizId} exists.` });
     }
 
-    if (req.path.split('/').pop() !== `${quizId}`) {
-      req.quiz = quiz;
-      return next();
-    }
-    return res.json(quiz);
+    req.quiz = quiz;
+    return next();
   })
   .catch((err) => {
     logger.error(err);
     return res.status(500).json({ message: 'Something happened.' });
   });
-};
+}
+
+export default (req, res) => res.json(req.quiz);

@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt-as-promised';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
+import { Set } from 'immutable';
 
 export function genSaltyHash(password) {
   return bcrypt.hash(password, 10);
@@ -70,4 +71,9 @@ export function partialPick(keys) {
     }
     return carry;
   }, {});
+}
+
+export function partialOmit(keys) {
+  const keySet = new Set(keys);
+  return (object) => partialPick(new Set(Object.keys(object)).subtract(keySet).toArray())(object);
 }

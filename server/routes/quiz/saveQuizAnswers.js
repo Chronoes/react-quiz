@@ -38,12 +38,12 @@ export function saveAnswersToUser(questionsRaw, answers, user) {
 }
 
 export default (req, res) => {
-  const { userHash = '', timeSpent: timeSpentUnparsed = 0, questions = [] } = req.body;
+  const { userHash = '', questions = [] } = req.body;
   const errors = [];
   if (userHash.length === 0) {
     errors.push('userHash must be a hash String');
   }
-  const timeSpent = parseIntBase10(timeSpentUnparsed);
+  const timeSpent = parseIntBase10(req.body.timeSpent);
   if (!isPositiveNumber(timeSpent)) {
     errors.push('timeSpent must be a positive Number');
   }
@@ -63,17 +63,18 @@ export default (req, res) => {
     const originalQuestions = user.toJSON().quiz.questions;
     const validate = validateAnswer(originalQuestions);
     const verify = verifyAnswer(originalQuestions);
-    return Promise.all(questions.map((answer) =>
+    return user.update({ timeSpent })
+    .then(() => Promise.all(questions.map((answer) =>
       validate(answer)
       .then(verify)
-      .catch((err) => { errors.push(err.message); return err; })))
+      .catch((err) => { errors.push(err.message); return err; }))))
     .then((verified) => Promise.resolve(verified.filter((answer) => !(answer instanceof Error))))
     .then((normalised) => saveAnswersToUser(originalQuestions, normalised, user)
       .then(() => {
         if (errors.length > 0) {
           logger.warn(`Errors with user ID ${user.id}: ${errors.join('; ')}`);
         }
-        return res.json({ correctAnswers: normalised.filter(({ isCorrect }) => isCorrect).length });
+        return res.status(201).json({ correctAnswers: normalised.filter(({ isCorrect }) => isCorrect).length });
       }));
   })
   .catch((err) => {

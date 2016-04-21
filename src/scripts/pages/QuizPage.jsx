@@ -8,6 +8,11 @@ import * as quizActions from '../actions/quizActions';
 import QuizForm from '../components/QuizForm';
 import Timer from '../components/Timer';
 
+/*
+ * TODO: Use HTML5 sessionStorage to temporarily cache user answers
+ * TODO: Display alerts for questions that have missing answers before sending to server, ask for confirmation
+*/
+
 class QuizPage extends Component {
   static propTypes = {
     actions: Types.object.isRequired,

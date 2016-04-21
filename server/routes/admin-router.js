@@ -1,9 +1,10 @@
 import { Router } from 'express';
 
 import getQuizList from './admin/getQuizList';
-import getQuiz from './admin/getQuiz';
+import getQuiz, { fetchQuiz } from './admin/getQuiz';
 import getQuizUsers from './admin/getQuizUsers';
 import getUser from './admin/getUser';
+import updateQuizStatus from './admin/updateQuizStatus';
 
 import { parseIntBase10, isPositiveNumber } from '../util';
 
@@ -27,11 +28,11 @@ export function validateIdParam(name) {
 admin.param(...validateIdParam('quizId'));
 
 admin.route('/quiz/:quizId')
-.get(getQuiz);
+.get(fetchQuiz, getQuiz)
 // .post(saveQuizHandler)
-// .put();
+.put(fetchQuiz, updateQuizStatus);
 
-admin.get('/quiz/:quizId/users', getQuiz, getQuizUsers);
+admin.get('/quiz/:quizId/users', fetchQuiz, getQuizUsers);
 
 admin.param(...validateIdParam('userId'));
 

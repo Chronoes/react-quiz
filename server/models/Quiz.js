@@ -1,13 +1,21 @@
-import { STRING, INTEGER } from 'sequelize';
+import { STRING, INTEGER, ValidationError } from 'sequelize';
+import { Map } from 'immutable';
 
+export const statuses = new Map({ passive: 0, active: 1 });
 /* eslint new-cap: 0 */
 export default {
   status: {
-    type: STRING(20),
+    type: INTEGER,
     allowNull: false,
-    defaultValue: 'active',
-    validate: {
-      isIn: [['active', 'passive']],
+    defaultValue: 1,
+    get() {
+      return statuses.keyOf(this.getDataValue('status'));
+    },
+    set(status) {
+      if (!statuses.includes(status)) {
+        throw new ValidationError(`Status must be one of [${statuses.valueSeq().toArray()}]`);
+      }
+      return this.setDataValue('status', status);
     },
   },
 

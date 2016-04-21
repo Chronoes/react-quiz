@@ -3,10 +3,8 @@
 
 .form-container {
   @extend .col-xs-12;
-  @extend .col-sm-8;
-  @extend .col-sm-offset-2;
-  @extend .col-lg-8;
-  @extend .col-lg-offset-2;
+  @extend .col-md-8;
+  @extend .col-md-offset-2;
   margin-top: 1vh;
 }
 

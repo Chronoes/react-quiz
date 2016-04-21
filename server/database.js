@@ -16,11 +16,11 @@ const database = new Sequelize(name, user, password, {
   },
 });
 
-export const QuestionChoice = database.define('questionChoice', models.QuestionChoice, {
+export const QuestionChoice = database.define('questionChoice', models.QuestionChoice.attributes, {
   timestamps: false,
 });
 
-export const Question = database.define('question', models.Question, {
+export const Question = database.define('question', models.Question.attributes, {
   timestamps: false,
   defaultScope: {
     order: [['order']],
@@ -32,14 +32,14 @@ export const Question = database.define('question', models.Question, {
   },
 });
 
-export const Quiz = database.define('quiz', models.Quiz, {
+export const Quiz = database.define('quiz', models.Quiz.attributes, {
   scopes: {
     active: {
-      where: { status: 'active' },
+      where: { status: 1 },
     },
     user: {
       attributes: {
-        exclude: ['createdAt', 'updatedAt', 'status'],
+        exclude: ['createdAt', 'updatedAt'],
       },
     },
     withQuestions: {
@@ -47,20 +47,21 @@ export const Quiz = database.define('quiz', models.Quiz, {
     },
   },
 });
+Quiz.mappings = models.Quiz.mappings;
 
 Quiz.hasMany(Question);
 
 Question.hasMany(QuestionChoice);
 
-export const UserTextAnswer = database.define('userTextAnswer', models.UserTextAnswer, {
+export const UserTextAnswer = database.define('userTextAnswer', models.UserTextAnswer.attributes, {
   timestamps: false,
 });
 
-export const UserChoiceAnswer = database.define('userChoiceAnswer', models.UserChoiceAnswer, {
+export const UserChoiceAnswer = database.define('userChoiceAnswer', models.UserChoiceAnswer.attributes, {
   timestamps: false,
 });
 
-export const User = database.define('user', models.User, {
+export const User = database.define('user', models.User.attributes, {
   updatedAt: false,
   scopes: {
     withAnswers: {
@@ -83,5 +84,7 @@ UserChoiceAnswer.belongsTo(QuestionChoice);
 User.hasMany(UserTextAnswer);
 UserTextAnswer.belongsTo(User);
 UserTextAnswer.belongsTo(Question);
+
+export const RegisteredUser = database.define('registeredUser', models.RegisteredUser.attributes);
 
 export default database;

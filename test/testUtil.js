@@ -102,4 +102,17 @@ describe('Utility functions', () => {
       })).to.deep.equal({ take: 'these', cupcakes: 'please', not: 'this' });
     });
   });
+
+  describe('#partialOmit()', () => {
+    it('should return a function that creates a new object, omitting given prop names', () => {
+      const keys = ['some', 'stuff'];
+      const boundPartialOmit = util.partialOmit(keys);
+
+      expect(boundPartialOmit).to.be.a('function');
+      expect(boundPartialOmit({})).to.be.empty;
+      expect(boundPartialOmit(
+        { some: '142', things: 13.9, to: [2, 3, 5, 7], be: {}, stuff: true }))
+        .to.deep.equal({ things: 13.9, to: [2, 3, 5, 7], be: {} });
+    });
+  });
 });

@@ -32,7 +32,7 @@
     "express": "^4.13.4",
     "font-awesome": "^4.5.0",
     "history": "^2.0.0",
-    "immutable": "^3.7.6",
+    "immutable": "^3.8.1",
     "jsonwebtoken": "^5.7.0",
     "moment": "^2.11.2",
     "pg": "^4.5.1",
