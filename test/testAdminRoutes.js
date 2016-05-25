@@ -8,7 +8,7 @@ import getQuizList from '../server/routes/admin/getQuizList';
 import getQuiz, { fetchQuiz } from '../server/routes/admin/getQuiz';
 import getQuizUsers from '../server/routes/admin/getQuizUsers';
 import getUser from '../server/routes/admin/getUser';
-import updateQuizStatus from '../server/routes/admin/updateQuizStatus';
+import updateQuiz from '../server/routes/admin/updateQuiz';
 
 describe('API Admin route', () => {
   describe('/quiz route', () => {
@@ -115,7 +115,7 @@ describe('API Admin route', () => {
       });
     });
 
-    describe('#updateQuizStatus()', () => {
+    describe('#updateQuiz()', () => {
       it('should respond with OK when status was changed', (done) => {
         const req = new Request();
         const res = new Response();
@@ -125,7 +125,7 @@ describe('API Admin route', () => {
         .then((quiz) => {
           expect(quiz.status).to.equal('active');
           req.quiz = quiz;
-          return updateQuizStatus(req, res, () => true)
+          return updateQuiz(req, res, () => true)
           .then(() => {
             expect(res.sentBody).to.have.all.keys('id', 'status', 'title', 'timeLimit', 'createdAt', 'updatedAt');
             expect(res.sentBody.status).to.equal('passive');

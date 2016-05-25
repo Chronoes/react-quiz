@@ -4,7 +4,7 @@ import getQuizList from './admin/getQuizList';
 import getQuiz, { fetchQuiz } from './admin/getQuiz';
 import getQuizUsers from './admin/getQuizUsers';
 import getUser from './admin/getUser';
-import updateQuizStatus from './admin/updateQuizStatus';
+import updateQuiz from './admin/updateQuiz';
 
 import { parseIntBase10, isPositiveNumber } from '../util';
 
@@ -30,7 +30,7 @@ admin.param(...validateIdParam('quizId'));
 admin.route('/quiz/:quizId')
 .get(fetchQuiz, getQuiz)
 // .post(saveQuizHandler)
-.put(fetchQuiz, updateQuizStatus);
+.put(fetchQuiz, updateQuiz);
 
 admin.get('/quiz/:quizId/users', fetchQuiz, getQuizUsers);
 

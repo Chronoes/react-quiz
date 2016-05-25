@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as util from '../server/routes/quiz/utilQuiz';
+import * as util from '../server/routes/utilQuiz';
 
 describe('Quiz utility functions', () => {
   const questions = [
@@ -208,6 +208,90 @@ describe('Quiz utility functions', () => {
         done();
       })
       .catch(done);
+    });
+  });
+
+  describe('#validateQuiz()', () => {
+    it('should resolve on correct data', (done) => {
+      const quiz = {
+        title: 'Cool stuff',
+        status: 'active',
+        timeLimit: 93,
+        questions: [],
+      };
+
+      return util.validateQuiz(quiz)
+      .then(({ title, status, timeLimit, questions: quizQuestions }) => {
+        expect(title).to.equal(quiz.title);
+        expect(status).to.equal(1);
+        expect(timeLimit).to.equal(quiz.timeLimit);
+        expect(quizQuestions).to.deep.equal(quiz.questions);
+        done();
+      })
+      .catch(done);
+    });
+
+    it('should reject on invalid title', (done) => {
+      const quiz = {
+        title: '',
+        status: 'active',
+        timeLimit: 93,
+        questions: [],
+      };
+
+      return util.validateQuiz(quiz)
+      .then(() => done(new Error(`Invalid title '${quiz.title}' should be rejected`)))
+      .catch((err) => {
+        expect(err).to.be.an('error');
+        done();
+      });
+    });
+
+    it('should reject on invalid status', (done) => {
+      const quiz = {
+        title: 'Correct title',
+        status: 'impossible',
+        timeLimit: 122,
+        questions: [],
+      };
+
+      return util.validateQuiz(quiz)
+      .then(() => done(new Error(`Invalid status '${quiz.status}' should be rejected`)))
+      .catch((err) => {
+        expect(err).to.be.an('error');
+        done();
+      });
+    });
+
+    it('should reject on invalid timeLimit', (done) => {
+      const quiz = {
+        title: 'Correct title',
+        status: 'passive',
+        timeLimit: 0,
+        questions: [],
+      };
+
+      return util.validateQuiz(quiz)
+      .then(() => done(new Error(`Invalid status '${quiz.status}' should be rejected`)))
+      .catch((err) => {
+        expect(err).to.be.an('error');
+        done();
+      });
+    });
+
+    it('should reject on invalid questions', (done) => {
+      const quiz = {
+        title: 'Correct title',
+        status: 'passive',
+        timeLimit: 122,
+      };
+
+      return util.validateQuiz(quiz)
+      .then(() => done(new Error(`Invalid status '${quiz.status}' should be rejected`)))
+      .catch((err) => {
+        expect(err).to.be.an('error');
+        done();
+      });
     });
   });
 });

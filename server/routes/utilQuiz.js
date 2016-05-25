@@ -1,5 +1,8 @@
-import { isPositiveNumber, parseIntBase10 } from '../../util';
+import { isPositiveNumber, parseIntBase10 } from '../util';
 import { Seq, fromJS as immutableJS } from 'immutable';
+import { Quiz } from '../database';
+
+const { statuses } = Quiz.mappings;
 
 export class ValidationError extends Error {}
 
@@ -74,13 +77,44 @@ export function verifyAnswer(questionsRaw) {
           .equals(answerSeq),
       });
     } else if (type === 'fillblank') {
+      const trimmedAnswers = answer.map((ans) => ans.trim());
       return resolve({ ...resolvable,
+        answer: trimmedAnswers,
         isCorrect: new Seq(questionChoices)
         .sort()
         .map(({ value }) => value)
-        .equals(new Seq(answer.map((ans) => ans.trim()))),
+        .equals(new Seq(trimmedAnswers)),
       });
     }
     return resolve(resolvable);
+  });
+}
+
+export function validateQuiz(quiz) {
+  return new Promise((resolve, reject) => {
+    const { status, title, timeLimit, questions } = quiz;
+    if (!statuses.has(status)) {
+      return reject(new ValidationError(`status must be one of [${statuses.keySeq().toArray()}].`));
+    }
+    if (!title || typeof title !== 'string') {
+      return reject(new ValidationError('title must be a String'));
+    }
+    const parsedTimeLimit = parseIntBase10(timeLimit);
+    if (timeLimit !== undefined && !isPositiveNumber(parsedTimeLimit)) {
+      return reject(new ValidationError('timeLimit must be a positive Number'));
+    }
+    if (!Array.isArray(questions)) {
+      return reject(new ValidationError('questions must be an Array'));
+    }
+    return resolve(immutableJS(quiz)
+    .update('status', (statusStr) => statuses.get(statusStr))
+    .set('timeLimit', timeLimit === undefined ? null : parsedTimeLimit)
+    .toJS());
+  });
+}
+
+export function validateQuestion(question) {
+  return new Promise((resolve, reject) => {
+    return reject(new Error('Not yet implemented'));
   });
 }

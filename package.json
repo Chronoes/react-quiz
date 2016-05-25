@@ -26,6 +26,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "axios": "^0.8.1",
+    "babel-core": "^6.9.0",
     "bcrypt-as-promised": "^1.1.0",
     "body-parser": "^1.15.0",
     "bootstrap": "^4.0.0-alpha.2",
@@ -47,7 +48,6 @@
     "sequelize": "^3.19.3"
   },
   "devDependencies": {
-    "babel-core": "^6.4.5",
     "babel-eslint": "^5.0.0",
     "babel-loader": "^6.2.2",
     "babel-plugin-extensible-destructuring": "^3.0.0",
