@@ -4,6 +4,8 @@ import { Quiz } from '../database';
 
 const { statuses } = Quiz.mappings;
 
+const questionTypes = ['radio', 'checkbox', 'fillblank', 'textarea'];
+
 export class ValidationError extends Error {}
 
 export function validateAnswer(questionsRaw) {
@@ -96,7 +98,7 @@ export function validateQuiz(quiz) {
     if (!statuses.has(status)) {
       return reject(new ValidationError(`status must be one of [${statuses.keySeq().toArray()}].`));
     }
-    if (!title || typeof title !== 'string') {
+    if (title && typeof title !== 'string') {
       return reject(new ValidationError('title must be a String'));
     }
     const parsedTimeLimit = parseIntBase10(timeLimit);
@@ -113,8 +115,21 @@ export function validateQuiz(quiz) {
   });
 }
 
-export function validateQuestion(question) {
+export function validateQuestion({ type, question, choices }) {
   return new Promise((resolve, reject) => {
-    return reject(new Error('Not yet implemented'));
+    if (!questionTypes.includes(type)) {
+      return reject(new ValidationError(`type must be one of [${questionTypes}]`));
+    }
+    if (question && typeof question !== 'string') {
+      return reject(new ValidationError('question must be a non-empty String'));
+    }
+    if (type === 'textarea') {
+      return resolve({ type, question });
+    }
+    const trimmedChoices = choices.map(({ value, isAnswer }) => ({ value: value.trim(), isAnswer: !!isAnswer }));
+    if (Array.isArray(choices) && choices.some(({ value }) => typeof value !== 'string' || value.length === 0)) {
+      return reject(new ValidationError('choices must be an Array of { value: String, isAnswer: Boolean }'));
+    }
+    return resolve({ type, question, choices: trimmedChoices });
   });
 }

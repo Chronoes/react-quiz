@@ -85,16 +85,17 @@ export function setChoices(choices) {
   return { type: 'SET_CHOICES', choices: choices.filter(value => value.length > 0) };
 }
 
-export function saveQuiz({ title, questions }) {
+export function saveQuiz({ title, questions, timeLimit }) {
   return (dispatch) => {
     dispatch({ type: 'SAVE_QUIZ' });
     const payload = {
       title,
+      timeLimit,
       questions: questions.map(
         ({ type, question, choices }) => ({
           type,
           question,
-          choices: choices.map(({ value }) => value),
+          choices: choices.map(({ value, isAnswer }) => ({ value, isAnswer })),
         })).toJS(),
     };
     return saveQuizRequest(payload)
