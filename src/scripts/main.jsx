@@ -2,7 +2,7 @@ import { render } from 'react-dom';
 import patchDestructuring from 'extensible-polyfill';
 
 // Patch ImmutableJS for extensible destructuring
-patchDestructuring('safe');
+patchDestructuring('immutable');
 
 require('../styles/main.scss');
 require('font-awesome-webpack');

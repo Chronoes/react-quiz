@@ -68,4 +68,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(({ quiz }) => ({ quiz }), mapDispatchToProps)(AdminQuizPage);
+export default connect(({ admin: { quiz } }) => ({ quiz }), mapDispatchToProps)(AdminQuizPage);
