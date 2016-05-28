@@ -6,8 +6,6 @@ import User from './User';
 import UserTextAnswer from './UserTextAnswer';
 import UserChoiceAnswer from './UserChoiceAnswer';
 
-import RegisteredUser from './RegisteredUser';
-
 export default {
   Quiz: {
     attributes: Quiz,
@@ -27,8 +25,5 @@ export default {
   },
   UserChoiceAnswer: {
     attributes: UserChoiceAnswer,
-  },
-  RegisteredUser: {
-    attributes: RegisteredUser,
   },
 };

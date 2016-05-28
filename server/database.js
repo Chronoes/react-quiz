@@ -85,6 +85,4 @@ User.hasMany(UserTextAnswer);
 UserTextAnswer.belongsTo(User);
 UserTextAnswer.belongsTo(Question);
 
-export const RegisteredUser = database.define('registeredUser', models.RegisteredUser.attributes);
-
 export default database;

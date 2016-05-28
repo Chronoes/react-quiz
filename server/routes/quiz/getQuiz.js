@@ -13,7 +13,7 @@ export default (req, res) => {
       logger.warn('No active quizzes');
       return res.status(404).json({ message: 'No active quizzes exist.' });
     }
-    return User.create({ name })
+    return User.create({ username: name })
     .then((user) => quiz.addUser(user)
       .then(() => user.update({ hash: genChecksum({ id: user.id, createdAt: user.createdAt }) })))
     .then((user) => {
