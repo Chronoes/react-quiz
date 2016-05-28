@@ -4,6 +4,7 @@ import getQuizList from './admin/getQuizList';
 import getQuiz, { fetchQuiz } from './admin/getQuiz';
 import getQuizUsers from './admin/getQuizUsers';
 import getUser from './admin/getUser';
+import saveNewQuiz from './admin/saveNewQuiz';
 import updateQuiz from './admin/updateQuiz';
 
 import { parseIntBase10, isPositiveNumber } from '../util';
@@ -12,7 +13,8 @@ const admin = new Router();
 
 // admin.post('/login', loginHandler);
 admin.route('/quiz')
-.get(getQuizList);
+.get(getQuizList)
+.post(saveNewQuiz);
 
 export function validateIdParam(name) {
   return [name, (req, res, next) => {

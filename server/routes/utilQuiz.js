@@ -98,7 +98,7 @@ export function validateQuiz(quiz) {
     if (!statuses.has(status)) {
       return reject(new ValidationError(`status must be one of [${statuses.keySeq().toArray()}].`));
     }
-    if (title && typeof title !== 'string') {
+    if (!title || typeof title !== 'string') {
       return reject(new ValidationError('title must be a String'));
     }
     const parsedTimeLimit = parseIntBase10(timeLimit);
@@ -108,7 +108,7 @@ export function validateQuiz(quiz) {
     if (!Array.isArray(questions)) {
       return reject(new ValidationError('questions must be an Array'));
     }
-    return resolve(immutableJS(quiz)
+    return resolve(immutableJS({ status, title, timeLimit, questions })
     .update('status', (statusStr) => statuses.get(statusStr))
     .set('timeLimit', timeLimit === undefined ? null : parsedTimeLimit)
     .toJS());
@@ -120,15 +120,23 @@ export function validateQuestion({ type, question, choices }) {
     if (!questionTypes.includes(type)) {
       return reject(new ValidationError(`type must be one of [${questionTypes}]`));
     }
-    if (question && typeof question !== 'string') {
+    if (!question || typeof question !== 'string') {
       return reject(new ValidationError('question must be a non-empty String'));
     }
     if (type === 'textarea') {
       return resolve({ type, question });
     }
-    const trimmedChoices = choices.map(({ value, isAnswer }) => ({ value: value.trim(), isAnswer: !!isAnswer }));
-    if (Array.isArray(choices) && choices.some(({ value }) => typeof value !== 'string' || value.length === 0)) {
-      return reject(new ValidationError('choices must be an Array of { value: String, isAnswer: Boolean }'));
+    if (!Array.isArray(choices) || type === 'fillblank' && choices.length === 0 || choices.length < 2) {
+      return reject(new ValidationError('choices must be an Array of { value: String, isAnswer: Boolean }.' +
+        ' fillblank at least length 1, radio and checkbox at least length 2'));
+    }
+    const trimmedChoices = choices.map(({ value, isAnswer }) =>
+      ({ value: value.trim(), isAnswer: type === 'fillblank' ? true : !!isAnswer }));
+    if (choices.some(({ value }) => typeof value !== 'string' || value.length === 0)) {
+      return reject(new ValidationError('choice values must be non-empty Strings'));
+    }
+    if (choices.filter(({ isAnswer }) => isAnswer).length === 0) {
+      return reject(new ValidationError('Each question (except textarea) must have at least one answer'));
     }
     return resolve({ type, question, choices: trimmedChoices });
   });

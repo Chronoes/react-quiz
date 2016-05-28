@@ -4,7 +4,7 @@ const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 
 // Patch for extensible destructuring
-require('extensible-polyfill').patch('safe');
+require('extensible-polyfill').patch('immutable');
 
 const config = require('./webpack.config.dev').default;
 

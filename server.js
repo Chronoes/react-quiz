@@ -1,7 +1,7 @@
 require('babel-core/register');
 
 // Patch for extensible destructuring
-require('extensible-polyfill').patch('safe');
+require('extensible-polyfill').patch('immutable');
 
 /* eslint no-console: 0 */
 
