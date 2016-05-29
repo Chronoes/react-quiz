@@ -67,15 +67,19 @@ gulp.task('lint:sass', () =>
   .pipe(sasslint.failOnError())
 );
 
-gulp.task('lint:scripts', () =>
-  gulp.src(directories.source.scripts)
-  .pipe(remember('scripts'))
+gulp.task('lint:js', () =>
+  gulp.src([
+    directories.root,
+    directories.source.scripts,
+    directories.server,
+  ])
+  .pipe(remember('js'))
   .pipe(eslint())
   .pipe(eslint.format())
   .pipe(eslint.failAfterError())
 );
 
-gulp.task('lint', ['lint:scripts', 'lint:sass']);
+gulp.task('lint', ['lint:js', 'lint:sass']);
 
 gulp.task('html', () =>
   gulp.src(directories.source.index)

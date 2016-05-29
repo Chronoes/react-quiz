@@ -92,7 +92,7 @@ export function verifyAnswer(questionsRaw) {
   });
 }
 
-export function validateQuiz(quiz) {
+export function validateQuizParams(quiz) {
   return new Promise((resolve, reject) => {
     const { status, title, timeLimit, questions } = quiz;
     if (!statuses.has(status)) {
@@ -115,8 +115,12 @@ export function validateQuiz(quiz) {
   });
 }
 
-export function validateQuestion({ type, question, choices }) {
+export function validateQuestion({ id, type, question, choices }) {
   return new Promise((resolve, reject) => {
+    const parsedId = parseIntBase10(id);
+    if (id !== undefined && !isPositiveNumber(parsedId)) {
+      return reject(new ValidationError('id (if exists) must be a positive Number'));
+    }
     if (!questionTypes.includes(type)) {
       return reject(new ValidationError(`type must be one of [${questionTypes}]`));
     }
@@ -130,14 +134,36 @@ export function validateQuestion({ type, question, choices }) {
       return reject(new ValidationError('choices must be an Array of { value: String, isAnswer: Boolean }.' +
         ' fillblank at least length 1, radio and checkbox at least length 2'));
     }
-    const trimmedChoices = choices.map(({ value, isAnswer }) =>
-      ({ value: value.trim(), isAnswer: type === 'fillblank' ? true : !!isAnswer }));
+    const trimmedChoices = choices.map(({ id: choiceId, value, isAnswer }) =>
+      ({ id: choiceId, value: value.trim(), isAnswer: type === 'fillblank' ? true : !!isAnswer }));
     if (choices.some(({ value }) => typeof value !== 'string' || value.length === 0)) {
       return reject(new ValidationError('choice values must be non-empty Strings'));
     }
     if (choices.filter(({ isAnswer }) => isAnswer).length === 0) {
       return reject(new ValidationError('Each question (except textarea) must have at least one answer'));
     }
-    return resolve({ type, question, choices: trimmedChoices });
+    return resolve({ id: parsedId, type, question, choices: trimmedChoices });
   });
+}
+
+export function validateQuiz(req, res, next) {
+  return validateQuizParams(req.body)
+  .then((quiz) => Promise.all(quiz.questions.map(validateQuestion))
+    .then((questions) => Promise.resolve(({ ...quiz,
+      questions: questions.map(({ choices, ...question }, order) => ({ ...question, questionChoices: choices, order })),
+    }))))
+  .catch((err) => res.status(400).json({ message: err.message }))
+  .then((quiz) => {
+    req.validatedQuiz = quiz;
+    return next();
+  });
+}
+
+export function transformQuizKeys(quiz) {
+  return immutableJS(quiz)
+  .update('questions', (questions) => questions.map((question) =>
+    question.set('choices', question.get('questionChoices').map((choice) => choice.delete('questionId')))
+  .delete('questionChoices')
+  .delete('quizId')))
+  .toJS();
 }

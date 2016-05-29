@@ -23,10 +23,9 @@ export function verifyToken(token, secret) {
       err ? reject(err) : resolve(decoded)));
 }
 
-export function verifyAuthorization(authHeader, secret) {
+export function verifyAuthorization(authHeader) {
   if (authHeader) {
-    const token = authHeader.replace('Bearer ', '');
-    return verifyToken(token, secret);
+    return Promise.resolve(authHeader.replace('Bearer ', ''));
   }
   return Promise.reject(new Error('No Authorization header.'));
 }

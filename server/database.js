@@ -32,6 +32,9 @@ export const Question = database.define('question', models.Question.attributes, 
   },
 });
 
+Question.hasMany(QuestionChoice);
+QuestionChoice.belongsTo(Question);
+
 export const Quiz = database.define('quiz', models.Quiz.attributes, {
   scopes: {
     active: {
@@ -50,8 +53,7 @@ export const Quiz = database.define('quiz', models.Quiz.attributes, {
 Quiz.mappings = models.Quiz.mappings;
 
 Quiz.hasMany(Question);
-
-Question.hasMany(QuestionChoice);
+Question.belongsTo(Quiz);
 
 export const UserTextAnswer = database.define('userTextAnswer', models.UserTextAnswer.attributes, {
   timestamps: false,

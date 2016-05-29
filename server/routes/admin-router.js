@@ -8,13 +8,14 @@ import saveNewQuiz from './admin/saveNewQuiz';
 import updateQuiz from './admin/updateQuiz';
 
 import { parseIntBase10, isPositiveNumber } from '../util';
+import { validateQuiz } from './utilQuiz';
 
 const admin = new Router();
 
 // admin.post('/login', loginHandler);
 admin.route('/quiz')
 .get(getQuizList)
-.post(saveNewQuiz);
+.post(validateQuiz, saveNewQuiz);
 
 export function validateIdParam(name) {
   return [name, (req, res, next) => {
@@ -31,8 +32,7 @@ admin.param(...validateIdParam('quizId'));
 
 admin.route('/quiz/:quizId')
 .get(fetchQuiz, getQuiz)
-// .post(saveQuizHandler)
-.put(fetchQuiz, updateQuiz);
+.put(validateQuiz, fetchQuiz, updateQuiz);
 
 admin.get('/quiz/:quizId/users', fetchQuiz, getQuizUsers);
 
