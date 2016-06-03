@@ -12,9 +12,9 @@ function Checkbox({ children, ...props }) {
 
 Checkbox.propTypes = {
   onChange: Types.func.isRequired,
-  children: Types.string.isRequired,
-  name: Types.node.isRequired,
-  value: Types.number.isRequired,
+  name: Types.string.isRequired,
+  value: Types.number,
+  children: Types.node,
   disabled: Types.bool,
 };
 

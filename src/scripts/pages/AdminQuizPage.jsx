@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Map } from 'immutable';
 
-import * as quizActions from '../actions/quizActions';
+import * as adminActions from '../actions/adminActions';
 
 import AdminQuizForm from '../components/AdminQuizForm';
 import NewQuizQuestion from '../components/NewQuizQuestion';
@@ -64,7 +64,7 @@ class AdminQuizPage extends Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(quizActions, dispatch),
+    actions: bindActionCreators(adminActions, dispatch),
   };
 }
 

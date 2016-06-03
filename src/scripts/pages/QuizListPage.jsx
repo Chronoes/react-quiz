@@ -7,7 +7,7 @@ import { List } from 'immutable';
 import QuizList from '../components/QuizList';
 
 import * as quizListActions from '../actions/quizListActions';
-import { resetQuizState, getQuizById } from '../actions/quizActions';
+import { resetQuizState, getQuizById } from '../actions/adminActions';
 
 class QuizListPage extends Component {
   static propTypes = {

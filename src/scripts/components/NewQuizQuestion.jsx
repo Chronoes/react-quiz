@@ -6,6 +6,7 @@ import QuestionChoices from './QuestionChoices';
 
 // FIXME: Move this somewhere else along with translations and constants and stuff
 const TYPES = new Map({ radio: 'Raadionupud', checkbox: 'Linnukesed', fillblank: 'Täida lüngad', textarea: 'Tekstikast' });
+const placeholders = new Map({ radio: 'Küsimus', checkbox: 'Küsimus', fillblank: 'Küsimus stiilis: Ohmi seaduse kohaselt: takistus = ___ / ___', textarea: 'Küsimus stiilis: Mis on elu mõte?' });
 
 class NewQuizQuestion extends Component {
   static propTypes = {
@@ -68,33 +69,27 @@ class NewQuizQuestion extends Component {
   }
 
   makeInputs(type, title) {
+    const titleElement = (
+      <QuestionTitle placeholder={placeholders.get(type)} onChange={this.onTitleChange}>
+        {title}
+      </QuestionTitle>
+    );
     switch (type) {
       case 'radio':
       case 'checkbox':
+      case 'fillblank':
         return (
           <div>
-            <QuestionTitle placeholder="Küsimus" onChange={this.onTitleChange}>
-              {title}
-            </QuestionTitle>
+            {titleElement}
             <QuestionChoices
               ref="choices"
               setChoices={this.onChoicesChange}>
-              {this.props.question ? this.props.question.get('choices').map(({ value }) => value) : null}
+              {this.props.question ? this.props.question.get('choices') : null}
             </QuestionChoices>
           </div>
         );
-      case 'fillblank':
-        return (
-          <QuestionTitle placeholder="Küsimus stiilis: Ohmi seaduse kohaselt: takistus = ___ / ___" onChange={this.onTitleChange}>
-            {title}
-          </QuestionTitle>
-        );
       case 'textarea':
-        return (
-          <QuestionTitle placeholder="Küsimus stiilis: Mis on elu mõte?" onChange={this.onTitleChange}>
-            {title}
-          </QuestionTitle>
-          );
+        return titleElement;
       default:
         return <code>Type '{type}' is incorrect</code>;
     }

@@ -58,15 +58,15 @@ export default (req, res) => {
   .then(() => Promise.all(mergedQuiz.questions.map((question) => {
     if (question.id) {
       return Question.update(question, { where: { id: question.id } })
-      .then(() => saveQuestionChoices(question.id, question.questionChoices));
+      .then(() => saveQuestionChoices(question.id, question.questionChoices || []));
     }
     return quiz.createQuestion(question)
-    .then(({ id }) => saveQuestionChoices(id, question.questionChoices));
+    .then(({ id }) => saveQuestionChoices(id, question.questionChoices || []));
   })))
   .then(() => Quiz.scope('withQuestions').findById(quiz.id))
   .then((newQuiz) => res.json(transformQuizKeys(newQuiz.toJSON())))
   .catch((err) => {
     logger.error(err);
-    return res.status(500).json('Something happened.');
+    return res.status(500).json({ message: 'Something happened.' });
   });
 };

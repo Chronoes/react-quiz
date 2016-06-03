@@ -1,5 +1,6 @@
 import { Quiz } from '../../database';
 import logger from '../../logger';
+import { transformQuizKeys } from '../utilQuiz';
 
 export function fetchQuiz(req, res, next) {
   const { quizId } = req.params;
@@ -18,4 +19,4 @@ export function fetchQuiz(req, res, next) {
   });
 }
 
-export default (req, res) => res.json(req.quiz);
+export default (req, res) => res.json(transformQuizKeys(req.quiz.toJSON()));
