@@ -8,7 +8,7 @@ const quizFormat = immutableJS({
   createdAt: moment(),
   updatedAt: moment(),
   users: 0,
-  isActive: false,
+  status: 'passive',
 });
 
 const quizListState = immutableJS([]);

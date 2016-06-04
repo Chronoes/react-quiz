@@ -18,7 +18,8 @@ class QuizInfoCard extends Component {
   }
 
   render() {
-    const { quiz: { title, createdAt, updatedAt, users, isActive } } = this.props;
+    const { quiz: { title, createdAt, updatedAt, users, status } } = this.props;
+    const isActive = status === 'active';
     return (
       <div className="card">
         <div className="card-block">

@@ -4,9 +4,9 @@ import { combineReducers } from 'redux';
 
 import quizList from './quizListReducer';
 
-const choiceFormat = new Map({ id: 0, value: '', isAnswer: null });
+export const choiceFormat = new Map({ id: 0, value: '', isAnswer: null });
 
-const questionFormat = immutableJS({
+export const questionFormat = immutableJS({
   id: 0,
   type: 'radio',
   question: '',
@@ -23,20 +23,20 @@ const quizState = immutableJS({
 
 function quiz(state = quizState, type, action) {
   switch (type) {
+    case 'GET_QUIZ_BY_ID_SUCCESS':
+      return state.mergeWith((prev, next, key) => key === 'questions' ?
+         next.map((question) => questionFormat.mergeDeep(question)) : next, action.quiz);
     case 'SET_TITLE':
       return state.set('title', action.title);
     case 'ADD_QUESTION':
       return state.set('editingQuestion', state.get('questions').size)
-        .update('questions',
-          (questions) => questions.push(
+        .update('questions', (questions) => questions.push(
             questionFormat.set('type', action.questionType).set('question', action.title))
         );
     case 'SET_QUESTION_TITLE':
       return state.setIn(['questions', state.get('editingQuestion'), 'question'], action.title);
     case 'SET_CHOICES':
-      return state.setIn(['questions', state.get('editingQuestion'), 'choices'],
-        action.choices.map((value) => choiceFormat.set('value', value))
-      );
+      return state.mergeDeepIn(['questions', state.get('editingQuestion'), 'choices'], action.choices);
     case 'EDIT_QUESTION':
       return state.set('editingQuestion', action.idx);
     case 'MOVE_QUESTION':
@@ -44,7 +44,8 @@ function quiz(state = quizState, type, action) {
         .insert(action.direction === 'up' ? action.idx - 1 : action.idx + 1, questions.get(action.idx))
       );
     case 'DELETE_QUESTION':
-      return state.deleteIn(['questions', action.idx]).update('editingQuestion', value => value - 1);
+      return state.deleteIn(['questions', action.idx])
+      .update('editingQuestion', (value) => action.idx === state.get('questions').size - 1 ? value - 1 : value);
     case 'SAVE_QUIZ_SUCCESS':
       return state.mergeDeep(action.quiz);
     case 'RESET_QUIZ_STATE':

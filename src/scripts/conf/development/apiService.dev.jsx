@@ -9,7 +9,7 @@ export function getQuizRequest(name) {
   return Promise.resolve({ data: {
     id: 1,
     title: 'ayyy lmao',
-    userId: 1,
+    userHash: '0123456789abcdef',
     questions: [
       {
         id: 1,
@@ -79,7 +79,7 @@ export function getQuizListRequest() {
       createdAt: moment().subtract(8, 'days'),
       updatedAt: moment().subtract(8, 'days'),
       users: parseInt(Math.random() * 50, 10),
-      isActive: false,
+      status: 'passive',
     },
     {
       id: 2,
@@ -87,7 +87,7 @@ export function getQuizListRequest() {
       createdAt: moment().subtract(5, 'days'),
       updatedAt: moment(),
       users: parseInt(Math.random() * 50, 10),
-      isActive: true,
+      status: 'active',
     },
     {
       id: 3,
@@ -95,7 +95,7 @@ export function getQuizListRequest() {
       createdAt: moment().subtract(2, 'days'),
       updatedAt: moment().subtract(1, 'days'),
       users: parseInt(Math.random() * 50, 10),
-      isActive: false,
+      status: 'passive',
     },
     {
       id: 4,
@@ -103,7 +103,7 @@ export function getQuizListRequest() {
       createdAt: moment(),
       updatedAt: moment(),
       users: parseInt(Math.random() * 50, 10),
-      isActive: false,
+      status: 'passive',
     },
   ] });
 }
