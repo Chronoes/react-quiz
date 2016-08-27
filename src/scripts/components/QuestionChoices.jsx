@@ -1,5 +1,5 @@
 import React, { Component, PropTypes as Types } from 'react';
-import { List, Map } from 'immutable';
+import { List, Map, Repeat } from 'immutable';
 
 import Choice from './Choice';
 
@@ -7,25 +7,35 @@ class QuestionChoices extends Component {
   static propTypes = {
     setChoices: Types.func.isRequired,
     children: Types.instanceOf(List),
+    type: Types.oneOf(['radio', 'checkbox', 'fillblank']),
+    fixed: Types.number,
   };
 
   static choiceFormat = new Map({ value: '', isAnswer: null });
 
   constructor(props) {
     super(props);
-    this.state = { choices: new List() };
+    this.state = { choices: List.of(QuestionChoices.choiceFormat) };
 
     this.onChoiceChange = this.onChoiceChange.bind(this);
     this.onAnswerChecking = this.onAnswerChecking.bind(this);
   }
 
   componentWillMount() {
-    this.setState({ choices: this.state.choices.push(QuestionChoices.choiceFormat) });
+    this.componentWillReceiveProps(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.children && nextProps.children.size > 0) {
-      this.setState({ choices: nextProps.children.push(QuestionChoices.choiceFormat) });
+    if (nextProps.children) {
+      const choices = nextProps.type === this.props.type ? nextProps.children : List.of(QuestionChoices.choiceFormat);
+      const choiceSize = (nextProps.fixed || 2) - choices.size;
+      if (choiceSize > 0) {
+        this.setState({ choices: choices.concat(new Repeat(QuestionChoices.choiceFormat, choiceSize)) });
+      } else if (!nextProps.fixed) {
+        this.setState({ choices: choices.push(QuestionChoices.choiceFormat) });
+      } else {
+        this.setState({ choices });
+      }
     }
   }
 
@@ -37,17 +47,15 @@ class QuestionChoices extends Component {
 
   onChoiceChange(idx, value) {
     const choices = this.state.choices.setIn([idx, 'value'], value);
-    switch (choices.takeLast(2).count(({ value: val }) => val.length === 0)) {
-      case 0:
-        this.setState({ choices: choices.push(QuestionChoices.choiceFormat) });
-        break;
-      case 2:
-        this.setState({ choices: choices.pop() });
-        break;
-      default:
-        this.setState({ choices });
-        break;
+    if (this.props.type !== 'fillblank') {
+      const emptyFieldSize = choices.takeLast(2).count(({ value: val }) => val.length === 0);
+      if (emptyFieldSize === 0) {
+        return this.setState({ choices: choices.push(QuestionChoices.choiceFormat) });
+      } else if (emptyFieldSize === 2) {
+        return this.setState({ choices: choices.pop() });
+      }
     }
+    return this.setState({ choices });
   }
 
   onAnswerChecking(idx, isAnswer) {
@@ -62,6 +70,7 @@ class QuestionChoices extends Component {
             key={i}
             id={i}
             isAnswer={isAnswer}
+            disabled={this.props.type === 'fillblank'}
             onChange={this.onChoiceChange}
             onAnswerChecking={this.onAnswerChecking}>
             {value}

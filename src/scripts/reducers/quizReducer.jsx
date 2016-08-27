@@ -1,7 +1,5 @@
 'use !extensible';
-import { fromJS as immutableJS, Map } from 'immutable';
-
-const choiceFormat = new Map({ id: 0, value: '' });
+import { fromJS as immutableJS } from 'immutable';
 
 const questionFormat = immutableJS({
   id: 0,

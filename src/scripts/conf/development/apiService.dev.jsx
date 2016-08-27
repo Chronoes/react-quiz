@@ -76,7 +76,7 @@ export function getQuizListRequest() {
     {
       id: 1,
       title: 'ayyy lmao',
-      createdAt: moment().subtract(8, 'days'),
+      createdAt: '2016-05-30T00:00:00Z',
       updatedAt: moment().subtract(8, 'days'),
       users: parseInt(Math.random() * 50, 10),
       status: 'passive',
@@ -112,5 +112,58 @@ export function getQuizByIdRequest(id) {
   if (parseInt(id, 10) <= 0) {
     return Promise.reject(`Parameter '${id}' is not positive integer or NaN.`);
   }
-  return getQuizRequest('test');
+  return Promise.resolve({ data: {
+    id: 1,
+    title: 'ayyy lmao',
+    status: 'passive',
+    questions: [
+      {
+        id: 1,
+        type: 'radio',
+        question: 'Question 1',
+        choices: [
+          { id: 1, value: 'One answer', isAnswer: true },
+          { id: 2, value: 'Two answer', isAnswer: false },
+          { id: 3, value: 'Three answer', isAnswer: false },
+          { id: 4, value: 'Ha- Ha- Ha-', isAnswer: false },
+        ],
+      },
+      {
+        id: 2,
+        type: 'checkbox',
+        question: 'Question 1',
+        choices: [
+          { id: 5, value: 'Interesting', isAnswer: true },
+          { id: 6, value: 'Boring', isAnswer: true },
+          { id: 7, value: 'Compelling', isAnswer: false },
+        ],
+      },
+      {
+        id: 3,
+        type: 'fillblank',
+        question: 'What does the cat say? ___.\nWhat does the dog say? ___.',
+        choices: [
+          { id: 8, value: 'woof', isAnswer: true },
+          { id: 9, value: 'meow', isAnswer: true },
+        ],
+      },
+      {
+        id: 4,
+        type: 'textarea',
+        question: 'Riddle me this: I\'m spent...',
+      },
+    ],
+    timeLimit: 900,
+  } });
+}
+
+export function updateStatusRequest(quizId, newStatus) {
+  return Promise.resolve({
+    id: quizId,
+    title: 'ayyy lmao',
+    createdAt: '2016-05-30T00:00:00Z',
+    updatedAt: moment(),
+    users: parseInt(Math.random() * 50, 10),
+    status: newStatus,
+  });
 }

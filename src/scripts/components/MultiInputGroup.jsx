@@ -9,9 +9,9 @@ class MultiInputGroup extends Component {
     questionId: Types.number.isRequired,
     question: Types.string.isRequired,
     children: Types.instanceOf(List).isRequired,
-    setAnswer: Types.func.isRequired,
     Title: Types.node.isRequired,
     Input: Types.oneOf([Radio, Checkbox]).isRequired,
+    setAnswer: Types.func,
     disabled: Types.bool,
   };
 
@@ -34,7 +34,7 @@ class MultiInputGroup extends Component {
           {children.map(({ id, value }, i) => (
             <Input
               key={i}
-              name={questionId}
+              name={`q${questionId}`}
               value={id}
               onChange={this.onChange}
               disabled={disabled}>

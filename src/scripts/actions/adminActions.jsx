@@ -41,10 +41,11 @@ export function setChoices(choices) {
   return { type: 'SET_CHOICES', choices: choices.filter(({ value }) => value.length > 0) };
 }
 
-export function saveQuiz({ title, questions, timeLimit }) {
+export function saveQuiz({ status, title, questions, timeLimit }) {
   return (dispatch) => {
     dispatch({ type: 'SAVE_QUIZ' });
     const payload = {
+      status,
       title,
       timeLimit,
       questions: questions.toJS(),

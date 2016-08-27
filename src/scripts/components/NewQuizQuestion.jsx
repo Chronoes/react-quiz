@@ -3,6 +3,7 @@ import { Map } from 'immutable';
 
 import QuestionTitle from './QuestionTitle';
 import QuestionChoices from './QuestionChoices';
+import FillBlankGroup from './FillBlankGroup';
 
 // FIXME: Move this somewhere else along with translations and constants and stuff
 const TYPES = new Map({ radio: 'Raadionupud', checkbox: 'Linnukesed', fillblank: 'Täida lüngad', textarea: 'Tekstikast' });
@@ -36,22 +37,20 @@ class NewQuizQuestion extends Component {
     }
   }
 
-  componentDidUpdate(_, prevState) {
-    const { question, setTitle } = this.props;
-    if (question) {
-      const { title } = this.state;
-      if (prevState.title !== title) {
-        setTitle(title);
-      }
-      if (this.refs.choices && question.get('choices').size === 0) {
-        this.onChoicesChange(this.refs.choices.state.choices);
-      }
-    }
-  }
+  // componentDidUpdate(_, prevState) {
+  //   const { question, setTitle } = this.props;
+  //   if (question) {
+  //     const { title } = this.state;
+  //     if (prevState.title !== title) {
+  //       setTitle(title);
+  //     }
+  //   }
+  // }
 
   onSubmit(event) {
     event.preventDefault();
     this.props.add(this.state.type, this.state.title);
+    this.props.setChoices(this.refs.choices.state.choices);
   }
 
   onTypeChange(event) {
@@ -60,6 +59,9 @@ class NewQuizQuestion extends Component {
 
   onTitleChange(event) {
     this.setState({ title: event.target.value });
+    if (this.props.question) {
+      this.props.setTitle(event.target.value);
+    }
   }
 
   onChoicesChange(choices) {
@@ -69,30 +71,34 @@ class NewQuizQuestion extends Component {
   }
 
   makeInputs(type, title) {
+    if (!TYPES.has(type)) {
+      return <code>Type '{type}' is incorrect</code>;
+    }
+
     const titleElement = (
       <QuestionTitle placeholder={placeholders.get(type)} onChange={this.onTitleChange}>
         {title}
       </QuestionTitle>
     );
-    switch (type) {
-      case 'radio':
-      case 'checkbox':
-      case 'fillblank':
-        return (
-          <div>
-            {titleElement}
-            <QuestionChoices
-              ref="choices"
-              setChoices={this.onChoicesChange}>
-              {this.props.question ? this.props.question.get('choices') : null}
-            </QuestionChoices>
-          </div>
-        );
-      case 'textarea':
-        return titleElement;
-      default:
-        return <code>Type '{type}' is incorrect</code>;
+
+    const extraProps = {};
+    if (type === 'textarea') {
+      return titleElement;
+    } else if (type === 'fillblank') {
+      extraProps.fixed = FillBlankGroup.split(title).length - 1;
     }
+    return (
+      <div>
+        {titleElement}
+        <QuestionChoices
+          ref="choices"
+          type={type}
+          setChoices={this.onChoicesChange}
+          {...extraProps}>
+          {this.props.question ? this.props.question.get('choices') : null}
+        </QuestionChoices>
+      </div>
+    );
   }
 
   render() {

@@ -1,4 +1,13 @@
-import { getQuizListRequest } from '../conf/apiService';
+import { getQuizListRequest, updateStatusRequest } from '../conf/apiService';
+
+export function changeStatus(quizId, newStatus) {
+  return (dispatch) => {
+    dispatch({ type: 'CHANGE_STATUS' });
+    return updateStatusRequest(quizId, newStatus)
+    .then(() => dispatch({ type: 'CHANGE_STATUS_SUCCESS' }))
+    .catch(() => dispatch({ type: 'CHANGE_STATUS_ERROR' }));
+  };
+}
 
 export function getQuizList() {
   return (dispatch) => {

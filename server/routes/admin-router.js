@@ -32,7 +32,7 @@ admin.param(...validateIdParam('quizId'));
 
 admin.route('/quiz/:quizId')
 .get(fetchQuiz, getQuiz)
-.put(validateQuiz, fetchQuiz, updateQuiz);
+.patch(fetchQuiz, updateQuiz);
 
 admin.get('/quiz/:quizId/users', fetchQuiz, getQuizUsers);
 

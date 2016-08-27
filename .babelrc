@@ -20,6 +20,11 @@
       "plugins": [
         ["extensible-destructuring", {"mode": "optout"}]
       ]
+    },
+    "production": {
+      "plugins": [
+        ["extensible-destructuring", {"mode": "optout"}]
+      ]
     }
   }
 }

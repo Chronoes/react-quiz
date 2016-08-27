@@ -21,7 +21,7 @@ const quizState = immutableJS({
   editingQuestion: 0,
 });
 
-function quiz(state = quizState, type, action) {
+function quiz(state = quizState, { type, ...action }) {
   switch (type) {
     case 'GET_QUIZ_BY_ID_SUCCESS':
       return state.mergeWith((prev, next, key) => key === 'questions' ?
@@ -35,8 +35,12 @@ function quiz(state = quizState, type, action) {
         );
     case 'SET_QUESTION_TITLE':
       return state.setIn(['questions', state.get('editingQuestion'), 'question'], action.title);
-    case 'SET_CHOICES':
-      return state.mergeDeepIn(['questions', state.get('editingQuestion'), 'choices'], action.choices);
+    case 'SET_CHOICES': {
+      const keyPath = ['questions', state.get('editingQuestion'), 'choices'];
+      return action.choices.size > 0 ?
+        state.mergeDeepIn(keyPath, action.choices) :
+        state.updateIn(keyPath, (choices) => choices.clear());
+    }
     case 'EDIT_QUESTION':
       return state.set('editingQuestion', action.idx);
     case 'MOVE_QUESTION':

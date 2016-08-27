@@ -38,12 +38,12 @@ class QuizListPage extends Component {
   }
 
   render() {
-    const { quizList } = this.props;
+    const { quizList, actions: { changeStatus } } = this.props;
     return (
       <div className="container">
         <button className="btn btn-primary" onClick={this.onClickNewQuiz}>Uus</button>
         <hr />
-        <QuizList getQuiz={this.onEditQuiz}>{quizList}</QuizList>
+        <QuizList getQuiz={this.onEditQuiz} changeStatus={changeStatus}>{quizList}</QuizList>
       </div>
     );
   }

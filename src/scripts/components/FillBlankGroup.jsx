@@ -6,10 +6,14 @@ class FillBlankGroup extends Component {
   static propTypes = {
     questionId: Types.number.isRequired,
     question: Types.string.isRequired,
-    setAnswer: Types.func.isRequired,
     Title: Types.node.isRequired,
+    setAnswer: Types.func,
     disabled: Types.bool,
   };
+
+  static split(question) {
+    return question.split(/_{3,}/);
+  }
 
   constructor(props) {
     super(props);
@@ -23,7 +27,7 @@ class FillBlankGroup extends Component {
 
   render() {
     const { question, disabled, Title } = this.props;
-    const blanks = question.split(/_{3,}/);
+    const blanks = FillBlankGroup.split(question);
     return (
       <fieldset className="form-group form-inline">
         <Title>Täida lüngad</Title>

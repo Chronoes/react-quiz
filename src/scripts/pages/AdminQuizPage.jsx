@@ -38,7 +38,7 @@ class AdminQuizPage extends Component {
         <div className="form-group row">
           <label className="form-control-label col-lg-2">Pealkiri</label>
           <div className="col-lg-10">
-            <input type="text" className="editable-text h1" defaultValue={title} onChange={this.onQuizTitleChange} />
+            <input type="text" className="editable-text h1" value={title} onChange={this.onQuizTitleChange} />
           </div>
         </div>
         <div className="form-group row">

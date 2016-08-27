@@ -40,6 +40,14 @@ gulp.task('env-testing', () => {
   });
 });
 
+gulp.task('env-production', () => {
+  env({
+    vars: {
+      NODE_ENV: 'production',
+    },
+  });
+});
+
 gulp.task('notify', () => {
   notifier.notify({
     title: 'Gulp',
@@ -113,7 +121,7 @@ gulp.task('webpack', (done) =>
   webpack(webpackConfigDev).run(() => done())
 );
 
-gulp.task('webpack:production', (done) =>
+gulp.task('webpack:production', ['env-production'], (done) =>
   webpack(webpackConfigProd).run(() => done())
 );
 

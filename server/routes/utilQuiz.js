@@ -102,7 +102,7 @@ export function validateQuizParams(quiz) {
       return reject(new ValidationError('title must be a String'));
     }
     const parsedTimeLimit = parseIntBase10(timeLimit);
-    if (timeLimit !== undefined && !isPositiveNumber(parsedTimeLimit)) {
+    if (timeLimit !== null && !isPositiveNumber(parsedTimeLimit)) {
       return reject(new ValidationError('timeLimit must be a positive Number'));
     }
     if (!Array.isArray(questions)) {
@@ -110,7 +110,7 @@ export function validateQuizParams(quiz) {
     }
     return resolve(immutableJS({ status, title, timeLimit, questions })
     .update('status', (statusStr) => statuses.get(statusStr))
-    .set('timeLimit', timeLimit === undefined ? null : parsedTimeLimit)
+    .set('timeLimit', timeLimit === null ? null : parsedTimeLimit)
     .toJS());
   });
 }

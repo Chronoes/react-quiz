@@ -4,9 +4,9 @@ class TextArea extends Component {
   static propTypes = {
     questionId: Types.number.isRequired,
     question: Types.string.isRequired,
-    setAnswer: Types.func.isRequired,
     disabled: Types.bool.isRequired,
     Title: Types.node.isRequired,
+    setAnswer: Types.func,
   };
 
   constructor(props) {
