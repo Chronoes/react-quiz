@@ -1,15 +1,14 @@
 require('babel-core/register');
 
-// Patch for extensible destructuring
-require('extensible-polyfill').patch('immutable');
-
 /* eslint no-console: 0 */
 
 process.title = 'quiz-server';
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
 const application = require('./app');
+
 const app = application.default;
+
 const database = require('./server/database').default;
 
 app.all('/*', application.staticFiles);

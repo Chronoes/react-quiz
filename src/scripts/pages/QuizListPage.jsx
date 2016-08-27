@@ -1,7 +1,7 @@
 import React, { Component, PropTypes as Types } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { routeActions } from 'react-router-redux';
+import { routerActions } from 'react-router-redux';
 import { List } from 'immutable';
 
 import QuizList from '../components/QuizList';
@@ -13,7 +13,7 @@ class QuizListPage extends Component {
   static propTypes = {
     quizList: Types.instanceOf(List).isRequired,
     actions: Types.object.isRequired,
-    routeActions: Types.object.isRequired,
+    routerActions: Types.object.isRequired,
   };
 
   constructor(props) {
@@ -29,12 +29,12 @@ class QuizListPage extends Component {
 
   onClickNewQuiz() {
     this.props.actions.resetQuizState();
-    this.props.routeActions.push('/admin/quiz');
+    this.props.routerActions.push('/admin/quiz');
   }
 
   onEditQuiz(id) {
     this.props.actions.getQuizById(id);
-    this.props.routeActions.push('/admin/quiz');
+    this.props.routerActions.push('/admin/quiz');
   }
 
   render() {
@@ -52,7 +52,7 @@ class QuizListPage extends Component {
 function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators({ resetQuizState, getQuizById, ...quizListActions }, dispatch),
-    routeActions: bindActionCreators(routeActions, dispatch),
+    routerActions: bindActionCreators(routerActions, dispatch),
   };
 }
 

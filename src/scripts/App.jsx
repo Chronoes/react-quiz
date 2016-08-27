@@ -1,11 +1,7 @@
-import React, { PropTypes as Types } from 'react';
+import { PropTypes as Types } from 'react';
 
 function App({ children }) {
-  return (
-    <div>
-      {children}
-    </div>
-  );
+  return children;
 }
 
 App.displayName = 'App';

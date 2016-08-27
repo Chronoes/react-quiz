@@ -1,4 +1,3 @@
-'use !extensible';
 import { fromJS as immutableJS } from 'immutable';
 
 const questionFormat = immutableJS({
@@ -25,19 +24,19 @@ const quizState = immutableJS({
 export default function quiz(state = quizState, { type, ...action }) {
   switch (type) {
     case 'SET_USER_ANSWER':
-      return state.setIn(['questions', action.questionIdx, 'userAnswer'], action.answer);
+      return state.setIn(['questions', action.idx, 'userAnswer'], action.answer);
     case 'SET_USER_ANSWER_CHECKBOX':
-      return state.updateIn(['questions', action.questionIdx, 'userAnswers'], list => {
+      return state.updateIn(['questions', action.idx, 'userAnswers'], (list) => {
         const { answer } = action;
         const index = list.indexOf(answer);
         return index === -1 ? list.push(answer) : list.delete(index);
       });
     case 'SET_USER_ANSWER_FILLBLANK':
-      return state.setIn(['questions', action.questionIdx, 'userAnswers', action.answerIdx], action.answer);
+      return state.setIn(['questions', action.idx, 'userAnswers', action.answerIdx], action.answer);
     case 'GET_QUIZ_SUCCESS':
       return state.set('isRunning', true)
         .mergeWith((prev, next, key) => key === 'questions' ?
-          next.map(question => questionFormat.mergeDeep(question)) : next, action.quiz);
+          next.map((question) => questionFormat.mergeDeep(question)) : next, action.quiz);
     case 'GET_QUIZ_ERROR':
       return state;
     case 'TIME_STOP':

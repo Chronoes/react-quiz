@@ -1,4 +1,4 @@
-require('babel-core/register');
+import 'babel-core/register';
 import gulp from 'gulp';
 import eslint from 'gulp-eslint';
 import sasslint from 'gulp-sass-lint';
@@ -107,14 +107,11 @@ gulp.task('images', () =>
   .pipe(gulp.dest(directories.distribution))
 );
 
-gulp.task('test', ['env-testing'], () => {
-  // Patch for extensible destructuring
-  require('extensible-polyfill').patch('safe');
-
-  return gulp.src(directories.test, { read: false })
+gulp.task('test', ['env-testing'], () =>
+  gulp.src(directories.test, { read: false })
   .pipe(remember('test'))
-  .pipe(mocha({ reporter: 'spec', timeout: 10000, globals: '__extensible_get__' }));
-});
+  .pipe(mocha({ reporter: 'spec', timeout: 10000 }))
+);
 
 
 gulp.task('webpack', (done) =>

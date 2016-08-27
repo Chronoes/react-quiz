@@ -3,15 +3,13 @@ const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 
-// Patch for extensible destructuring
-require('extensible-polyfill').patch('immutable');
-
 const config = require('./webpack.config.dev').default;
 
 process.title = 'quiz-dev-server';
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 const application = require('./app');
+
 const app = application.default;
 
 const compiler = webpack(config);
@@ -46,9 +44,9 @@ function initServer() {
   });
 }
 
-if (process.env.NODE_ENV_OPTS === 'live-api') {
-  const database = require('./server/database').default;
+const database = require('./server/database').default;
 
+if (process.env.NODE_ENV_OPTS === 'live-api') {
   database.sync()
   .then(initServer)
   .catch(console.error);

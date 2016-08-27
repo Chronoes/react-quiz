@@ -5,6 +5,7 @@ import { readFile } from 'fs';
 import path from 'path';
 import api from './server/api-router';
 import conf from './server/conf';
+
 const app = express();
 
 app.use(bodyParser.json());

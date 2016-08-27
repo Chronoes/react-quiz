@@ -2,19 +2,20 @@ import React, { PropTypes as Types } from 'react';
 
 function Radio({ children, ...props }) {
   return (
-    <label className="c-input c-radio">
-      <input type="radio" required {...props} />
-      <span className="c-indicator"></span>
-      {children}
+    <label htmlFor={props.id} className="custom-control custom-radio">
+      <input type="radio" className="custom-control-input" {...props} />
+      <span className="custom-control-indicator" />
+      <span className="custom-control-description">{children}</span>
     </label>
   );
 }
 
 Radio.propTypes = {
   onChange: Types.func.isRequired,
-  children: Types.string.isRequired,
-  name: Types.node.isRequired,
+  id: Types.string.isRequired,
+  name: Types.string.isRequired,
   value: Types.number.isRequired,
+  children: Types.node,
   disabled: Types.bool,
 };
 

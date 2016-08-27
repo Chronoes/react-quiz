@@ -22,8 +22,8 @@ class FillBlank extends Component {
       <input
         type="text"
         className="fill-blank"
-        onChange={this.onChange}
-        required
+        onKeyUp={this.onChange}
+        onBlur={this.onChange}
         disabled={this.props.disabled} />
     );
   }

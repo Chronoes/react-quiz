@@ -1,5 +1,7 @@
 import React, { Component, PropTypes as Types } from 'react';
 
+import { formGroupValidationClass } from '../util';
+
 class TextArea extends Component {
   static propTypes = {
     questionId: Types.number.isRequired,
@@ -7,6 +9,7 @@ class TextArea extends Component {
     disabled: Types.bool.isRequired,
     Title: Types.node.isRequired,
     setAnswer: Types.func,
+    unanswered: Types.bool,
   };
 
   constructor(props) {
@@ -20,16 +23,16 @@ class TextArea extends Component {
   }
 
   render() {
-    const { question, disabled, Title } = this.props;
+    const { question, disabled, Title, unanswered } = this.props;
     return (
       <fieldset className="form-group">
         <Title>{question}</Title>
-        <div className="m-l-1">
+        <div className={`${formGroupValidationClass(unanswered ? false : null, true)} m-l-1`}>
           <textarea
             className="form-control"
             placeholder="Kirjuta oma vastus"
-            onChange={this.onChange}
-            required
+            onKeyUp={this.onChange}
+            onBlur={this.onChange}
             disabled={disabled} />
         </div>
       </fieldset>

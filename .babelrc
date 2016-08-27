@@ -3,7 +3,7 @@
   "env": {
     "development": {
       "plugins": [
-        ["extensible-destructuring", {"mode": "optout"}],
+        ["extensible-destructuring", {"mode": "optout", "impl": "immutable"}],
         ["react-transform", {
           "transforms": [{
             "transform": "react-transform-hmr",
@@ -18,12 +18,12 @@
     },
     "testing": {
       "plugins": [
-        ["extensible-destructuring", {"mode": "optout"}]
+        ["extensible-destructuring", {"mode": "optout", "impl": "immutable"}]
       ]
     },
     "production": {
       "plugins": [
-        ["extensible-destructuring", {"mode": "optout"}]
+        ["extensible-destructuring", {"mode": "optout", "impl": "immutable"}]
       ]
     }
   }

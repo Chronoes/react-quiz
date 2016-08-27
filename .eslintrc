@@ -13,6 +13,7 @@
   "parser": "babel-eslint",
   "extends": "airbnb",
   "rules": {
+    "import/no-extraneous-dependencies": 0,
     "react/jsx-closing-bracket-location": 0,
     "max-len": [1, 120],
     "no-confusing-arrow": 0,

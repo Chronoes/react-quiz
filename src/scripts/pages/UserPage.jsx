@@ -1,7 +1,7 @@
 import React, { Component, PropTypes as Types } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { routeActions } from 'react-router-redux';
+import { push } from 'react-router-redux';
 
 import { getQuiz } from '../actions/quizActions';
 
@@ -12,20 +12,20 @@ class UserPage extends Component {
   static propTypes = {
     actions: Types.shape({
       getQuiz: Types.func,
-      routeTo: Types.func,
+      push: Types.func,
     }).isRequired,
     quizReceived: Types.bool,
   };
 
   componentDidUpdate() {
     if (this.props.quizReceived) {
-      this.props.actions.routeTo('/quiz');
+      this.props.actions.push('/quiz');
     }
   }
 
   render() {
     return (
-      <div>
+      <div className="container">
         <UserRegister getQuiz={this.props.actions.getQuiz} />
       </div>
     );
@@ -34,9 +34,9 @@ class UserPage extends Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({ getQuiz, routeTo: routeActions.push }, dispatch),
+    actions: bindActionCreators({ getQuiz, push }, dispatch),
   };
 }
 
 
-export default connect(({ quiz: id }) => ({ quizReceived: id > 0 }), mapDispatchToProps)(UserPage);
+export default connect(({ quiz: { id } }) => ({ quizReceived: id > 0 }), mapDispatchToProps)(UserPage);

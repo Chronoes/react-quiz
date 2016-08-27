@@ -1,11 +1,15 @@
 @import '../../node_modules/bootstrap/scss/bootstrap';
 @import './constants';
 
-.form-container {
-  @extend .col-xs-12;
-  @extend .col-md-8;
-  @extend .col-md-offset-2;
-  margin-top: 1vh;
+.form-inline > *,
+.form-group > * {
+  margin-left: 5px;
+}
+
+.center-container {
+  @extend .offset-md-3;
+  @extend .offset-lg-5;
+  margin-top: 2vh;
 }
 
 .fill-blank {
@@ -70,8 +74,8 @@
   display: inline-block;
   position: relative;
 
-  &:before,
-  &:after {
+  &::before,
+  &::after {
     background: $grey-accent;
     content: '';
     height: 1px;
@@ -80,12 +84,12 @@
     width: 9999px;
   }
 
-  &:before {
+  &::before {
     margin-right: 15px;
     right: 100%;
   }
 
-  &:after {
+  &::after {
     left: 100%;
     margin-left: 15px;
   }

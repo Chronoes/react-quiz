@@ -1,4 +1,3 @@
-'use !extensible';
 import { fromJS as immutableJS, Map } from 'immutable';
 import { combineReducers } from 'redux';
 

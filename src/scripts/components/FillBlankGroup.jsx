@@ -1,5 +1,6 @@
 import React, { Component, PropTypes as Types } from 'react';
 
+import { fillBlankSplit, formGroupValidationClass } from '../util';
 import FillBlank from './FillBlank';
 
 class FillBlankGroup extends Component {
@@ -9,11 +10,8 @@ class FillBlankGroup extends Component {
     Title: Types.node.isRequired,
     setAnswer: Types.func,
     disabled: Types.bool,
+    unanswered: Types.bool,
   };
-
-  static split(question) {
-    return question.split(/_{3,}/);
-  }
 
   constructor(props) {
     super(props);
@@ -26,8 +24,8 @@ class FillBlankGroup extends Component {
   }
 
   render() {
-    const { question, disabled, Title } = this.props;
-    const blanks = FillBlankGroup.split(question);
+    const { question, disabled, Title, unanswered } = this.props;
+    const blanks = fillBlankSplit(question);
     return (
       <fieldset className="form-group form-inline">
         <Title>Täida lüngad</Title>
@@ -35,7 +33,11 @@ class FillBlankGroup extends Component {
           {blanks.map((text, i) => (
             <span key={i}>
               {text}
-              {i < blanks.length - 1 ? <FillBlank id={i} disabled={disabled} onChange={this.onInputChange} /> : ''}
+              {i < blanks.length - 1 ? (
+                <div className={formGroupValidationClass(unanswered ? false : null, true)}>
+                  <FillBlank id={i} disabled={disabled} onChange={this.onInputChange} />
+                </div>
+              ) : null}
             </span>
           ))}
         </div>

@@ -1,6 +1,7 @@
 import React, { Component, PropTypes as Types } from 'react';
 import { List } from 'immutable';
 
+import { formGroupValidationClass } from '../util';
 import Radio from './Radio';
 import Checkbox from './Checkbox';
 
@@ -13,6 +14,7 @@ class MultiInputGroup extends Component {
     Input: Types.oneOf([Radio, Checkbox]).isRequired,
     setAnswer: Types.func,
     disabled: Types.bool,
+    unanswered: Types.bool,
   };
 
   constructor(props) {
@@ -26,20 +28,23 @@ class MultiInputGroup extends Component {
   }
 
   render() {
-    const { question, questionId, children, disabled, Title, Input } = this.props;
+    const { question, questionId, children, disabled, Title, Input, unanswered } = this.props;
     return (
       <fieldset className="form-group">
         <Title>{question}</Title>
-        <div className={`c-inputs-stacked m-l-1 ${disabled ? 'disabled' : ''}`}>
+        <div className={`custom-controls-stacked m-l-1${disabled ? ' disabled' : ''}`}>
           {children.map(({ id, value }, i) => (
-            <Input
-              key={i}
-              name={`q${questionId}`}
-              value={id}
-              onChange={this.onChange}
-              disabled={disabled}>
-              {value}
-            </Input>
+            <div key={i} className={formGroupValidationClass(unanswered ? false : null, true)}>
+              <Input
+                key={i}
+                id={`q${questionId}-${id}`}
+                name={`q${questionId}`}
+                value={id}
+                onChange={this.onChange}
+                disabled={disabled}>
+                {value}
+              </Input>
+            </div>
           ))}
         </div>
       </fieldset>

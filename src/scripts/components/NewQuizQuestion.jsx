@@ -1,9 +1,9 @@
 import React, { Component, PropTypes as Types } from 'react';
 import { Map } from 'immutable';
 
+import { fillBlankSplit } from '../util';
 import QuestionTitle from './QuestionTitle';
 import QuestionChoices from './QuestionChoices';
-import FillBlankGroup from './FillBlankGroup';
 
 // FIXME: Move this somewhere else along with translations and constants and stuff
 const TYPES = new Map({ radio: 'Raadionupud', checkbox: 'Linnukesed', fillblank: 'Täida lüngad', textarea: 'Tekstikast' });
@@ -85,7 +85,7 @@ class NewQuizQuestion extends Component {
     if (type === 'textarea') {
       return titleElement;
     } else if (type === 'fillblank') {
-      extraProps.fixed = FillBlankGroup.split(title).length - 1;
+      extraProps.fixed = fillBlankSplit(title).length - 1;
     }
     return (
       <div>

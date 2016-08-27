@@ -3,14 +3,14 @@ import thunk from 'redux-thunk';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import { browserHistory } from 'react-router';
-import { syncHistory } from 'react-router-redux';
+import { routerMiddleware, syncHistoryWithStore } from 'react-router-redux';
 
 import router from '../../router';
 import DevTools from '../../DevTools';
 
 import state from '../../state';
 
-const reduxRouterMiddleware = syncHistory(browserHistory);
+const reduxRouterMiddleware = routerMiddleware(browserHistory);
 
 const finalCreateStore = compose(
   applyMiddleware(thunk, reduxRouterMiddleware),
@@ -21,6 +21,7 @@ function configureStore(initialState) {
   const store = finalCreateStore(state, initialState);
 
   if (module.hot) {
+    /* eslint global-require: 0 */
     module.hot.accept('../../state', () => store.replaceReducer(require('../../state').default));
   }
 
@@ -28,12 +29,13 @@ function configureStore(initialState) {
 }
 
 const store = configureStore();
-reduxRouterMiddleware.listenForReplays(store);
+
+const history = syncHistoryWithStore(browserHistory, store);
 
 export default (
   <Provider store={store}>
     <div>
-      {router}
+      {router(history)}
       <DevTools />
     </div>
   </Provider>
