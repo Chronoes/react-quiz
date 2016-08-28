@@ -4,11 +4,26 @@ import webpack from 'webpack';
 export default {
   devtool: '#cheap-module-eval-source-map',
   cache: true,
-  entry: [
-    'webpack-hot-middleware/client?path=/__webpack_hmr',
-    'babel-polyfill',
-    './src/scripts/main.jsx',
-  ],
+  entry: {
+    app: [
+      'webpack-hot-middleware/client?path=/__webpack_hmr',
+      'babel-polyfill',
+      './src/scripts/main.jsx',
+    ],
+    vendor: [
+      'axios',
+      'history',
+      'immutable',
+      'moment',
+      'react',
+      'react-dom',
+      'react-redux',
+      'react-router',
+      'react-router-redux',
+      'redux',
+      'redux-thunk',
+    ],
+  },
   resolve: {
     extensions: ['', '.js', '.jsx'],
   },
@@ -24,6 +39,7 @@ export default {
       },
     }),
     new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
   ],

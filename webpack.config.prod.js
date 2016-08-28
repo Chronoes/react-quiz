@@ -1,17 +1,12 @@
-import { join } from 'path';
 import webpack from 'webpack';
+import devConfig from './webpack.config.dev';
 
 export default {
+  ...devConfig,
   devtool: 'source-map',
-  entry: [
-    './src/scripts/main.jsx',
-  ],
-  resolve: {
-    extensions: ['', '.js', '.jsx'],
-  },
-  output: {
-    path: join(__dirname, 'static'),
-    filename: 'bundle.js',
+  entry: {
+    app: './src/scripts/main.jsx',
+    vendor: devConfig.entry.vendor,
   },
   plugins: [
     new webpack.optimize.OccurenceOrderPlugin(),
@@ -25,26 +20,6 @@ export default {
         warnings: false,
       },
     }),
+    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
   ],
-  module: {
-    loaders: [
-      {
-        test: /\.jsx?$/,
-        loaders: ['babel'],
-        exclude: [join(__dirname, 'node_modules')],
-      },
-      {
-        test: /\.scss$/,
-        loaders: ['style', 'css', 'sass'],
-      },
-      {
-        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'url-loader?limit=10000&minetype=application/font-woff',
-      },
-      {
-        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'file-loader',
-      },
-    ],
-  },
 };
