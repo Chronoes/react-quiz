@@ -1,4 +1,4 @@
 node_modules/
-/static/
-server/secret
+/dist/
+/src/server/secret
 *.log

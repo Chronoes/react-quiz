@@ -1,7 +1,7 @@
-import { join } from 'path';
-import webpack from 'webpack';
+const { join } = require('path');
+const webpack = require('webpack');
 
-export default {
+module.exports = {
   devtool: '#cheap-module-eval-source-map',
   cache: true,
   entry: {
@@ -66,3 +66,5 @@ export default {
     ],
   },
 };
+
+// exports.default = exports;

@@ -1,7 +1,7 @@
-import webpack from 'webpack';
-import devConfig from './webpack.config.dev';
+const webpack = require('webpack');
+const devConfig = require('./webpack.config.dev');
 
-export default {
+module.exports = {
   ...devConfig,
   devtool: 'source-map',
   entry: {

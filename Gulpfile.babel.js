@@ -8,10 +8,12 @@ import remember from 'gulp-remember';
 import minifyHtml from 'gulp-htmlmin';
 import mocha from 'gulp-mocha';
 import env from 'gulp-env';
+import babel from 'gulp-babel';
 
 import { spawn } from 'child_process';
 import runSequence from 'run-sequence';
 import notifier from 'node-notifier';
+import path from 'path';
 
 import webpack from 'webpack';
 import webpackConfigDev from './webpack.config.dev';
@@ -26,10 +28,14 @@ const directories = {
     main: './src/scripts/main.jsx',
     styles: './src/styles/**/*.scss',
     images: './src/images/**/*',
+    server: './src/server/**/*.js',
   },
   test: './test/*.js',
-  server: './server/**/*.js',
-  distribution: './static',
+  distribution: {
+    base: './dist',
+    server: './dist/server',
+    static: './dist/static',
+  },
 };
 
 gulp.task('env-testing', () => {
@@ -79,7 +85,7 @@ gulp.task('lint:js', () =>
   gulp.src([
     directories.root,
     directories.source.scripts,
-    directories.server,
+    directories.source.server,
   ])
   .pipe(remember('js'))
   .pipe(eslint())
@@ -92,19 +98,19 @@ gulp.task('lint', ['lint:js', 'lint:sass']);
 gulp.task('html', () =>
   gulp.src(directories.source.index)
   .pipe(cache('html'))
-  .pipe(gulp.dest(directories.distribution))
+  .pipe(gulp.dest(directories.static))
 );
 
 gulp.task('html:production', () =>
   gulp.src(directories.source.index)
   .pipe(minifyHtml({ collapseWhitespace: true }))
-  .pipe(gulp.dest(directories.distribution))
+  .pipe(gulp.dest(directories.static))
 );
 
 gulp.task('images', () =>
   gulp.src(directories.source.images)
   .pipe(cache('images'))
-  .pipe(gulp.dest(directories.distribution))
+  .pipe(gulp.dest(directories.static))
 );
 
 gulp.task('test', ['env-testing'], () =>
@@ -122,30 +128,48 @@ gulp.task('webpack:production', ['env-production'], (done) =>
   webpack(webpackConfigProd).run(() => done())
 );
 
-gulp.task('build', (done) =>
-  runSequence(['line-count', 'lint'], 'test', ['webpack', 'html', 'images'], 'notify', done)
-);
-
-gulp.task('build:watch', (done) =>
-  runSequence('lint', 'test', ['html', 'images'], done)
-);
-
-gulp.task('build:production', (done) =>
-  runSequence(['line-count', 'lint'], 'test', ['webpack:production', 'html:production', 'images'], 'notify', done)
+gulp.task('conf', () =>
+  gulp.src(directories.root)
+  .pipe(babel())
+  .pipe(directories.distribution.base)
 );
 
 gulp.task('server', () => {
-  const server = spawn('node', ['devServer']);
+  const server = spawn('node', [path.join(directories.distribution.base, 'devServer')]);
   server.stdout.on('data', data => process.stdout.write(`webpack-server: ${data}`));
   server.stderr.on('data', data => process.stderr.write(`webpack-server: ${data}`));
 });
+
+gulp.task('server:build', () =>
+  gulp.src([
+    `${directories.source.base}/*.js`,
+    directories.source.server,
+  ], { base: directories.source.base })
+  .pipe(remember('server'))
+  .pipe(babel())
+  .pipe(gulp.dest(directories.distribution.base))
+);
+
+gulp.task('build', (done) =>
+  runSequence(['line-count', 'lint'], 'test', ['conf', 'server:build', 'webpack', 'html', 'images'], 'notify', done)
+);
+
+gulp.task('build:watch', (done) =>
+  runSequence('lint', 'test', ['conf', 'server:build', 'html', 'images'], done)
+);
+
+gulp.task('build:production', (done) =>
+  runSequence(['line-count', 'lint'], 'test',
+    ['conf', 'server:build', 'webpack:production', 'html:production', 'images'], 'notify', done)
+);
+
 
 gulp.task('watch', () =>
   gulp.watch(
     [
       directories.source.images,
       directories.source.index,
-      directories.server,
+      directories.source.server,
       directories.test,
     ], ['build:watch'])
 );
