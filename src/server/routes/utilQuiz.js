@@ -1,10 +1,9 @@
-import { isPositiveNumber, parseIntBase10 } from '../util';
 import { Seq, fromJS as immutableJS } from 'immutable';
-import { Quiz } from '../database';
+import { isPositiveNumber, parseIntBase10 } from '../util';
+import { Quiz, Question } from '../database';
 
 const { statuses } = Quiz.mappings;
-
-const questionTypes = ['radio', 'checkbox', 'fillblank', 'textarea'];
+const { questionTypes } = Question.mappings;
 
 export class ValidationError extends Error {}
 
@@ -121,8 +120,8 @@ export function validateQuestion({ id, type, question, choices }) {
     if (id !== undefined && !isPositiveNumber(parsedId)) {
       return reject(new ValidationError('id (if exists) must be a positive Number'));
     }
-    if (!questionTypes.includes(type)) {
-      return reject(new ValidationError(`type must be one of [${questionTypes}]`));
+    if (!questionTypes.has(type)) {
+      return reject(new ValidationError(`type must be one of [${questionTypes}]`)); // FIXME: String representation of immutableJS Map
     }
     if (!question || typeof question !== 'string') {
       return reject(new ValidationError('question must be a non-empty String'));
@@ -130,7 +129,7 @@ export function validateQuestion({ id, type, question, choices }) {
     if (type === 'textarea') {
       return resolve({ type, question });
     }
-    if (!Array.isArray(choices) || type === 'fillblank' && choices.length === 0 || choices.length < 2) {
+    if (!Array.isArray(choices) || (type === 'fillblank' && choices.length === 0) || choices.length < 2) {
       return reject(new ValidationError('choices must be an Array of { value: String, isAnswer: Boolean }.' +
         ' fillblank at least length 1, radio and checkbox at least length 2'));
     }
