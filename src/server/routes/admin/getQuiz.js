@@ -18,7 +18,7 @@ export function fetchQuiz(req, res, next) {
       return res.status(404).json({ message: `No quiz with ID ${quizId} exists.` });
     }
 
-    return getQuizQuestions(quizId)
+    return getQuizQuestions(quizId, true, true)
     .then((questions) => {
       req.quiz = { ...quiz, questions };
       return next();
