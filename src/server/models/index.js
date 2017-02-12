@@ -30,7 +30,10 @@ export default {
   },
   User: {
     name: 'users',
-    definition: user,
+    definition(table) {
+      user(table);
+      table.integer('quiz_id').notNullable().references('quiz_id').inTable('quizzes');
+    },
   },
   UserTextAnswer: {
     name: 'user_text_answers',

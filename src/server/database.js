@@ -24,14 +24,24 @@ export function createSchema() {
     database.schema.createTableIfNotExists(first.name, first.definition));
 }
 
+export function dropSchema() {
+  const dropOrder = models.initOrder.slice();
+  dropOrder.reverse();
+  const first = models[dropOrder.shift()];
+  return dropOrder
+  .reduce((promise, next) =>
+    promise.then(() => database.schema.dropTableIfExists(models[next].name)),
+    database.schema.dropTableIfExists(first.name));
+}
+
 class Model {
   constructor({ name: modelName, mappings }) {
     this.name = modelName;
     this.mappings = mappings;
   }
 
-  query() {
-    return database(this.name);
+  query(tableAlias) {
+    return tableAlias ? database(`${this.name} AS ${tableAlias}`) : database(this.name);
   }
 
   toString() {

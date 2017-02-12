@@ -1,6 +1,6 @@
 import { Seq, fromJS as immutableJS } from 'immutable';
-import { isPositiveNumber, parseIntBase10 } from '../util';
-import { Quiz, Question } from '../database';
+import { isPositiveNumber, parseIntBase10 } from './general';
+import { Quiz, Question, QuestionChoice } from '../database';
 
 const { statuses } = Quiz.mappings;
 const { questionTypes } = Question.mappings;
@@ -158,11 +158,52 @@ export function validateQuiz(req, res, next) {
   });
 }
 
-export function transformQuizKeys(quiz) {
-  return immutableJS(quiz)
-  .update('questions', (questions) => questions.map((question) =>
-    question.set('choices', question.get('questionChoices').map((choice) => choice.delete('questionId')))
-  .delete('questionChoices')
-  .delete('quizId')))
-  .toJS();
+export function getQuestionChoices({ questionId, type }, includeAnswers = false) {
+  if (type === questionTypes.get('textarea')) {
+    return Promise.resolve([]);
+  }
+
+  const query = QuestionChoice.query('QC')
+  .select(
+    'QC.question_choice_id AS questionChoiceId'
+  ).where('question_id', questionId);
+
+  if (includeAnswers) {
+    return query.select(
+      'QC.is_answer AS isAnswer',
+      'QC.value'
+    );
+  }
+
+  return type === questionTypes.get('fillblank') ? query : query.select('QC.value');
+}
+
+export function getQuizQuestions(quizId, withChoices = true, includeAnswers = false) {
+  const query = Question.query('Q')
+  .select(
+    'Q.question_id AS questionId',
+    'Q.question',
+    'Q.type',
+    'Q.order_by AS orderBy'
+  ).where('quiz_id', quizId);
+
+  if (withChoices) {
+    return query
+    .then((questions) => Promise.all(questions.map((question) =>
+      getQuestionChoices({ questionId: question.questionId, type: question.type }, includeAnswers)
+      .then((choices) => Promise.resolve({ ...question, choices }))))
+    );
+  }
+  return query;
+}
+
+export function convertQuizMappings(quiz) {
+  return {
+    ...quiz,
+    status: statuses.keyOf(quiz.status),
+    questions: quiz.questions.map((question) => ({
+      ...question,
+      type: questionTypes.keyOf(question.type),
+    })),
+  };
 }

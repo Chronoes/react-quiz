@@ -1,6 +1,6 @@
 import logger from '../../logger';
 import { Quiz, Question } from '../../database';
-import { transformQuizKeys } from '../utilQuiz';
+import { transformQuizKeys } from '../../lib/quiz';
 
 export default ({ validatedQuiz }, res) => Quiz.create(validatedQuiz, { include: [Question.scope('withChoices')] })
   .then((quiz) => Quiz.scope('withQuestions').findById(quiz.id))

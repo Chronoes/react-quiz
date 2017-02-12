@@ -1,5 +1,5 @@
 import logger from '../../logger';
-import { partialPick } from '../../util';
+import { partialPick } from '../../lib/general';
 
 export default (req, res) => req.quiz.getUsers()
   .then((users) => res.json(users.map(partialPick(['id', 'name', 'timeSpent', 'createdAt']))))

@@ -1,8 +1,8 @@
 import { fromJS as immutableJS } from 'immutable';
 import database, { Quiz, User } from '../../database';
 import logger from '../../logger';
-import { parseIntBase10, isPositiveNumber } from '../../util';
-import { verifyAnswer, validateAnswer } from '../utilQuiz';
+import { parseIntBase10, isPositiveNumber } from '../../lib/general';
+import { verifyAnswer, validateAnswer } from '../../lib/quiz';
 
 function saveTextAnswer(transaction, user) {
   return (relationId) => (values) =>

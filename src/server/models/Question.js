@@ -6,6 +6,6 @@ export default (table) => {
   table.increments('question_id').primary();
   table.specificType('type', 'smallint').notNullable();
   table.string('question').notNullable();
-  table.specificType('order', 'smallint').notNullable();
+  table.specificType('order_by', 'smallint').notNullable();
   return table;
 };

@@ -1,5 +1,5 @@
 import database, { Quiz, User } from '../../database';
-import { parseNumberDefault } from '../../util';
+import { parseNumberDefault } from '../../lib/general';
 import logger from '../../logger';
 
 // Sequelize has issues counting associations, so I do a raw query

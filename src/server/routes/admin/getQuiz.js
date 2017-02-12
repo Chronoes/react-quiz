@@ -1,17 +1,28 @@
 import { Quiz } from '../../database';
 import logger from '../../logger';
-import { transformQuizKeys } from '../utilQuiz';
+import { getQuizQuestions, convertQuizMappings } from '../../lib/quiz';
 
 export function fetchQuiz(req, res, next) {
   const { quizId } = req.params;
-  return Quiz.scope('withQuestions').findById(quizId)
+  return Quiz.query('Q')
+  .first(
+    'Q.quiz_id AS quizId',
+    'Q.status',
+    'Q.title',
+    'Q.time_limit AS timeLimit',
+    'Q.created_at AS createdAt',
+    'Q.updated_at AS updatedAt'
+  ).where('quiz_id', quizId)
   .then((quiz) => {
-    if (quiz === null) {
+    if (!quiz) {
       return res.status(404).json({ message: `No quiz with ID ${quizId} exists.` });
     }
 
-    req.quiz = quiz;
-    return next();
+    return getQuizQuestions(quizId)
+    .then((questions) => {
+      req.quiz = { ...quiz, questions };
+      return next();
+    });
   })
   .catch((err) => {
     logger.error(err);
@@ -19,4 +30,4 @@ export function fetchQuiz(req, res, next) {
   });
 }
 
-export default (req, res) => res.json(transformQuizKeys(req.quiz.toJSON()));
+export default (req, res) => res.json(convertQuizMappings(req.quiz));

@@ -7,8 +7,8 @@ import getUser from './admin/getUser';
 import saveNewQuiz from './admin/saveNewQuiz';
 import updateQuiz from './admin/updateQuiz';
 
-import { parseIntBase10, isPositiveNumber } from '../util';
-import { validateQuiz } from './utilQuiz';
+import { parseIntBase10, isPositiveNumber } from '../lib/general';
+import { validateQuiz } from '../lib/quiz';
 
 const admin = new Router();
 

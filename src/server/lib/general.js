@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt-as-promised';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
-import { Set } from 'immutable';
+import { Set, Map } from 'immutable';
 
 export function genSaltyHash(password) {
   return bcrypt.hash(password, 10);

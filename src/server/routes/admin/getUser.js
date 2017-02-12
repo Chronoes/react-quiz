@@ -2,7 +2,7 @@ import { List, fromJS as immutableJS } from 'immutable';
 
 import { User } from '../../database';
 import logger from '../../logger';
-import { partialPick } from '../../util';
+import { partialPick } from '../../lib/general';
 
 function transformQuestion(selector) {
   return (question) => question.reduce((carry, answer) =>

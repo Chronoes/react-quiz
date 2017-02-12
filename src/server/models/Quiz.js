@@ -7,6 +7,6 @@ export default (table) => {
   table.integer('status').notNullable().defaultsTo(statuses.get('active'));
   table.string('title').notNullable();
   table.integer('time_limit');
-  table.timestamps();
+  table.timestamps(true, true);
   return table;
 };

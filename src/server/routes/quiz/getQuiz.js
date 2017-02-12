@@ -1,33 +1,35 @@
-import { Quiz, User } from '../../database';
+import { Quiz } from '../../database';
 import logger from '../../logger';
-import { genChecksum, partialPick, partialOmit } from '../../util';
+import { createUser } from '../../lib/user';
+import { getQuizQuestions, convertQuizMappings } from '../../lib/quiz';
+
+const { statuses } = Quiz.mappings;
 
 export default (req, res) => {
   const { name = '' } = req.query;
   if (!name) {
     return res.status(400).json({ message: 'Missing parameter \'name\'' });
   }
-  return Quiz.query()
-  .select('Q.quiz_id AS "quizId"', '')
-  .first()
+  return Quiz.query('Q')
+  .first(
+    'Q.quiz_id AS quizId',
+    'Q.title',
+    'Q.time_limit AS timeLimit'
+  ).where('status', statuses.get('active'))
   .then((quiz) => {
-    if (quiz === null) {
+    if (!quiz) {
       logger.warn('No active quizzes');
       return res.status(404).json({ message: 'No active quizzes exist.' });
     }
-    return User.create({ username: name })
-    .then((user) => quiz.addUser(user)
-      .then(() => user.update({ hash: genChecksum({ id: user.id, createdAt: user.createdAt }) })))
-    .then((user) => {
-      logger.log(`Served quiz ID ${quiz.id} to hash ${user.hash}`);
-      const quizJson = partialOmit(['status'])(quiz.toJSON());
-      return res.json({ ...quizJson,
-        questions: quizJson.questions
-          .map(partialPick(['id', 'type', 'question', 'order', ['questionChoices', 'choices']]))
-          .map((question) => ({ ...question, choices: question.choices.map(partialPick(['id', 'value'])) })),
-        userHash: user.hash,
-      });
-    });
+    return createUser(name, quiz.quizId)
+    .then((user) => getQuizQuestions(quiz.quizId)
+      .then((questions) => {
+        logger.log(`Served quiz ID ${quiz.quizId} to hash ${user.hash}`);
+        return res.json({
+          ...(convertQuizMappings({ ...quiz, questions })),
+          userHash: user.hash,
+        });
+      }));
   })
   .catch((err) => {
     logger.error(err);

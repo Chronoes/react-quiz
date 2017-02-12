@@ -1,16 +1,13 @@
-require('babel-core/register');
-const webpack = require('webpack');
-const webpackDevMiddleware = require('webpack-dev-middleware');
-const webpackHotMiddleware = require('webpack-hot-middleware');
+import webpack from 'webpack';
+import webpackDevMiddleware from 'webpack-dev-middleware';
+import webpackHotMiddleware from 'webpack-hot-middleware';
 
-const config = require('./webpack.config.dev').default;
+import config from '../webpack.config.dev';
+import app, { staticFiles } from './app';
+import { createSchema } from './server/database';
 
 process.title = 'quiz-dev-server';
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-
-const application = require('./app');
-
-const app = application.default;
 
 const compiler = webpack(config);
 
@@ -31,9 +28,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.all('/*', application.staticFiles);
+app.all('/*', staticFiles);
 
-/* eslint no-console: 0 */
+/* eslint-disable no-console */
 function initServer() {
   const server = app.listen(process.env.PORT || 1337, err => {
     if (err) {
@@ -44,10 +41,8 @@ function initServer() {
   });
 }
 
-const database = require('./server/database').default;
-
 if (process.env.NODE_ENV_OPTS === 'live-api') {
-  database.sync()
+  createSchema()
   .then(initServer)
   .catch(console.error);
 } else {

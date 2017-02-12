@@ -1,7 +1,7 @@
 import { fromJS as immutableJS } from 'immutable';
 import logger from '../../logger';
 import { Quiz, Question, QuestionChoice } from '../../database';
-import { transformQuizKeys } from '../utilQuiz';
+import { transformQuizKeys } from '../../lib/quiz';
 
 function questionMerger(prev, next, key) {
   if (key === 'questionChoices') {

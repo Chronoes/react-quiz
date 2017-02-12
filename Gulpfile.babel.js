@@ -78,7 +78,6 @@ gulp.task('lint:sass', () =>
   .pipe(remember('styles'))
   .pipe(sasslint())
   .pipe(sasslint.format())
-  .pipe(sasslint.failOnError())
 );
 
 gulp.task('lint:js', () =>
@@ -90,7 +89,6 @@ gulp.task('lint:js', () =>
   .pipe(remember('js'))
   .pipe(eslint())
   .pipe(eslint.format())
-  .pipe(eslint.failAfterError())
 );
 
 gulp.task('lint', ['lint:js', 'lint:sass']);
@@ -131,7 +129,7 @@ gulp.task('webpack:production', ['env-production'], (done) =>
 gulp.task('conf', () =>
   gulp.src(directories.root)
   .pipe(babel())
-  .pipe(directories.distribution.base)
+  .pipe(gulp.dest(directories.distribution.base))
 );
 
 gulp.task('server', () => {
@@ -155,7 +153,7 @@ gulp.task('build', (done) =>
 );
 
 gulp.task('build:watch', (done) =>
-  runSequence('lint', 'test', ['conf', 'server:build', 'html', 'images'], done)
+  runSequence('lint', /* 'test',*/ ['conf', 'server:build', 'html', 'images'], done)
 );
 
 gulp.task('build:production', (done) =>
