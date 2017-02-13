@@ -21,15 +21,14 @@ export default (req, res) => {
       logger.warn('No active quizzes');
       return res.status(404).json({ message: 'No active quizzes exist.' });
     }
-    return createUser(name, quiz.quizId)
-    .then((user) => getQuizQuestions(quiz.quizId)
-      .then((questions) => {
-        logger.log(`Served quiz ID ${quiz.quizId} to hash ${user.hash}`);
-        return res.json({
-          ...(convertQuizMappings({ ...quiz, questions })),
-          userHash: user.hash,
-        });
-      }));
+    return Promise.all([quiz, createUser(name, quiz.quizId), getQuizQuestions(quiz.quizId)]);
+  })
+  .then(([quiz, user, questions]) => {
+    logger.log(`Served quiz ID ${quiz.quizId} to hash ${user.hash}`);
+    return res.json({
+      ...(convertQuizMappings({ ...quiz, questions })),
+      userHash: user.hash,
+    });
   })
   .catch((err) => {
     logger.error(err);

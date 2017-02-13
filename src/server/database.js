@@ -1,7 +1,7 @@
 import Knex from 'knex';
 
 import conf from './conf';
-import models from './models/index';
+import models from './models';
 
 const { name, user, password, dialect, host } = conf.getIn([process.env.NODE_ENV, 'database']);
 
