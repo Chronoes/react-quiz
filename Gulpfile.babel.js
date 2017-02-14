@@ -8,6 +8,7 @@ import minifyHtml from 'gulp-htmlmin';
 import jest from 'gulp-jest-cli';
 import env from 'gulp-env';
 import babel from 'gulp-babel';
+import sourcemaps from 'gulp-sourcemaps';
 
 import { spawn } from 'child_process';
 import runSequence from 'run-sequence';
@@ -126,7 +127,9 @@ gulp.task('server:build', () =>
     directories.source.server,
   ], { base: directories.source.base })
   .pipe(remember('server'))
+  .pipe(sourcemaps.init())
   .pipe(babel())
+  .pipe(sourcemaps.write('.'))
   .pipe(gulp.dest(directories.distribution.base))
 );
 

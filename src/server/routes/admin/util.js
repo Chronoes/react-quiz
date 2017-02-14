@@ -5,14 +5,15 @@ import { getQuizQuestions, validateQuizParams, validateQuestion } from '../../li
 export function validateQuiz(req, res, next) {
   return validateQuizParams(req.body)
   .then((quiz) => Promise.all(quiz.questions.map(validateQuestion))
-    .then((questions) => Promise.resolve(({ ...quiz,
-      questions: questions.map(({ choices, ...question }, order) => ({ ...question, questionChoices: choices, order })),
-    }))))
-  .catch((err) => res.status(400).json({ message: err.message }))
-  .then((quiz) => {
+    .then((questions) => Promise.resolve(({
+      ...quiz,
+      questions: questions.map((question, orderBy) => ({ ...question, orderBy })),
+    })))
+  ).then((quiz) => {
     req.validatedQuiz = quiz;
     return next();
-  });
+  })
+  .catch((err) => res.status(400).json({ message: err.message }));
 }
 
 export function fetchQuiz(req, res, next) {

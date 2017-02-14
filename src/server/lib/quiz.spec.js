@@ -176,3 +176,66 @@ describe('#verifyAnswer()', () => {
     });
   });
 });
+
+describe('#convertQuizMappings()', () => {
+  it('should convert database mappings to textual', () => {
+    const quiz = {
+      title: 'Test',
+      status: 1,
+      timeLimit: 1500,
+      questions: [
+        {
+          questionId: 1,
+          type: 2,
+          question: 'is it ok?',
+          choices: [
+            { questionChoiceId: 1, isAnswer: true, value: 'yes' },
+            { questionChoiceId: 2, isAnswer: false, value: 'maybe' },
+            { questionChoiceId: 3, isAnswer: true, value: 'no' },
+          ],
+        },
+      ],
+    };
+
+    const expected = {
+      title: 'Test',
+      status: 'active',
+      timeLimit: 1500,
+      questions: [
+        {
+          questionId: 1,
+          type: 'checkbox',
+          question: 'is it ok?',
+          choices: [
+            { questionChoiceId: 1, isAnswer: true, value: 'yes' },
+            { questionChoiceId: 2, isAnswer: false, value: 'maybe' },
+            { questionChoiceId: 3, isAnswer: true, value: 'no' },
+          ],
+        },
+      ],
+    };
+
+    const actual = util.convertQuizMappings(quiz);
+
+    expect(actual).toEqual(expected);
+  });
+});
+
+
+describe('#validateQuizParams()', () => {
+  it('should do stuff', () => {
+    expect(true).toBe(false);
+  });
+});
+
+describe('#getQuestionChoices()', () => {
+  it('should do stuff', () => {
+    expect(true).toBe(false);
+  });
+});
+
+describe('#getQuizQuestions()', () => {
+  it('should do stuff', () => {
+    expect(true).toBe(false);
+  });
+});

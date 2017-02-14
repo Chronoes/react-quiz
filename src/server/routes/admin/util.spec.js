@@ -1,7 +1,8 @@
+import { Request, Response } from '../../../../__mocks__/express';
 import * as util from './util';
 
-describe.skip('#validateQuiz()', () => {
-  it.only('should resolve on correct data', () => {
+describe('#validateQuiz()', () => {
+  it('should resolve on correct data', () => {
     const quiz = {
       title: 'Cool stuff',
       status: 'active',
@@ -9,71 +10,68 @@ describe.skip('#validateQuiz()', () => {
       questions: [],
     };
 
-    return util.validateQuiz(quiz)
-    .then((validated) => {
-      expect(validated).toEqual(quiz);
+    const next = jest.fn(() => {});
+    const req = new Request().setBody(quiz);
+
+    return util.validateQuiz(req, new Response(), next)
+    .then(() => {
+      expect(next).toHaveBeenCalled();
+      expect(req.validatedQuiz).toEqual(quiz);
     });
   });
 
-  it('should reject on invalid title', () => {
-    const quiz = {
+
+  function onRejection(quiz) {
+    const req = new Request().setBody(quiz);
+    const res = new Response();
+    const next = jest.fn(() => {});
+
+    return util.validateQuiz(req, res, next)
+    .then(() => {
+      expect(res.statusCode).toBe(400);
+      expect(next).not.toHaveBeenCalled();
+    });
+  }
+
+  it('should reject on invalid title', () =>
+    onRejection({
       title: '',
       status: 'active',
       timeLimit: 93,
       questions: [],
-    };
-
-    return util.validateQuiz(quiz)
-    .catch((err) => {
-      expect(err).toBeInstanceOf(util.ValidationError);
     })
-    .then(() => Promise.reject(new Error(`Invalid title '${quiz.title}' should be rejected`)));
-  });
+  );
 
-  it('should reject on invalid status', (done) => {
-    const quiz = {
+  it('should reject on invalid status', () =>
+    onRejection({
       title: 'Correct title',
       status: 'impossible',
       timeLimit: 122,
       questions: [],
-    };
+    })
+  );
 
-    return util.validateQuiz(quiz)
-    .then(() => done(new Error(`Invalid status '${quiz.status}' should be rejected`)))
-    .catch((err) => {
-      expect(err).toBeInstanceOf(util.ValidationError);
-      done();
-    });
-  });
-
-  it('should reject on invalid timeLimit', (done) => {
-    const quiz = {
+  it('should reject on invalid timeLimit', () =>
+    onRejection({
       title: 'Correct title',
       status: 'passive',
       timeLimit: 0,
       questions: [],
-    };
+    })
+  );
 
-    return util.validateQuiz(quiz)
-    .then(() => done(new Error(`Invalid status '${quiz.status}' should be rejected`)))
-    .catch((err) => {
-      expect(err).toBeInstanceOf(util.ValidationError);
-      done();
-    });
-  });
-
-  it('should reject on invalid questions', (done) => {
-    const quiz = {
+  it('should reject on invalid questions', () =>
+    onRejection({
       title: 'Correct title',
       status: 'passive',
       timeLimit: 122,
-    };
+    })
+  );
+});
 
-    return util.validateQuiz(quiz)
-    .then(() => done(new Error(`Invalid status '${quiz.status}' should be rejected`)))
-    .catch((err) => {
-      expect(err).toBeInstanceOf(util.ValidationError);
-      done();
-    });
+
+describe('#fetchQuiz()', () => {
+  it('should do stuff', () => {
+    expect(true).toBe(false);
   });
 });

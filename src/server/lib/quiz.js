@@ -154,7 +154,18 @@ export function validateQuestion({ id, type, question, choices }) {
   });
 }
 
-export function getchoices({ questionId, type }, includeAnswers = false) {
+export function convertQuizMappings(quiz) {
+  return {
+    ...quiz,
+    status: statuses.keyOf(quiz.status),
+    questions: quiz.questions.map((question) => ({
+      ...question,
+      type: questionTypes.keyOf(question.type),
+    })),
+  };
+}
+
+export function getQuestionChoices({ questionId, type }, includeAnswers = false) {
   if (type === questionTypes.get('textarea')) {
     return Promise.resolve([]);
   }
@@ -186,20 +197,9 @@ export function getQuizQuestions(quizId, withChoices = true, includeAnswers = fa
   if (withChoices) {
     return query
     .then((questions) => Promise.all(questions.map((question) =>
-      getchoices({ questionId: question.questionId, type: question.type }, includeAnswers)
+      getQuestionChoices(question, includeAnswers)
       .then((choices) => Promise.resolve({ ...question, choices }))))
     );
   }
   return query;
-}
-
-export function convertQuizMappings(quiz) {
-  return {
-    ...quiz,
-    status: statuses.keyOf(quiz.status),
-    questions: quiz.questions.map((question) => ({
-      ...question,
-      type: questionTypes.keyOf(question.type),
-    })),
-  };
 }

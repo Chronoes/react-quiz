@@ -1,3 +1,5 @@
+import express from 'express';
+
 export class Request {
   constructor(query = {}, params = {}) {
     this.query = query;
@@ -28,15 +30,16 @@ export class Response {
     return this;
   }
 
-  _convertToJSON(object) {
+  convertToJSON(object) {
     if (Array.isArray(object)) {
-      return object.map(this._convertToJSON);
+      return object.map(this.convertToJSON);
     }
     return typeof object.toJSON === 'function' ? object.toJSON() : object;
   }
 
   json(object) {
-    this.sentBody = this._convertToJSON(object);
-    return this;
+    this.sentBody = this.convertToJSON(object);
   }
 }
+
+export default express;

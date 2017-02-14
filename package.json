@@ -80,6 +80,7 @@
     "gulp-remember": "^0.3.1",
     "gulp-sass-lint": "^1.2.0",
     "gulp-sloc": "^1.0.4",
+    "gulp-sourcemaps": "^2.4.1",
     "jest-cli": "^18.1.0",
     "less": "^2.7.1",
     "node-sass": "^3.8.0",
