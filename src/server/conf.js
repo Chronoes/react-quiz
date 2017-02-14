@@ -13,13 +13,13 @@ const base = new Map({
 
 const development = new Map(base);
 
-const testing = base.setIn(['database', 'name'], 'quiz_test');
+const test = base.setIn(['database', 'name'], 'quiz_test');
 
 const production = base.setIn(['database', 'name'], 'quiz');
 
 export default new Map({
   development,
-  testing,
+  test,
   production,
   secretPath: path.join(__dirname, 'secret'),
   logOutput: path.join(__dirname, 'server.log'),

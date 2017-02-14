@@ -1,4 +1,5 @@
 import { Seq, fromJS as immutableJS } from 'immutable';
+
 import { isPositiveNumber, parseIntBase10 } from './general';
 import { Quiz, Question, QuestionChoice } from '../database';
 
@@ -9,52 +10,54 @@ export class ValidationError extends Error {}
 
 export function validateAnswer(questionsRaw) {
   const questions = immutableJS(questionsRaw);
+
   return (userAnswer) => new Promise((resolve, reject) => {
     if (typeof userAnswer !== 'object') {
       return reject(new ValidationError('User answer must be an object'));
     }
     const { answer = null } = userAnswer;
-    const questionId = parseIntBase10(userAnswer.id);
+    const questionId = parseIntBase10(userAnswer.questionId);
     if (!isPositiveNumber(questionId) || answer === null) {
       return reject(new ValidationError('User answer format: {id: Number, answer: Number || String || Array}'));
     }
-    const question = questions.find(({ id }) => id === questionId);
+    const question = questions.find(({ questionId: id }) => id === questionId);
     if (!question) {
       return reject(new ValidationError(`Question ID ${questionId} does not exist`));
     }
+
     const { type } = question;
-    const error = { expected: '' };
+    let expectedType = '';
     if (type === 'checkbox') {
       if (!Array.isArray(answer)) {
-        error.expected = 'Array of Numbers';
+        expectedType = 'Array of Numbers';
       } else {
         const answers = answer.map(parseIntBase10);
         if (!answers.every(isPositiveNumber)) {
-          error.expected = 'Array of Numbers';
+          expectedType = 'Array of Numbers';
         } else {
           return resolve({ questionId, answer: answers });
         }
       }
     } else if (type === 'fillblank') {
       if (Array.isArray(answer) && answer.some((value) => typeof value !== 'string')) {
-        error.expected = 'Array of Strings';
+        expectedType = 'Array of Strings';
       }
     } else if (type === 'textarea') {
       if (typeof answer !== 'string') {
-        error.expected = 'String';
+        expectedType = 'String';
       }
     } else if (type === 'radio') {
       const parsed = parseIntBase10(answer);
       if (!isPositiveNumber(parsed)) {
-        error.expected = 'Number';
+        expectedType = 'Number';
       } else {
         return resolve({ questionId, answer: parsed });
       }
     }
 
-    if (error.expected) {
+    if (expectedType) {
       return reject(new ValidationError(
-        `Malformed user answer '${answer}': expected ${error.expected} for type ${type}, question ID ${questionId}`));
+        `Malformed user answer '${answer}': expected ${expectedType} for type ${type}, question ID ${questionId}`));
     }
     return resolve({ questionId, answer });
   });
@@ -62,26 +65,30 @@ export function validateAnswer(questionsRaw) {
 
 export function verifyAnswer(questionsRaw) {
   const questions = immutableJS(questionsRaw);
+
   return ({ answer, questionId }) => new Promise((resolve) => {
-    const { type, questionChoices } = questions.find(({ id }) => id === questionId);
+    const { type, choices } = questions.find(({ questionId: id }) => id === questionId);
     const resolvable = { questionId, answer, isCorrect: null };
+
     if (type === 'radio') {
-      const question = questionChoices.find(({ id }) => id === answer);
-      return resolve({ ...resolvable, isCorrect: !!(question && question.get('isAnswer')) });
+      const choice = choices.find(({ questionChoiceId: id }) => id === answer);
+      return resolve({ ...resolvable, isCorrect: !!(choice && choice.get('isAnswer')) });
     } else if (type === 'checkbox') {
-      const choiceSeq = new Seq(questionChoices.filter(({ isAnswer }) => isAnswer));
+      const choiceSeq = new Seq(choices.filter(({ isAnswer }) => isAnswer));
       const answerSeq = new Seq.Set(answer);
-      return resolve({ ...resolvable,
+      return resolve({
+        ...resolvable,
         isCorrect: choiceSeq.count() === answerSeq.count() &&
-          choiceSeq.map(({ id }) => id)
+          choiceSeq.map(({ questionChoiceId }) => questionChoiceId)
           .toSetSeq()
           .equals(answerSeq),
       });
     } else if (type === 'fillblank') {
       const trimmedAnswers = answer.map((ans) => ans.trim());
-      return resolve({ ...resolvable,
+      return resolve({
+        ...resolvable,
         answer: trimmedAnswers,
-        isCorrect: new Seq(questionChoices)
+        isCorrect: new Seq(choices)
         .sort()
         .map(({ value }) => value)
         .equals(new Seq(trimmedAnswers)),
@@ -107,10 +114,12 @@ export function validateQuizParams(quiz) {
     if (!Array.isArray(questions)) {
       return reject(new ValidationError('questions must be an Array'));
     }
-    return resolve(immutableJS({ status, title, timeLimit, questions })
-    .update('status', (statusStr) => statuses.get(statusStr))
-    .set('timeLimit', timeLimit === null ? null : parsedTimeLimit)
-    .toJS());
+    return resolve({
+      title,
+      status,
+      timeLimit: timeLimit === null ? null : parsedTimeLimit,
+      questions,
+    });
   });
 }
 
@@ -145,20 +154,7 @@ export function validateQuestion({ id, type, question, choices }) {
   });
 }
 
-export function validateQuiz(req, res, next) {
-  return validateQuizParams(req.body)
-  .then((quiz) => Promise.all(quiz.questions.map(validateQuestion))
-    .then((questions) => Promise.resolve(({ ...quiz,
-      questions: questions.map(({ choices, ...question }, order) => ({ ...question, questionChoices: choices, order })),
-    }))))
-  .catch((err) => res.status(400).json({ message: err.message }))
-  .then((quiz) => {
-    req.validatedQuiz = quiz;
-    return next();
-  });
-}
-
-export function getQuestionChoices({ questionId, type }, includeAnswers = false) {
+export function getchoices({ questionId, type }, includeAnswers = false) {
   if (type === questionTypes.get('textarea')) {
     return Promise.resolve([]);
   }
@@ -190,7 +186,7 @@ export function getQuizQuestions(quizId, withChoices = true, includeAnswers = fa
   if (withChoices) {
     return query
     .then((questions) => Promise.all(questions.map((question) =>
-      getQuestionChoices({ questionId: question.questionId, type: question.type }, includeAnswers)
+      getchoices({ questionId: question.questionId, type: question.type }, includeAnswers)
       .then((choices) => Promise.resolve({ ...question, choices }))))
     );
   }

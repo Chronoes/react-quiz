@@ -1,9 +1,11 @@
 {
   "presets": ["react", "es2015", "stage-0"],
+  "plugins": [
+    ["extensible-destructuring", {"mode": "optout", "impl": "immutable"}]
+  ],
   "env": {
     "development": {
       "plugins": [
-        ["extensible-destructuring", {"mode": "optout", "impl": "immutable"}],
         ["react-transform", {
           "transforms": [{
             "transform": "react-transform-hmr",
@@ -16,15 +18,7 @@
         }]
       ]
     },
-    "testing": {
-      "plugins": [
-        ["extensible-destructuring", {"mode": "optout", "impl": "immutable"}]
-      ]
-    },
-    "production": {
-      "plugins": [
-        ["extensible-destructuring", {"mode": "optout", "impl": "immutable"}]
-      ]
-    }
+    "test": {},
+    "production": {}
   }
 }

@@ -43,6 +43,14 @@ gulp.task('env-production', () => {
   });
 });
 
+gulp.task('env-testing', () => {
+  env({
+    vars: {
+      NODE_ENV: 'test',
+    },
+  });
+});
+
 gulp.task('line-count', () =>
   gulp.src(
     [
@@ -122,7 +130,7 @@ gulp.task('server:build', () =>
   .pipe(gulp.dest(directories.distribution.base))
 );
 
-gulp.task('test', () =>
+gulp.task('test', ['env-testing'], () =>
   gulp.src(directories.source.base)
   .pipe(jest())
 );
