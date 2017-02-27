@@ -24,7 +24,7 @@ admin.route('/quiz/:quizId')
 .get(fetchQuiz, getQuiz)
 .put(fetchQuiz, updateQuiz);
 
-admin.get('/quiz/:quizId/users', fetchQuiz, getQuizUsers);
+admin.get('/quiz/:quizId/users', getQuizUsers);
 
 
 admin.param(...validateIdParam('userId'));

@@ -1,4 +1,5 @@
 import gulp from 'gulp';
+import gutil from 'gulp-util';
 import eslint from 'gulp-eslint';
 import sasslint from 'gulp-sass-lint';
 import sloc from 'gulp-sloc';
@@ -115,10 +116,22 @@ gulp.task('conf', () =>
   .pipe(gulp.dest(directories.distribution.base))
 );
 
-gulp.task('server', () => {
-  const server = spawn('node', [path.join(directories.distribution.base, 'devServer')]);
-  server.stdout.on('data', data => process.stdout.write(`webpack-server: ${data}`));
-  server.stderr.on('data', data => process.stderr.write(`webpack-server: ${data}`));
+let server;
+
+gulp.task('server:close', (done) => {
+  if (server) {
+    server.on('close', done);
+    server.kill('SIGINT');
+  } else {
+    done();
+  }
+});
+
+gulp.task('server', ['server:close'], () => {
+  server = spawn('node', [path.join(directories.distribution.base, 'devServer')]);
+  const onData = (data) => gutil.log(data.toString().replace(/\n+$/, ''));
+  server.stdout.on('data', onData);
+  server.stderr.on('data', onData);
 });
 
 gulp.task('server:build', () =>
@@ -143,7 +156,7 @@ gulp.task('build', (done) =>
 );
 
 gulp.task('build:watch', (done) =>
-  runSequence(['conf', 'server:build', 'html', 'images'], done)
+  runSequence(['conf', 'server:build', 'html', 'images'], 'server', done)
 );
 
 gulp.task('build:production', (done) =>
@@ -155,10 +168,8 @@ gulp.task('build:production', (done) =>
 gulp.task('watch', () =>
   gulp.watch(
     [
-      directories.source.images,
-      directories.source.index,
       directories.source.server,
     ], ['build:watch'])
 );
 
-gulp.task('default', ['build:watch', 'server', 'watch']);
+gulp.task('default', ['build:watch', 'watch']);

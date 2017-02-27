@@ -71,7 +71,5 @@ describe('#validateQuiz()', () => {
 
 
 describe('#fetchQuiz()', () => {
-  it('should do stuff', () => {
-    expect(true).toBe(false);
-  });
+  it('should do stuff');
 });

@@ -1,33 +1,27 @@
-import database, { Quiz, User } from '../../database';
+import { Quiz, User } from '../../database';
 import { parseNumberDefault } from '../../lib/general';
+import { convertQuizMappings } from '../../lib/quiz';
 import logger from '../../logger';
-
-// Sequelize has issues counting associations, so I do a raw query
-function findAllAndCountAssociation(limit, offset) {
-  return database.query(`
-    SELECT
-      "${Quiz.name}".*,
-      COUNT("${User.name}"."id") AS "users"
-    FROM
-      "${Quiz.tableName}" AS "${Quiz.name}"
-      LEFT OUTER JOIN "${User.tableName}" AS "${User.name}" ON ("${User.name}"."${Quiz.name}Id" = "${Quiz.name}"."id")
-    GROUP BY
-      "${Quiz.name}"."id"
-    ORDER BY
-      "${Quiz.name}"."updatedAt" DESC
-    LIMIT :limit OFFSET :offset
-    `, {
-      type: database.QueryTypes.SELECT,
-      replacements: { limit, offset },
-      model: Quiz,
-    });
-}
 
 export default (req, res) => {
   const limit = parseNumberDefault(req.query.limit, 18);
   const offset = parseNumberDefault(req.query.offset, 0);
-  return findAllAndCountAssociation(limit, offset)
-  .then((quizzes) => res.json(quizzes))
+  return Quiz.query('Q')
+  .select(
+    'Q.quiz_id AS quizId',
+    'Q.status',
+    'Q.title',
+    'Q.time_limit AS timeLimit',
+    'Q.created_at AS createdAt',
+    'Q.updated_at AS updatedAt'
+  )
+  .count('U.user_id AS users')
+  .leftJoin(`${User} AS U`, 'U.quiz_id', 'Q.quiz_id')
+  .groupBy('Q.quiz_id')
+  .orderBy('Q.updated_at', 'DESC')
+  .limit(limit)
+  .offset(offset)
+  .then((quizzes) => res.json(quizzes.map(convertQuizMappings)))
   .catch((err) => {
     logger.error(err);
     return res.status(500).json({ message: 'Something happened.' });

@@ -223,19 +223,13 @@ describe('#convertQuizMappings()', () => {
 
 
 describe('#validateQuizParams()', () => {
-  it('should do stuff', () => {
-    expect(true).toBe(false);
-  });
+  it('should do stuff');
 });
 
 describe('#getQuestionChoices()', () => {
-  it('should do stuff', () => {
-    expect(true).toBe(false);
-  });
+  it('should do stuff');
 });
 
 describe('#getQuizQuestions()', () => {
-  it('should do stuff', () => {
-    expect(true).toBe(false);
-  });
+  it('should do stuff');
 });

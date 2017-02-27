@@ -1,8 +1,15 @@
+import { User } from '../../database';
 import logger from '../../logger';
-import { partialPick } from '../../lib/general';
 
-export default (req, res) => req.quiz.getUsers()
-  .then((users) => res.json(users.map(partialPick(['id', 'name', 'timeSpent', 'createdAt']))))
+export default (req, res) => User.query('U')
+  .select(
+    'U.user_id AS userId',
+    'U.username',
+    'U.time_spent AS timeSpent',
+    'U.created_at AS createdAt'
+  ).where('U.quiz_id', req.params.quizId)
+  .orderBy('U.username', 'ASC')
+  .then((users) => res.json(users))
   .catch((err) => {
     logger.error(err);
     return res.status(500).json({ message: 'Something happened.' });

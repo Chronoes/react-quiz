@@ -158,7 +158,7 @@ export function convertQuizMappings(quiz) {
   return {
     ...quiz,
     status: statuses.keyOf(quiz.status),
-    questions: quiz.questions.map((question) => ({
+    questions: quiz.questions && quiz.questions.map((question) => ({
       ...question,
       type: questionTypes.keyOf(question.type),
     })),

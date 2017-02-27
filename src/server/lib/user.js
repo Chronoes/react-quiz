@@ -1,7 +1,7 @@
-import { fromJS as immutableJS } from 'immutable';
+import { fromJS as immutableJS, Seq } from 'immutable';
 
 import database, { User, UserTextAnswer, UserChoiceAnswer, Question } from '../database';
-import { genChecksum } from '../lib/general';
+import { genChecksum, remapAssociations } from './general';
 
 const { questionTypes } = Question.mappings;
 
@@ -17,6 +17,24 @@ export function createUser(username, quizId) {
     .update('hash', hash)
     .then(() => Promise.resolve({ userId, hash }));
   });
+}
+
+export function getUserAnswers(userId) {
+  return User.query('U')
+  .select(
+    'U.username',
+    'U.time_spent AS timeSpent',
+    'U.created_at AS createdAt',
+    'U.quiz_id AS quizId',
+    'UTA.question_id AS textAnswer_questionId',
+    'UTA.is_correct AS textAnswer_isCorrect',
+    'UTA.value AS textAnswer_value',
+    'UCA.question_choice_id AS choiceAnswer_questionChoiceId',
+    'UCA.is_correct AS choiceAnswer_isCorrect'
+  ).leftJoin(`${UserTextAnswer} AS UTA`, 'UTA.user_id', 'U.user_id')
+  .leftJoin(`${UserChoiceAnswer} AS UCA`, 'UCA.user_id', 'U.user_id')
+  .where('U.user_id', userId)
+  .then((answers) => new Seq(answers).map(remapAssociations));
 }
 
 function saveTextAnswer(transaction, user) {

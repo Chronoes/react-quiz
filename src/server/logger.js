@@ -11,7 +11,7 @@ class LogTransformer extends Transform {
   }
 
   _transform(chunk, encoding, callback) {
-    this.push(new Buffer(this.getLogSuffix()));
+    this.push(new Buffer(`\n${this.getLogSuffix()}`));
     this.push(chunk);
     callback();
   }
