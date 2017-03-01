@@ -24,14 +24,25 @@ export function createSchema() {
     database.schema.createTableIfNotExists(first.name, first.definition));
 }
 
+const reverseInitOrder = models.initOrder.slice();
+reverseInitOrder.reverse();
+
 export function dropSchema() {
-  const dropOrder = models.initOrder.slice();
-  dropOrder.reverse();
+  const dropOrder = reverseInitOrder.slice();
   const first = models[dropOrder.shift()];
   return dropOrder
   .reduce((promise, next) =>
     promise.then(() => database.schema.dropTableIfExists(models[next].name)),
     database.schema.dropTableIfExists(first.name));
+}
+
+export function truncateDatabase() {
+  const truncOrder = reverseInitOrder.slice();
+  const first = models[truncOrder.shift()];
+  return truncOrder
+  .reduce((promise, next) =>
+    promise.then(() => database(models[next].name).del()),
+    database(first.name).del());
 }
 
 class Model {

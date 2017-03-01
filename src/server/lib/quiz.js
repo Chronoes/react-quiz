@@ -1,7 +1,7 @@
 import { Seq, fromJS as immutableJS } from 'immutable';
 
-import { isPositiveNumber, parseIntBase10 } from './general';
-import { Quiz, Question, QuestionChoice } from '../database';
+import { isPositiveNumber, parseIntBase10, remapToCompoundObject, groupAssociations } from './general';
+import database, { Quiz, Question, QuestionChoice } from '../database';
 
 const { statuses } = Quiz.mappings;
 const { questionTypes } = Question.mappings;
@@ -166,23 +166,27 @@ export function convertQuizMappings(quiz) {
 }
 
 export function getQuestionChoices({ questionId, type }, includeAnswers = false) {
-  if (type === questionTypes.get('textarea')) {
-    return Promise.resolve([]);
-  }
-
-  const query = QuestionChoice.query('QC')
+  let query = QuestionChoice.query('QC')
   .select(
     'QC.question_choice_id AS questionChoiceId'
   ).where('question_id', questionId);
 
   if (includeAnswers) {
-    return query.select(
+    query = query
+    .select(
       'QC.is_answer AS isAnswer',
       'QC.value'
     );
+  } else {
+    query = query
+    .select(
+      database.raw('(CASE WHEN ? = ? THEN NULL ELSE "QC".value END) AS choices_value',
+        [type, questionTypes.get('fillblank')]
+      )
+    );
   }
 
-  return type === questionTypes.get('fillblank') ? query : query.select('QC.value');
+  return query.then((choices) => Promise.resolve(immutableJS(choices)));
 }
 
 export function getQuizQuestions(quizId, withChoices = true, includeAnswers = false) {
@@ -192,14 +196,34 @@ export function getQuizQuestions(quizId, withChoices = true, includeAnswers = fa
     'Q.question',
     'Q.type',
     'Q.order_by AS orderBy'
-  ).where('quiz_id', quizId);
+  ).where('quiz_id', quizId)
+  .orderBy('Q.order_by', 'ASC');
 
   if (withChoices) {
-    return query
-    .then((questions) => Promise.all(questions.map((question) =>
-      getQuestionChoices(question, includeAnswers)
-      .then((choices) => Promise.resolve({ ...question, choices }))))
+    let choiceQuery = query
+    .leftJoin(`${QuestionChoice.name} AS QC`, 'QC.question_id', 'Q.question_id')
+    .select(
+      'QC.question_choice_id AS choices_questionChoiceId'
     );
+
+    if (includeAnswers) {
+      choiceQuery = choiceQuery
+      .select(
+        'QC.is_answer AS choices_isAnswer',
+        'QC.value AS choices_value'
+      );
+    } else {
+      choiceQuery = choiceQuery
+      .select(
+        database.raw('(CASE WHEN ?? = ? THEN NULL ELSE ?? END) AS choices_value',
+          ['Q.type', questionTypes.get('fillblank'), 'QC.value']
+        )
+      );
+    }
+
+    return choiceQuery.then((questions) =>
+      Promise.resolve(groupAssociations(questions.map(remapToCompoundObject), 'questionId')));
   }
-  return query;
+
+  return query.then((questions) => Promise.resolve(groupAssociations(questions, 'questionId')));
 }

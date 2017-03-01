@@ -1,3 +1,8 @@
+import { List, Map } from 'immutable';
+
+import { Quiz, Question, QuestionChoice, truncateDatabase } from '../database';
+import { partialOmit, partialPick } from './general';
+
 import * as util from './quiz';
 
 const questions = [
@@ -231,5 +236,138 @@ describe('#getQuestionChoices()', () => {
 });
 
 describe('#getQuizQuestions()', () => {
-  it('should do stuff');
+  const fullExpected = (withChoices, includeAnswers) => {
+    const fullObject = {
+      1: {
+        questionId: 1,
+        question: 'test 1',
+        type: 1,
+        orderBy: 1,
+        choices: [
+          {
+            questionChoiceId: 1,
+            value: 'choice 1',
+            isAnswer: true,
+          },
+          {
+            questionChoiceId: 2,
+            value: 'choice 2',
+            isAnswer: false,
+          },
+          {
+            questionChoiceId: 3,
+            value: 'choice 3',
+            isAnswer: false,
+          },
+        ],
+      },
+      2: {
+        questionId: 2,
+        question: 'test 2',
+        type: 3,
+        orderBy: 2,
+        choices: [
+          {
+            questionChoiceId: 4,
+            value: includeAnswers ? 'fillblank 1' : null,
+            isAnswer: true,
+          },
+          {
+            questionChoiceId: 5,
+            value: includeAnswers ? 'fillblank 2' : null,
+            isAnswer: true,
+          },
+        ],
+      },
+      3: {
+        questionId: 3,
+        question: 'test 3',
+        type: 4,
+        orderBy: 3,
+        choices: [
+          {
+            questionChoiceId: null,
+            value: null,
+            isAnswer: null,
+          },
+        ],
+      },
+    };
+
+    if (withChoices) {
+      if (includeAnswers) {
+        return fullObject;
+      }
+
+      return new Map(fullObject)
+      .map((question) => ({ ...question, choices: question.choices.map(partialOmit(['isAnswer'])) }))
+      .toJS();
+    }
+    return new Map(fullObject)
+    .map(partialOmit(['choices']))
+    .toJS();
+  };
+
+  const arbitraryQuizId = 100;
+
+  beforeAll(() => {
+    const list = new Map(fullExpected(true, true)).toList();
+
+    return Quiz.query()
+    .insert({
+      quiz_id: arbitraryQuizId,
+      title: '#getQuizQuestions()',
+      status: 1,
+    })
+    .then(() => Question.query()
+      .insert(
+        list.map(partialPick([
+          ['questionId', 'question_id'],
+          'question',
+          'type',
+          ['orderBy', 'order_by'],
+        ]))
+        .map((question) => ({ ...question, quiz_id: arbitraryQuizId }))
+        .toJS()
+      )
+    ).then(() => QuestionChoice.query()
+      .insert(
+        list.map(({ choices, questionId }) =>
+          new List(choices)
+          .filter(({ questionChoiceId }) => questionChoiceId)
+          .map((choice) => ({ ...choice, questionId }))
+        ).flatten(true)
+        .map(partialPick([
+          ['questionChoiceId', 'question_choice_id'],
+          'value',
+          ['isAnswer', 'is_answer'],
+          ['questionId', 'question_id'],
+        ]))
+        .toJS()
+      )
+    );
+  });
+
+  afterAll(() => truncateDatabase());
+
+  it('should return questions by quiz ID', () =>
+    util.getQuizQuestions(arbitraryQuizId, false, false)
+    .then((qs) => {
+      expect(qs.toJS()).toEqual(fullExpected(false, false));
+    })
+  );
+
+  it('should return questions and choices by quiz ID', () =>
+    util.getQuizQuestions(arbitraryQuizId, true, false)
+    .then((qs) => {
+      expect(qs.toJS()).toEqual(fullExpected(true, false));
+    })
+  );
+
+  it('should return questions and choices with answers by quiz ID', () =>
+    util.getQuizQuestions(arbitraryQuizId, true, true)
+    .then((qs) => {
+      expect(qs.toJS()).toEqual(fullExpected(true, true));
+    })
+  );
 });
